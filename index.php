@@ -70,6 +70,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Links</th>
                             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Download</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">View</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200" id="table-body">
@@ -179,7 +180,7 @@
                             echo '<tr class="hover:bg-gray-50 template-row" data-creator="' . strtolower($creator) . '" data-search="' . strtolower($name . ' ' . $title . ' ' . $description . ' ' . $creator . ' ' . $category) . '" data-category="' . strtolower($category) . '">';
                             
                             // Category column
-                            echo '<td class="px-6 py-4">';
+                            echo '<td class="px-6 py-4 text-center">';
                             if (!empty($category)) {
                                 echo '<div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 w-fit text-center">' . $category . '</div>';
                             } else {
@@ -240,6 +241,19 @@
                             }
                             echo '</td>';
                             
+                            // View column
+                            echo '<td class="px-6 py-4 text-center">';
+                            if ($hasJsonFile) {
+                                echo '<button onclick="viewJson(\'' . htmlspecialchars($jsonFile) . '\', \'' . htmlspecialchars(addslashes($name)) . '\')" class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors">';
+                                echo '<i class="fas fa-eye mr-1"></i> View';
+                                echo '</button>';
+                            } else {
+                                echo '<span class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">';
+                                echo '<i class="fas fa-times mr-1"></i> N/A';
+                                echo '</span>';
+                            }
+                            echo '</td>';
+                            
                             echo '</tr>';
                         }
                         ?>
@@ -250,6 +264,39 @@
             <!-- Footer -->
             <div class="bg-gray-50 px-6 py-4 text-center text-sm text-gray-600">
                 <p>Total Templates: <?php echo count($templates); ?> | Available Downloads: <?php echo $availableDownloads; ?></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JSON View Modal -->
+    <div id="jsonModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 modal-backdrop">
+        <div class="flex items-center justify-center min-h-screen p-4" onclick="closeJsonModal()">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold flex items-center">
+                        <i class="fas fa-file-code mr-2"></i>
+                        <span id="modalTitle">JSON Template</span>
+                    </h3>
+                    <button onclick="closeJsonModal()" class="text-white hover:text-gray-200 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Modal Body -->
+                <div class="p-6 overflow-auto max-h-[calc(90vh-140px)]">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="text-gray-600">Template JSON Structure</p>
+                        <button id="copyJsonBtn" onclick="copyJsonToClipboard()" class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-copy mr-2"></i>
+                            Copy JSON
+                        </button>
+                    </div>
+                    
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <pre id="jsonContent" class="text-sm text-gray-800 whitespace-pre-wrap overflow-auto"><code>Loading...</code></pre>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -331,6 +378,107 @@
                     $(this).removeClass('transform scale-[1.01] shadow-sm');
                 }
             );
+        });
+        
+        // JSON Modal Functions
+        let currentJsonContent = '';
+        
+        function viewJson(jsonFile, templateName) {
+            const modal = $('#jsonModal');
+            const modalTitle = $('#modalTitle');
+            const jsonContent = $('#jsonContent');
+            
+            // Set modal title
+            modalTitle.text(templateName + ' - JSON Template');
+            
+            // Show modal
+            modal.removeClass('hidden');
+            
+            // Load JSON content
+            jsonContent.html('<code>Loading...</code>');
+            
+            fetch(jsonFile)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load JSON file');
+                    }
+                    return response.text();
+                })
+                .then(jsonText => {
+                    try {
+                        // Parse and pretty-format the JSON
+                        const jsonObj = JSON.parse(jsonText);
+                        const formattedJson = JSON.stringify(jsonObj, null, 2);
+                        currentJsonContent = formattedJson;
+                        jsonContent.html('<code>' + escapeHtml(formattedJson) + '</code>');
+                    } catch (e) {
+                        // If JSON parsing fails, show raw content
+                        currentJsonContent = jsonText;
+                        jsonContent.html('<code>' + escapeHtml(jsonText) + '</code>');
+                    }
+                })
+                .catch(error => {
+                    jsonContent.html('<code class="text-red-600">Error loading JSON: ' + escapeHtml(error.message) + '</code>');
+                    currentJsonContent = '';
+                });
+        }
+        
+        function closeJsonModal() {
+            $('#jsonModal').addClass('hidden');
+        }
+        
+        function copyJsonToClipboard() {
+            if (!currentJsonContent) {
+                alert('No content to copy');
+                return;
+            }
+            
+            navigator.clipboard.writeText(currentJsonContent).then(function() {
+                const copyBtn = $('#copyJsonBtn');
+                const originalHtml = copyBtn.html();
+                
+                // Show success feedback
+                copyBtn.html('<i class="fas fa-check mr-2"></i>Copied!');
+                copyBtn.removeClass('bg-green-600 hover:bg-green-700').addClass('bg-green-700');
+                
+                // Reset after 2 seconds
+                setTimeout(function() {
+                    copyBtn.html(originalHtml);
+                    copyBtn.removeClass('bg-green-700').addClass('bg-green-600 hover:bg-green-700');
+                }, 2000);
+            }).catch(function(err) {
+                alert('Failed to copy to clipboard');
+            });
+        }
+        
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+        
+        // Close modal when clicking outside
+        $(document).on('click', '#jsonModal', function(e) {
+            if (e.target === this) {
+                closeJsonModal();
+            }
+        });
+        
+        // Also handle clicks on the backdrop wrapper
+        $(document).on('click', '.modal-backdrop', function(e) {
+            if (e.target === this) {
+                closeJsonModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && !$('#jsonModal').hasClass('hidden')) {
+                closeJsonModal();
+            }
         });
     </script>
 </body>
