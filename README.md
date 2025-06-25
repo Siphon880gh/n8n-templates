@@ -26,32 +26,41 @@ The core template data is sourced from [Oleg Melnikov's comprehensive n8n templa
 If the database continue to update beyond June 25th, 2025, you can perform a diff per the ID column to see where the new records are. The original database does not have category column and unless a new category column is added, you can enrich the new records with a category column on ChatGPT o4:
 
 ```
-Lets enrich with a category entry at each record. I already added category header:
+Lets enrich with a category entry at each record. Add a column "category" on the leftmost.
 
 Some categories could be:
 AI Agent Development;Business Process Automation;Content Creation & Video Automation;Data Processing & Analysis;Design & Creative Automation;Marketing & Advertising Automation;Technical Infrastructure & DevOps;Web Scraping & Data Extraction
 
-And of course, add your own category where missing
+And of course, add your own category where missing.
 
-Format output as csv code snippet.
+Do not parse part of the dataset and then ask the user to review and confirm that the columns are structured as expected. Go ahead and enrich all rows with appropriate categories. 
 
-Do not stop part way to ask if you are correct. Run through the records entirely.
-
-Do not parse part of the dataset and then ask the user to review and confirm that the columns are structured as expected. Go ahead and enrich all rows with appropriate categories.
+The output will probably be too long to display all at once here. We can export as a file that I download.
 
 Here is my data:
 """
-{CSV lines 25 at a time}
+{CSV lines 25 at a time, only two columns name and title}
 """
+```
+
+Or if using Cursor AI, open the chat from the csv (of 25 ish lines):
+```
+Lets enrich with a category entry at each record. Add a column "category" on the leftmost.
+
+Some categories could be:
+AI Agent Development;Business Process Automation;Content Creation & Video Automation;Data Processing & Analysis;Design & Creative Automation;Marketing & Advertising Automation;Technical Infrastructure & DevOps;Web Scraping & Data Extraction
+
+And of course, add your own category where missing.
+
+Do not parse part of the dataset and then ask the user to review and confirm that the columns are structured as expected. Go ahead and enrich all rows with appropriate categories. 
 ```
 
 The categories can be captured from the most recent dashboard by running Chrome console script:
 ```
 var arr = [];
 document.querySelectorAll("#category-filter *").forEach(el=>{
-
-    arr.push(el.textContent);
-
+    if(el.textContent!=="All Categories")
+        arr.push(el.textContent);
 })
 
 console.log(arr.join(";"))
