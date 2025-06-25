@@ -1,3 +1,11 @@
+<?php
+// PHP version 8.4.7
+$csvPath = 'data/n8n-templates_enriched.csv';
+
+// Suppress deprecation warnings
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,16 +83,15 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200" id="table-body">
                         <?php
-                        $csvFile = 'n8n-templates_enriched.csv';
                         $jsonDir = 'json/';
                         $templates = [];
                         $creators = [];
                         $categories = [];
                         $availableDownloads = 0;
 
-                        if (file_exists($csvFile)) {
-                            $handle = fopen($csvFile, 'r');
-                            $headers = fgetcsv($handle); // Get headers
+                        if (file_exists($csvPath)) {
+                            $handle = fopen($csvPath, 'r');
+                            $headers = fgetcsv($handle, 0, ',', '"', '\\'); // Get headers
                             
                             // Remove BOM (Bye Orer Mark) from headers if present
                             if ($headers && !empty($headers[0])) {
@@ -97,7 +104,7 @@
                             } else {
                                 $headerCount = count($headers);
                                 
-                                while (($data = fgetcsv($handle)) !== FALSE) {
+                                while (($data = fgetcsv($handle, 0, ',', '"', '\\')) !== FALSE) {
                                     // Skip empty rows
                                     if (empty(array_filter($data))) {
                                         continue;

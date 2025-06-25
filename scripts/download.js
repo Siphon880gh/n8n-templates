@@ -1,3 +1,5 @@
+const csvPath = '../data/n8n-templates_enriched.csv';
+
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
@@ -99,10 +101,9 @@ function downloadFile(driveId, filename) {
 
 // Function to process CSV and download files
 async function processCSV() {
-    const csvPath = './n8n-templates.csv';
     
     if (!fs.existsSync(csvPath)) {
-        console.error('CSV file not found: n8n-templates.csv');
+        console.error(`CSV file not found: ${csvPath}`);
         return;
     }
     

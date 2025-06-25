@@ -4,8 +4,8 @@
   "description": "Downloads n8n templates from Google Drive URLs in CSV file",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "download": "node index.js"
+    "start": "php -S localhost:8000 index.php",
+    "download": "node scripts/download.js"
   },
   "dependencies": {
     "csv-parse": "^5.5.2"
