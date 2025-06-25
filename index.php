@@ -56,6 +56,11 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                         Login Required
                     </h1>
                     <p class="mt-2 text-blue-100">Access n8n Templates Library</p>
+                    <div class="mt-4 text-xs text-blue-200 space-y-1">
+                        <p>Made browsable by <a href="https://www.linkedin.com/in/weng-fung/" target="_blank" class="text-white hover:text-blue-100 underline">Weng</a></p>
+                        <p>Core data from <a href="https://www.youtube.com/watch?v=yAiCXyGLZ2c" target="_blank" class="text-white hover:text-blue-100 underline">Oleg Melnikov</a></p>
+                        <p>Get AI-powered template recommendations at <a href="https://olegfuns.app.n8n.cloud/webhook/cda21b26-b940-4b60-8afa-fd7b8281a96b/chat" target="_blank" class="text-white hover:text-blue-100 underline">Oleg's AI Chat</a></p>
+                    </div>
                 </div>
 
                 <!-- Login Form -->
@@ -124,15 +129,19 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <!-- Header with Logout -->
             <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
-                <div class="flex justify-between items-center">
-                    <div>
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
                         <h1 class="text-3xl font-bold flex items-center">
                             <i class="fas fa-cogs mr-3"></i>
                             n8n Templates Library
                         </h1>
                         <p class="mt-2 text-blue-100">Browse and download automation templates</p>
+                        <div class="mt-3 text-xs text-blue-200 space-y-1">
+                            <p>Made browsable by <a href="https://www.linkedin.com/in/weng-fung/" target="_blank" class="text-white hover:text-blue-100 underline">Weng</a> • Core data from <a href="https://www.youtube.com/watch?v=yAiCXyGLZ2c" target="_blank" class="text-white hover:text-blue-100 underline">Oleg Melnikov</a></p>
+                            <p><i class="fas fa-robot mr-1"></i> Get AI-powered template recommendations at <a href="https://olegfuns.app.n8n.cloud/webhook/cda21b26-b940-4b60-8afa-fd7b8281a96b/chat" target="_blank" class="text-white hover:text-blue-100 underline">Oleg's AI Chat</a></p>
+                        </div>
                     </div>
-                    <a href="?action=logout" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+                    <a href="?action=logout" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-colors flex items-center ml-4">
                         <i class="fas fa-sign-out-alt mr-2"></i>
                         Logout
                     </a>
