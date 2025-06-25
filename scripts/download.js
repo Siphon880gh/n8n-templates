@@ -1,8 +1,9 @@
-const csvPath = '../data/n8n-templates_enriched.csv';
+// Assuming we run at app root folder. These paths are relative to your working path at runtime.
+const csvPath = './data/n8n-templates_enriched.csv';
+const jsonDir = './json';
 
 const fs = require('fs');
 const https = require('https');
-const http = require('http');
 const path = require('path');
 const { parse } = require('csv-parse');
 
@@ -10,7 +11,6 @@ const { parse } = require('csv-parse');
 const DOWNLOAD_DELAY_MS = 2000; // Delay between downloads to avoid spamming Google Drive servers
 
 // Create json directory if it doesn't exist
-const jsonDir = './json';
 if (!fs.existsSync(jsonDir)) {
     fs.mkdirSync(jsonDir, { recursive: true });
 }
@@ -111,11 +111,13 @@ async function processCSV() {
     const records = [];
     
     // Parse CSV
+    // relax_column_count: allow the parser to handle records with inconsistent numbers of columns, making it much more permissive when processing your CSV file. 
     await new Promise((resolve, reject) => {
         parse(csvContent, {
             columns: true,
             skip_empty_lines: true,
-            trim: true
+            trim: true,
+            relax_column_count: true
         }, (err, data) => {
             if (err) {
                 reject(err);
@@ -133,7 +135,7 @@ async function processCSV() {
     
     for (let i = 0; i < records.length; i++) {
         const record = records[i];
-        const resourceUrl = record.resource_url || record.template_url;
+        const resourceUrl = record.template_url || record.resource_url;
         const videoId = record.id;
         
         if (!resourceUrl || !videoId) {
