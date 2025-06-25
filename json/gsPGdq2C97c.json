@@ -1,0 +1,458 @@
+{
+  "name": "1. LI Connection Request System: Trigger PhantomBuster Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "formTitle": "LinkedIn Lead Outreach Trigger",
+        "formDescription": "Insert an audience for your LinkedIn Outreach Campaign here.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Describe your audience in plain English.",
+              "fieldType": "textarea",
+              "placeholder": "Company type, location, etc",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2419d138-c9f7-494b-b84f-7bd8158aef28",
+      "name": "On form submission",
+      "webhookId": "ecb5116a-1434-45b5-8f38-31393735a1b8",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "G9fv9EzHaTdmtYXb",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/jljBwyyQakqrL1wae/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer apify_api_49eEwZq5l183z71vAk5X9vij6A2uaZ0mxTAK"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"getPersonalEmails\": true,\n    \"getWorkEmails\": true,\n    \"totalRecords\": 500,\n    \"url\": \"{{ $json.message.content.searchUrl }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        580,
+        0
+      ],
+      "id": "893e5e59-ddac-480e-9666-cfc4eacf993e",
+      "name": "Run Apify Actor & Get Results"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.5-preview",
+          "mode": "list",
+          "cachedResultName": "GPT-4.5-PREVIEW"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're a helpful, intelligent sales assistant.",
+              "role": "system"
+            },
+            {
+              "content": "Your task is to take as input a natural language description of a prospect audience, and turn that into an Apollo Search URL.\n\nHere's an example of an Apollo Search URL:\n\nhttps://app.apollo.io/#/people?personLocations[]=United%20States&sortAscending=false&sortByField=%5Bnone%5D&personTitles[]=owner&personTitles[]=ceo&personTitles[]=founder&personTitles[]=partner&page=1&qKeywords=creative%20agency&organizationNumEmployeesRanges[]=1%2C200\n\nThis URL describes a search for people that are\n- Located in the United States.\n- Hold the titles: Owner, CEO, Founder, or Partner.\n- Have a keyword association with “creative agency”.\n\nThese are the fields you can change:\n\norganizationLocations[], Keywords, personTitles[], and organizationNumEmployeesRanges[]\n\nDo not add or change any other fields. Use the above template\n\nReturn your response in JSON using this format:\n\n{\"searchUrl\":\"search url goes here\"}"
+            },
+            {
+              "content": "={{ $json['Describe your audience in plain English.'] }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        220,
+        0
+      ],
+      "id": "2050e13d-55be-4669-b805-d2210fb364ba",
+      "name": "Generate Search URL",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        780,
+        0
+      ],
+      "id": "97bf46ab-1900-4dc3-be9e-bf4c1a40190a",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.phantombuster.com/api/v2/agents/launch",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Phantombuster-Key",
+              "value": "mGBCk0W7hbnK6v58FpI2MSttntCpFqjS9Pp1xHZrRZM"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "4108795702201397"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1780,
+        0
+      ],
+      "id": "1065dcfe-a305-43fe-97e5-7ad2c3bfb163",
+      "name": "Trigger PhantomBuster Agent"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "12VzSF9drN_kWYsGhNjir9hAGCE0k56N7HkfAV8EuI7Q",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12VzSF9drN_kWYsGhNjir9hAGCE0k56N7HkfAV8EuI7Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12VzSF9drN_kWYsGhNjir9hAGCE0k56N7HkfAV8EuI7Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Limit').item.json.id }}",
+            "first_name": "={{ $('Limit').item.json.first_name }}",
+            "last_name": "={{ $('Limit').item.json.last_name }}",
+            "name": "={{ $('Limit').item.json.name }}",
+            "linkedin_url": "={{ $('Limit').item.json.linkedin_url }}",
+            "title": "={{ $('Limit').item.json.title }}",
+            "email_status": "={{ $('Limit').item.json.email_status }}",
+            "photo_url": "={{ $('Limit').item.json.photo_url }}",
+            "icebreaker": "={{ $json.message.content.icebreaker }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email_status",
+              "displayName": "email_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "photo_url",
+              "displayName": "photo_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "icebreaker",
+              "displayName": "icebreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1340,
+        0
+      ],
+      "id": "c407a69a-a9b9-49dd-a5c5-8ca9b530b358",
+      "name": "Add to Google Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EOibXIc4U8wcXyRR",
+          "name": "YouTube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent writing assistant.",
+              "role": "system"
+            },
+            {
+              "content": "Your task is to take as input a bunch of LinkedIn profile information of a user, and then generate a very short, very punchy icebreaker that I can use as a variable in my connection request.\n\nReturn your results in this format:\n\n{\"icebreaker\":\"Icebreaker goes here\"}\n\nIn order to ensure icebreakers are punchy and high-quality, make them follow this template:\n\nHey {{name}}, loved seeing {{thingAboutThem}}. I'm also into {{plausibleTieIn}}, thought I'd connect.\n\nFor {{thingAboutThem}} and {{plausibleTieIn}}, never use the exact information provided in a LinkedIn field. Instead, always paraphrase. This makes it seem human written, instead of just an automated message. Also, make it super short. Don't say stuff like \"passionate about turning vision into reality\" or anything like that—be extremely laconic and spartan."
+            },
+            {
+              "content": "{\"linkedInFields\":\"Danielle Morgan, Fort Lauderdale, Founder & CEO at DM Creative Agency, previous experience: Regional Sales Director at Out East Eyewear, Account Director at Radancy\"}"
+            },
+            {
+              "content": "{\n  \"icebreaker\": \"Hey Danielle, loved seeing your creative agency journey. I'm also building brands, thought I'd connect.\"\n}",
+              "role": "assistant"
+            },
+            {
+              "content": "={\"linkedInFields\":\"{{ $json.first_name }} {{ $json.last_name }}, {{ $json.city }}, {{ $json.title }} at {{ $json.employment_history[0].organization_name }}, previous experience: {{ $json.employment_history[1].title }} at {{ $json.employment_history[1].organization_name }}, {{ $json.employment_history[2].title }} at {{ $json.employment_history[2].organization_name }}\"} "
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        980,
+        0
+      ],
+      "id": "04290792-010b-43da-b606-74e15185312d",
+      "name": "Personalize Outreach",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        0
+      ],
+      "id": "3e677add-7bee-4fbf-bff1-b7ea9ae51be6",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Generate Search URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Search URL": {
+      "main": [
+        [
+          {
+            "node": "Run Apify Actor & Get Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Apify Actor & Get Results": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Personalize Outreach",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Personalize Outreach": {
+      "main": [
+        [
+          {
+            "node": "Add to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Trigger PhantomBuster Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "801b4eef-45ec-4651-b4cd-b82178d93264",
+  "meta": {
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "5RFmm8vrn1I8fFGE",
+  "tags": [
+    {
+      "createdAt": "2025-01-23T18:12:52.273Z",
+      "updatedAt": "2025-01-23T18:12:52.273Z",
+      "id": "l8MPK4ZirgwFWMno",
+      "name": "N8N Course"
+    }
+  ]
+}

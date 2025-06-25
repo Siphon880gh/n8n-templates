@@ -1,0 +1,226 @@
+{
+  "name": "⚙️GetEmails",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "INBOX",
+            "UNREAD"
+          ],
+          "receivedAfter": "={{ $json.message.content }}"
+        },
+        "options": {}
+      },
+      "id": "f891547d-2b7c-4982-a4e8-ab17c6b75401",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        940,
+        320
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tTM3T5akyzZzFT2R",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your task is to give a concise summary of the emails that you will receive.\n\nPlease include:\nFrom:{{ $json.headers.from }}\nA summary of the email: {{ $json.text }}",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7a8201a5-cc9c-4da3-918d-5c2373be541e",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        1100,
+        320
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "bEw2RFKI3MP4M94t",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to identify what date the user is asking for based on the JSON.query and the current date: {{ $now}}\n\nExample:\nIf the query asks for today, you would return today's date.\n\nExample: If the query asks for yesterday, you would return the day before today.",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.query }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9b13052d-b7e8-4737-9f61-775b6066cbf8",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        640,
+        320
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "bEw2RFKI3MP4M94t",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa5e2ce4-3a4f-4144-be90-8f641f64e185",
+              "name": "response",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "27b505a9-34f2-4070-ac64-3569cdd4b9f6",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1540,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message.content"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b5852895-f874-47fc-85a9-c7c8a4ea073e",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "613bfca9-3e8e-4d79-9138-a7ae064be226",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        460,
+        320
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3cfd738f-1d62-4316-8c33-4bb8f0ef55f2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "90jRfZTdDWxvbkws",
+  "tags": []
+}

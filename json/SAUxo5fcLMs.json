@@ -1,0 +1,693 @@
+{
+  "name": "AI ImgGen",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        1260
+      ],
+      "id": "1aa9e59a-c85c-412b-835f-69723134a771",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "content": "## Generate image",
+        "height": 300,
+        "width": 1260,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -60
+      ],
+      "id": "d6a01a1e-db9d-47c2-a65f-ea9d9a35f218",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Recipe book",
+        "height": 360,
+        "width": 1260,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        320
+      ],
+      "id": "d60fd0f9-dd62-4088-b5f0-1db8e30adbc4",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        580,
+        420
+      ],
+      "id": "893608a8-3812-464d-accf-3e9c5a80dd4a",
+      "name": "Convert to File2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        80,
+        420
+      ],
+      "id": "7638de82-aa6e-4345-83a6-e40cf53fda10",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "=create clean, visually appealing top-down images of recipe ingredients arranged neatly on a light, neutral background. Use natural lighting and a soft color palette. Ingredients should be spaced evenly with a clean, modern aesthetic. Emphasize variety in textures and colors. Optional: include small handwritten-style ingredient labels below each item, mimicking the look of a curated cookbook or magazine spread.  \n\n{{ $json.Ingredients }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        420
+      ],
+      "id": "eb6ee64e-296d-4115-b1bf-18208c11e3c4",
+      "name": "createImage"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1eZoAvo8D-VDCNbPY4Egg9uNioKrvfDFtVCXtOC1DyIQ",
+          "mode": "list",
+          "cachedResultName": "Recipe Book",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eZoAvo8D-VDCNbPY4Egg9uNioKrvfDFtVCXtOC1DyIQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eZoAvo8D-VDCNbPY4Egg9uNioKrvfDFtVCXtOC1DyIQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -140,
+        420
+      ],
+      "id": "21cf9a53-3790-41cc-b4c4-eada1694cc21",
+      "name": "getRecipe",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mEsizruw9o9tf1Nb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('getRecipe').item.json['Recipe name'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "19R5bCLF5GBU4KFdtFW1Vg3Rtyviow08q",
+          "mode": "list",
+          "cachedResultName": "Recipe images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/19R5bCLF5GBU4KFdtFW1Vg3Rtyviow08q"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        800,
+        420
+      ],
+      "id": "8c98cae4-24a0-458d-9210-348c7fc03fde",
+      "name": "saveImage",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tcQTtcknCiecyI7b",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        620,
+        1260
+      ],
+      "id": "c34ff07a-984d-41c7-abba-b3289d5deaae",
+      "name": "Convert to File3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        100,
+        1260
+      ],
+      "id": "f40ec3d0-8c25-45a1-8fc1-2d9e3927d63c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1b9h1kFSjxKPZCuq2TlV6la195-YvgTi0",
+            "mode": "list",
+            "cachedResultName": "Products",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1b9h1kFSjxKPZCuq2TlV6la195-YvgTi0"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -100,
+        1260
+      ],
+      "id": "8f696363-ced8-4a16-b09c-803b32323fbc",
+      "name": "getFiles",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tcQTtcknCiecyI7b",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('getFiles').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        280,
+        1260
+      ],
+      "id": "603fded4-738e-44b7-8676-5dbd6637c6a6",
+      "name": "downloadFile",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tcQTtcknCiecyI7b",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=Authorization",
+              "value": "Bearer "
+            },
+            {
+              "name": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "Generate a visually appealing and vibrant product image using the provided beverage can. Identify the beverage flavor directly from the can and position relevant ingredients, such as fruits or botanicals, dynamically around it. Include realistic water splashes around the can to create a refreshing and energetic feel. The background should harmonize with the can's color scheme, using much lighter, complementary tone to enhance the overall bright and fresh aesthetic. Lighting should emphasize freshness, clarity, and highlight natural textures of the ingredients."
+            },
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        1260
+      ],
+      "id": "6bfcdacf-f0a5-4f75-b6ec-311cd1637147",
+      "name": "editImage"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Loop Over Items').item.json.name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1FG0EYk5v0IAttxA-r6ykjJK_CcrBn08g",
+          "mode": "list",
+          "cachedResultName": "Products (Edited)",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1FG0EYk5v0IAttxA-r6ykjJK_CcrBn08g"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        840,
+        1260
+      ],
+      "id": "89ffd9b8-7909-47b3-97a6-c86351b78437",
+      "name": "saveImage1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tcQTtcknCiecyI7b",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "An adorable fluffy bunny with big, sad, expressive eyes, gently holding a small wooden sign that reads \"Like and Subscribe\" in playful, friendly lettering. The bunny is positioned against a soft pastel-colored background, with warm, natural lighting that enhances its cuteness and charm. The overall style is whimsical, inviting, and designed to evoke a positive emotional response."
+            },
+            {
+              "name": "quality",
+              "value": "high"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        40
+      ],
+      "id": "60c66d38-5ac9-4ca7-9949-39b5c19b695a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        140,
+        40
+      ],
+      "id": "25355d19-643d-4ffd-8e0e-773ac0666223",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "Change the words on the sign to 'Thanks for Subscribing!' and make the bunny look happy"
+            },
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        900
+      ],
+      "id": "0c9462ae-cfd6-4130-9555-c622f91befa9",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1lIFOHY4XjNM9pJkZ20VZNWqP98JxJXN6",
+          "mode": "list",
+          "cachedResultName": "bunny.png",
+          "cachedResultUrl": "https://drive.google.com/file/d/1lIFOHY4XjNM9pJkZ20VZNWqP98JxJXN6/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -140,
+        900
+      ],
+      "id": "65eeab31-24d2-418f-960f-c45720afc9f7",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tcQTtcknCiecyI7b",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        900
+      ],
+      "id": "442f37c9-36e9-48a8-a803-b1aefe2ad836",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "content": "## Edit image",
+        "height": 360,
+        "width": 1260,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        760
+      ],
+      "id": "7ebf6b0f-8350-4dc4-bf8e-a14ab3322416",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Update product photos",
+        "height": 360,
+        "width": 1260,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        1160
+      ],
+      "id": "d6038256-5e5a-4e24-a042-457a001647b3",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "getFiles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File2": {
+      "main": [
+        [
+          {
+            "node": "saveImage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "createImage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createImage": {
+      "main": [
+        [
+          {
+            "node": "Convert to File2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getRecipe": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "saveImage": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File3": {
+      "main": [
+        [
+          {
+            "node": "saveImage1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "downloadFile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getFiles": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "downloadFile": {
+      "main": [
+        [
+          {
+            "node": "editImage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "editImage": {
+      "main": [
+        [
+          {
+            "node": "Convert to File3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "saveImage1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d4d0a403-c2ee-4d32-98f1-3872e5fcaa52",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "605a683b81a6e587f4e29323845487f54ca9ffb48ef0a7180153d72d510ddc13"
+  },
+  "id": "qgSu835wA8hQ2LWY",
+  "tags": []
+}

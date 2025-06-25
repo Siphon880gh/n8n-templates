@@ -1,0 +1,941 @@
+{
+  "name": "AI Marketing Team",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "openai/gpt-4.1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        200
+      ],
+      "id": "243cc16f-a8ca-4e9f-8d8a-6e48d2c1796f",
+      "name": "GPT 4.1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "1dQlOKKWiigrH9O9",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "createImage",
+        "description": "Call this tool to create an image. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "lsZTPeThp35cB3Hs",
+          "mode": "list",
+          "cachedResultName": "Create Image"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chatID": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+            "imagePrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagePrompt', `The image requested by the user`, 'string') }}",
+            "imageTitle": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imageTitle', `The title of the image. Should be no more than 4 words.`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "imageTitle",
+              "displayName": "imageTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagePrompt",
+              "displayName": "imagePrompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        780,
+        200
+      ],
+      "id": "b46f6e9a-9719-4540-9aa6-23da285e89f2",
+      "name": "Create Image"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1160,
+        -140
+      ],
+      "id": "9856dbc9-1904-422e-8dfa-f84e210b1edc",
+      "name": "Telegram",
+      "webhookId": "fbdb3bd7-490b-4d3e-961e-e2d398294649",
+      "credentials": {
+        "telegramApi": {
+          "id": "9jQWan3cOz3tE62s",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        100,
+        200
+      ],
+      "id": "3c80151c-dc63-4981-8136-15f5e16a647f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "name": "editImage",
+        "description": "Call this tool to edit an image.",
+        "workflowId": {
+          "__rl": true,
+          "value": "nMBpMe21l4gDEjOI",
+          "mode": "list",
+          "cachedResultName": "Edit Image"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "image": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('image', `The title of the image the user wants to edit`, 'string') }}",
+            "chatID": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+            "request": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('request', `The edit the user wants to make to the image`, 'string') }}",
+            "pictureID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('pictureID', `The ID of the image to edit`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "image",
+              "displayName": "image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "request",
+              "displayName": "request",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "pictureID",
+              "displayName": "pictureID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        940,
+        200
+      ],
+      "id": "ae38e1af-dc55-48cf-9be2-7439a592453d",
+      "name": "Edit Image"
+    },
+    {
+      "parameters": {
+        "name": "searchImages",
+        "description": "Call this tool to search the image database.",
+        "workflowId": {
+          "__rl": true,
+          "value": "zDYAKGCIEChJa1JH",
+          "mode": "list",
+          "cachedResultName": "Search Images"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "intent": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('intent', `The intent of the user. This can either be \"Get\" or \"Edit\"`, 'string') }}",
+            "image": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('image', `The image title`, 'string') }}",
+            "chatID": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "intent",
+              "displayName": "intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "image",
+              "displayName": "image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1180,
+        200
+      ],
+      "id": "e1b30c8b-b081-4689-97fb-22733fbac6a7",
+      "name": "Search Images"
+    },
+    {
+      "parameters": {
+        "name": "blogPost",
+        "description": "Call this tool to create a blog post using a topic and a target audience.",
+        "workflowId": {
+          "__rl": true,
+          "value": "sS2JMp5z7YiqtJpa",
+          "mode": "list",
+          "cachedResultName": "Blog Post"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "blogTopic": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('blogTopic', `The topic of the blog.`, 'string') }}",
+            "targetAudience": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('targetAudience', `The target audience for the blog.`, 'string') }}",
+            "chatID": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "blogTopic",
+              "displayName": "blogTopic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "targetAudience",
+              "displayName": "targetAudience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        600,
+        200
+      ],
+      "id": "c8d4ca3f-591e-4751-91ff-3aa6714e893f",
+      "name": "Blog Post"
+    },
+    {
+      "parameters": {
+        "content": "# Marketing Team",
+        "height": 400,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        600,
+        -300
+      ],
+      "id": "ac099456-afcf-4c32-8d2d-cf9162932ce5",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "name": "linkedinPost",
+        "description": "Call this tool to create a LinkedIn post using a topic and a target audience.",
+        "workflowId": {
+          "__rl": true,
+          "value": "RgUBWsswXoQsX2tI",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Post"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "postTopic": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('postTopic', `The topic of the LinkedIn post`, 'string') }}",
+            "targetAudience": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('targetAudience', `The target audience of the LinkedIn post`, 'string') }}",
+            "chatID": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "postTopic",
+              "displayName": "postTopic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "targetAudience",
+              "displayName": "targetAudience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        200
+      ],
+      "id": "93e30328-9637-411f-bb0d-1c5e9cc207e1",
+      "name": "LinkedIn Post"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fe7ecc99-e1e8-4a5e-bdd6-6fce9757b234",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a3451421-dcc6-4643-94a4-f4b187dbb70b",
+      "name": "Set 'Text'",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "id": "cd462755-96a8-4ca2-a3a8-77e85e83f024",
+      "name": "Download Voice File",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        -220
+      ],
+      "webhookId": "c0b376b1-7b63-41b6-8063-0b3096b8333d",
+      "credentials": {
+        "telegramApi": {
+          "id": "9jQWan3cOz3tE62s",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "26f7a215-90a0-4719-a7a2-fbfba550277b",
+      "name": "Transcribe Audio",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        400,
+        -220
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "WnxUhaEPMn5hIsEp",
+          "name": "Demo 4/2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8c844924-b2ed-48b0-935c-c66a8fd0c778",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3c795fe4-9c50-4b1d-a43e-2b9d36746a39",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -20,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "12bb0833-769d-4592-af4d-fa335c6e84ab",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        -140
+      ],
+      "webhookId": "99eab1a0-569d-4f0f-a49e-578a02abfe63",
+      "credentials": {
+        "telegramApi": {
+          "id": "9jQWan3cOz3tE62s",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Trigger\n",
+        "height": 400,
+        "width": 360,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -300
+      ],
+      "id": "cd9f9d75-e1bf-4279-b733-3339fb383536",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Content Creation",
+        "height": 220,
+        "width": 480,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        120
+      ],
+      "id": "97967485-58d3-4f7e-b879-c0895721fd99",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Image Creation",
+        "height": 220,
+        "width": 320,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        740,
+        120
+      ],
+      "id": "5c76b653-8a55-4c6d-b335-35185944a48b",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Image Database",
+        "height": 220,
+        "width": 300,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        120
+      ],
+      "id": "079a7833-0fff-4fd3-81d1-9d112b432e24",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# Response\n\n",
+        "height": 400,
+        "width": 300,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        -300
+      ],
+      "id": "60b95e09-119e-4477-99cb-a5629ef4965a",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "# Brain\n\n",
+        "height": 220,
+        "width": 440,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        120
+      ],
+      "id": "65a7791a-7d13-4dff-b532-8576692a9ffa",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "# Voice or Text",
+        "height": 400,
+        "width": 420,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -300
+      ],
+      "id": "6c35946c-e517-40f2-8d96-7b0f391dcb3c",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "name": "video",
+        "description": "Call this tool to create a video.",
+        "workflowId": {
+          "__rl": true,
+          "value": "7HwL0nnjhjdXJ3FY",
+          "mode": "list",
+          "cachedResultName": "Faceless Video"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "videoTopic": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('videoTopic', `The topic of the video`, 'string') }}",
+            "chatID": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "videoTopic",
+              "displayName": "videoTopic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        280,
+        200
+      ],
+      "id": "5137d58b-d6d9-4877-9d95-6d4cf870d09f",
+      "name": "Video"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a marketing team AI agent. Your job is to help the user create and edit images based on the request, or create content.\n\n## Tools\ncreateImage - Use this to create an image. Send the requested image prompt to this tool.\neditImage - Use this to edit an image. The user might also say \"make\" rather than \"edit\".\nImage Database - Use this to search the image database. \nblogPost - Use this to create a blog post.\nlinkedinPost - Use this to create a LinkedIn post.\nvideo - Use this tool to create a video.\nThink - Use this if you need help making a decision.\n\n## Instructions\n- If the user asks to 'edit that image' or 'make that...', this indicates they want to edit the last image in the database, the most recent one.\n- If the user requests a blog post or LinkedIn post, use the \"blogPost\" or \"linkedinPost\" tool and output: \"Here's that post you requested. Hope you enjoy it.\"\n\n## Output\n- Make sure to return the image link as a clickable link\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        700,
+        -140
+      ],
+      "id": "13aea3f4-b9b0-4f14-9d68-06baee17bea5",
+      "name": "Marketing Team Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        200
+      ],
+      "id": "7642374d-7e12-4f7d-be49-d74bc85932e5",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "content": "# 📋 Setup Guide  \n**Author: [Nate Herk](https://www.youtube.com/@nateherk/videos)**\n---\n### ✅ First Steps\n1. **Import the following workflows** into your n8n environment:\n   - Video\n   - LinkedIn Post\n   - Blog Post\n   - Create Image\n   - Edit Image\n   - Search Images\n\n2. **Link all workflows** together appropriately.\n   - Make sure that the tools the Marketing Team Agent uses are correctly linked to these workflows.\n   - Rename workflows as needed to fit your naming system.\n---\n\n### 🔗 Credentials to Connect\n- **[Telegram Credential](https://telegram.org/)** (for outbound/inbound communication)\n- **[OpenRouter](https://openrouter.ai/) Credential** (for AI requests)\n- **[Tavily](https://tavily.com/) Credential** (for research inside LinkedIn Post and Blog Post workflows)\n---\n\n### 🔑 API Keys to Configure\nInside the **Video Workflow**:\n- **[PiAPI](https://piapi.ai/) API Key** (for video generation)\n- **[Runway](https://runwayml.com/) API Key** (for video processing)\n- **[ElevenLabs](https://elevenlabs.io/) API Key** (for voice generation)\n\nInside the **LinkedIn Post** and **Blog Post Workflows**:\n- **[Tavily](https://tavily.com/) API Key** (for research assistance)\n---\n\n### 📄 Templates to Download and Connect\n- **[Creatomate](https://creatomate.com/) Image Template**  \n  → Download from the Free Skool Community\n\n- **[Google Sheets Log Template](https://docs.google.com/spreadsheets/d/1wQxM9cAwewCigPH22KDidMu_i9j_dx4MHEa5rmJiw5I/edit?usp=sharing)**  \n  → Connect it to your n8n Google Sheets node to track content outputs.\n---\n\nMake sure all credentials, APIs, and templates are properly set before running the full system!\n",
+        "height": 1000,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -300
+      ],
+      "id": "b7c8b7b9-b25d-4f20-8713-3013d2955b9d",
+      "name": "Sticky Note8"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GPT 4.1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Image": {
+      "ai_tool": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image": {
+      "ai_tool": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Images": {
+      "ai_tool": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Blog Post": {
+      "ai_tool": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Post": {
+      "ai_tool": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voice File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Download Voice File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set 'Text'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Audio": {
+      "main": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set 'Text'": {
+      "main": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video": {
+      "ai_tool": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marketing Team Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Marketing Team Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d41cc226-7086-4a5e-bb39-a8fd64014322",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "7LI7szVWjgxuYSD2",
+  "tags": []
+}

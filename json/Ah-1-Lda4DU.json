@@ -1,0 +1,811 @@
+{
+  "name": "Evaluator Optimizer & HITL",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Report Generator - With Human In The Loop (HITL)",
+        "height": 80,
+        "width": 2320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        440
+      ],
+      "id": "4c56f2c4-0339-4491-9fb7-0615e2f91a51",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        660
+      ],
+      "id": "ed2578fc-a0da-41ef-a386-2fb1a456f0b4",
+      "name": "Researcher HITL",
+      "webhookId": "d162fc45-cdc3-4c6f-b5a1-bf335f6e6b79",
+      "credentials": {
+        "telegramApi": {
+          "id": "tFeCvphZpwOyGTPz",
+          "name": "Report Generator HITL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=List concise, structured key points and angles about the following topic: {{ $json.message.text }}\n\nUse the SerpAPI Tool, to help you find up to date information.\n\nContext\nCurrent Date: {{ $now }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        500,
+        660
+      ],
+      "id": "3b194984-7bed-49c0-9621-3bd65a22e72f",
+      "name": "Key Points Generator HITL",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a report generator. Your task is to write clear, structured, and detailed reports based on a given outline.\n\nWrite a comprehensive and well-structured report in Markdown format on the topic:\n\"{{ $('Researcher HITL').item.json.message.text }}\"\n\nUse the following outline to guide the structure and flow of the report:\n{{ $('Sections Generator HITL').item.json.output }}\n\nYour output must follow this JSON format:\n\n{\n  \"report_title\": \"A short, clear title summarizing the report\",\n  \"content\": \"The full report content in markdown format\"\n}\nEnsure each section in the outline is addressed thoroughly. Use headings, subheadings, and bullet points where appropriate to improve readability.",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1820,
+        640
+      ],
+      "id": "b1d82972-0884-4a49-a82f-b1a9325b9a90",
+      "name": "Report Generator HITL"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $('Researcher HITL').first().json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        640
+      ],
+      "id": "fa6e7569-4dae-4e5b-905f-fc6103c043d0",
+      "name": "Researcher Response HITL",
+      "webhookId": "4fd48b41-1d35-427a-b049-d1cbab073d6f",
+      "credentials": {
+        "telegramApi": {
+          "id": "tFeCvphZpwOyGTPz",
+          "name": "Report Generator HITL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"report_title\": \"A short, clear title summarizing the report\",\n  \"content\": \"The full report content in markdown format\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1980,
+        940
+      ],
+      "id": "11c8851d-5e61-41c8-9f22-f5ffe608903a",
+      "name": "Report Output HITL"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{$('Researcher HITL').first().json.message.chat.id}}",
+        "message": "={{ $json.output }}",
+        "responseType": "freeText",
+        "options": {
+          "messageButtonLabel": "Provide Your Feedback"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1240,
+        660
+      ],
+      "id": "a48004d6-9156-4ca6-8bf9-c56a76cbf779",
+      "name": "Human Feedback",
+      "webhookId": "c6ee508d-0026-4074-b5fe-ebc006e6cb57",
+      "credentials": {
+        "telegramApi": {
+          "id": "tFeCvphZpwOyGTPz",
+          "name": "Report Generator HITL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"output\": {{JSON.stringify($('Key Points Generator HITL').item.json.output)}},\n  \"currentSections\": {{ JSON.stringify($('Sections Generator HITL').item.json.output) }},\n \"feedback\": {{ JSON.stringify($json.data.text) }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1160,
+        920
+      ],
+      "id": "01ab22e3-0e80-4692-b62c-be61df8f30f0",
+      "name": "Feedback Field"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1640,
+        940
+      ],
+      "id": "57be8da8-ed20-41bb-b01e-0d66fbd53d01",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "nVzTXHc84wuzJQ08",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# HITL\n",
+        "height": 540,
+        "width": 940,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        820,
+        580
+      ],
+      "id": "a0d071f0-ed6e-477b-99fa-e457f89f3128",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {},\n    binary: {\n      data: {\n        data: Buffer.from($input.first().json.output.content, 'utf-8'),\n        mimeType: 'text/markdown',\n        fileName: `${$input.first().json.output.report_title}.md`\n      }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2180,
+        640
+      ],
+      "id": "fec9a5f4-8dd0-46e8-a820-3cb0de99a639",
+      "name": "Convert to Markdown File HITL"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        580,
+        940
+      ],
+      "id": "247988c9-9e37-4b8d-a0cd-a4dc16491319",
+      "name": "SerpAPI HITL",
+      "credentials": {
+        "serpApi": {
+          "id": "63GRoapFoeFVGcVq",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.data.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Approved",
+              "description": "If the text indicates approval and does not request for a any kind of changes. 'True' is considered approved too."
+            },
+            {
+              "category": "Refine",
+              "description": "If the text suggests modifications or improvements are needed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        660
+      ],
+      "id": "a3c0a46d-5e18-45af-af3b-018ccaa3654a",
+      "name": "Feedback Classifier"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Using the following notes as a reference:\n{{$json.output}}\n\nCreate a professional report outline for \"{{ $('Researcher HITL').item.json.message.text }}\".\n\nStructure the outline as follows:\n\nIntroduction\n(Start with context, importance, and the objective of the report.)\n\nCore Sections (Max 4) \n(These are the main content sections based on your analysis. Name each section clearly based on its purpose or topic—do not include a section called \"Core Sections\" in the output.)\n\nConclusion\n(End with a summary, final thoughts, and any calls to action.)\n\nMake sure the description is short and concise, and in plain text format.\n\n{{ $json.feedback ?\n`<Feedback>\n\n<CurrentSections>\n${$json.currentSections}\n</CurrentSections>\n\n\nBelow is the feedback regarding the sections above, update the current sections accordingly.\n\n ${$json.feedback}\n</Feedback>`: '' }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        880,
+        680
+      ],
+      "id": "69054c8c-dadf-49a6-9664-d5d08b045edb",
+      "name": "Sections Generator HITL"
+    },
+    {
+      "parameters": {
+        "content": "# Email Auto Responder With Evaluator-optimizer\n",
+        "height": 80,
+        "width": 2000,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2020,
+        440
+      ],
+      "id": "17a59439-e504-489d-a694-8a7613caee4e",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Email Content: {{$json.output}}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are the Email Evaluator for TechSpark\n\nYou will receive an email content\n\nEvaluate the email based on:\n- Clarity and completeness.\n- Tone (professional, friendly).\n- Proper sign-off as \"John Doe\".\n- Text should not include the \"Subject\"\n\nReturn your evaluation as valid JSON with one of the following formats:\n\n1. If the email passes all criteria:\n{\n  \"pass\": true\n}\n\n2. If the email does not meet all criteria:\n{\n  \"pass\": false,\n  \"feedback\": \"Provide concise, actionable suggestions here.\"\n}\n\nNo extra keys or text outside the JSON structure."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -880,
+        620
+      ],
+      "id": "32ddb7ef-194a-4f9b-b37a-3c633aa54c45",
+      "name": "Evaluator"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c7cd25e9-31ab-4c2a-8880-0148aea726c2",
+              "leftValue": "={{ $json.output.pass }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -560,
+        620
+      ],
+      "id": "8932c6b9-5561-4da5-b794-4a609ef8a174",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"pass\": true,\n\t\"feedback\": \"this is empty when pass is true\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -700,
+        860
+      ],
+      "id": "09b9dfb0-4a57-44d7-ba48-962a2962a017",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1980,
+        640
+      ],
+      "id": "e121e053-9976-442f-9b76-03c787e6ad11",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SOyujdTykEJJWBJ9",
+          "name": "BAIA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are a Customer Support Specialist at TechSpark Solutions.\n\nYou will be provided with a customer inquiry\n\nPrepare a concise, polite, and helpful email response addressing the customer’s question or concern.  \n\nOutput only the final email text—no extra commentary or formatting.\n\n\n{{ $json.feedback \n  ? `<feedback>\n${$json.feedback}\n\n<preparedEmail>\n${$json.currentEmail}\n</preparedEmail>\n</feedback>` \n  : '' \n}}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1260,
+        620
+      ],
+      "id": "2fe80276-d433-4deb-9fc3-387993160289",
+      "name": "Customer Support"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "reply",
+        "threadId": "={{ $('Gmail Trigger').first().json.threadId }}",
+        "messageId": "={{ $('Gmail Trigger').first().json.id }}",
+        "message": "={{ $('Customer Support').last().json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        600
+      ],
+      "id": "5f19c5d6-330f-47d8-a421-b4c6ff2956fb",
+      "name": "Gmail",
+      "webhookId": "58be091c-293b-4fcc-8c56-56da568e0637",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SOyujdTykEJJWBJ9",
+          "name": "BAIA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"currentEmail\": {{ JSON.stringify($('Customer Support').last().json.output) }},\n  \"feedback\": {{  JSON.stringify($json.output.feedback) }},\n  \"text\": {{  JSON.stringify($('Gmail Trigger').first().json.text) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -980,
+        860
+      ],
+      "id": "53dafcc3-d017-4b6e-8692-0e01fad69f9e",
+      "name": "feedback"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Customer Inquiry",
+              "description": "Text where the user requests assistance, more information, or expresses a concern about a product or service."
+            },
+            {
+              "category": "No Action Required",
+              "description": "Text that does not ask a question, seek information, or require a direct response."
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "=You are a text classifier at TechSpark Solutions.\nPlease classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        640
+      ],
+      "id": "2051f117-6cda-4b2d-881e-6d708a9fbe6b",
+      "name": "Classify Email"
+    },
+    {
+      "parameters": {
+        "content": "# Evaluator Optimizer\n",
+        "height": 540,
+        "width": 940,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1340,
+        540
+      ],
+      "id": "a44d52bb-b4c8-49ed-990d-fc2160dba8cd",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1220,
+        880
+      ],
+      "id": "edc26d8f-c05f-4c8f-b0e5-c1217bd01054",
+      "name": "4.1 MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "nVzTXHc84wuzJQ08",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        940
+      ],
+      "id": "aa56a4d6-eb51-403a-b841-55b9efbd15c0",
+      "name": "4.1-mini HITL",
+      "credentials": {
+        "openAiApi": {
+          "id": "nVzTXHc84wuzJQ08",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Evaluator-optimizer\nIn the evaluator-optimizer workflow, one LLM call generates a response while another provides evaluation and feedback in a loop.\n![Image Description](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimages%2F4zrzovbb%2Fwebsite%2F14f51e6406ccb29e695da48b17017e899a6119c7-2401x1000.png&w=3840&q=75)\n## When to use this workflow: \nThis workflow is particularly effective when we have clear evaluation criteria, and when iterative refinement provides measurable value. The two signs of good fit are, first, that LLM responses can be demonstrably improved when a human articulates their feedback; and second, that the LLM can provide such feedback. This is analogous to the iterative writing process a human writer might go through when producing a polished document.\n\n",
+        "height": 600,
+        "width": 740,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2800,
+        460
+      ],
+      "id": "5f20dbc5-36c3-4ee3-be86-cd8e05f23f23",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Researcher HITL": {
+      "main": [
+        [
+          {
+            "node": "Key Points Generator HITL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Key Points Generator HITL": {
+      "main": [
+        [
+          {
+            "node": "Sections Generator HITL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report Generator HITL": {
+      "main": [
+        [
+          {
+            "node": "Convert to Markdown File HITL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report Output HITL": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Report Generator HITL",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Human Feedback": {
+      "main": [
+        [
+          {
+            "node": "Feedback Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Feedback Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Report Generator HITL",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback Field": {
+      "main": [
+        [
+          {
+            "node": "Sections Generator HITL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Markdown File HITL": {
+      "main": [
+        [
+          {
+            "node": "Researcher Response HITL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI HITL": {
+      "ai_tool": [
+        [
+          {
+            "node": "Key Points Generator HITL",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback Classifier": {
+      "main": [
+        [
+          {
+            "node": "Report Generator HITL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Feedback Field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sections Generator HITL": {
+      "main": [
+        [
+          {
+            "node": "Human Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluator": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Evaluator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Classify Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Support": {
+      "main": [
+        [
+          {
+            "node": "Evaluator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "feedback": {
+      "main": [
+        [
+          {
+            "node": "Customer Support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Email": {
+      "main": [
+        [
+          {
+            "node": "Customer Support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4.1 MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Customer Support",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Evaluator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Classify Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4.1-mini HITL": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Key Points Generator HITL",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Sections Generator HITL",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5f915b86-ca86-4656-b9c5-5f8431dbbcc0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3d51f336689652ace6b022a390861d2d3a3154bc98dbc004d2470a29f3ac8cf2"
+  },
+  "id": "m0Wn99Gz0aWQdiPs",
+  "tags": []
+}

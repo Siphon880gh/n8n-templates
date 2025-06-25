@@ -1,0 +1,186 @@
+{
+  "name": "Mistral OCR",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Document Understanding",
+        "formDescription": "Please upload your document for processing.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Document",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -40,
+        280
+      ],
+      "id": "6540451e-4e3e-406e-bb78-dcea578a6ef3",
+      "name": "On form submission",
+      "webhookId": "f9d60b5f-0a09-4654-a840-84a0f745321e"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mistral.ai/v1/files",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "purpose",
+              "value": "ocr"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "Document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        280
+      ],
+      "id": "50a2d4a0-7d99-430c-9eaf-4f6eadf3f46d",
+      "name": "Upload to Mistral"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.mistral.ai/v1/files/{{ $json.id }}/url",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "expiry",
+              "value": "24"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        280
+      ],
+      "id": "4a0625b4-d47d-475d-9af2-8bdbf6c638fc",
+      "name": "Get Signed URL"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mistral.ai/v1/ocr",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"mistral-ocr-latest\",\n  \"document\": {\n    \"type\": \"document_url\",\n    \"document_url\": \"{{ $json.url }}\"\n  },\n  \"include_image_base64\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        280
+      ],
+      "id": "dd0db0b7-59f9-4a0d-9e4d-4887029841fb",
+      "name": "Get OCR Results"
+    },
+    {
+      "parameters": {
+        "content": "## Mistral OCR\nRemember to insert your credentials!",
+        "height": 460,
+        "width": 940,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -100,
+        100
+      ],
+      "typeVersion": 1,
+      "id": "eed447b8-3000-4ca3-87f4-9b8dda91b556",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Nate Herk | AI Automation",
+        "height": 80,
+        "width": 500,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        120,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "5ef9ac18-ff7e-4004-9549-908dc2433e2a",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Upload to Mistral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Mistral": {
+      "main": [
+        [
+          {
+            "node": "Get Signed URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Signed URL": {
+      "main": [
+        [
+          {
+            "node": "Get OCR Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get OCR Results": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3e27e9dd-2d9a-4f11-94ac-3d0fa4e721c4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "V8ry6c2g5sR7PpcY",
+  "tags": []
+}

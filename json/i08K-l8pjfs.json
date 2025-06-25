@@ -1,0 +1,375 @@
+{
+  "name": "Loveable Software App",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "social-media-backend",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1320,
+        240
+      ],
+      "id": "d80d52c7-350e-40eb-808b-80cfcb06f8bd",
+      "name": "Webhook",
+      "webhookId": "d3b67edf-1882-45f1-b890-a66a864de01e"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"post\": {{ $json.post }},\n  \"image\": \"{{ $json.image_url }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        532,
+        240
+      ],
+      "id": "7a306551-8645-40a4-b9bf-35d6ec5438af",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.websiteUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1100,
+        240
+      ],
+      "id": "3f55c3c3-2d1e-46c4-a63a-2bd45f84f2f7",
+      "name": "Scrape website data"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "body",
+              "cssSelector": "body"
+            }
+          ]
+        },
+        "options": {
+          "cleanUpText": true
+        }
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -880,
+        240
+      ],
+      "id": "c6deb7ab-2ac6-4745-b4db-08f7fe3b2575",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d23cb901-9272-4f36-b396-f8dc900d0a16",
+              "name": "=post",
+              "value": "={{ JSON.stringify($('Generate Post Text').first().json.output.replace(/\\n/g, \" \")) }}\n",
+              "type": "string"
+            },
+            {
+              "id": "16128c98-eb13-4f6a-99c6-2c864c5cfa86",
+              "name": "image_url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        312,
+        240
+      ],
+      "id": "3c821c92-aa95-4fa8-948e-571dd974997e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Industry: {{ $('Webhook').item.json.body.industry }}\nCompany Name: {{ $('Webhook').item.json.body.companyName }}\nWebsite: {{ $('Webhook').item.json.body.websiteUrl }}\nSocial Media Platform: {{ $('Webhook').item.json.body.socialPlatform }}\nPost Type: {{ $('Webhook').item.json.body.postType }}\nCustom_text: {{ $('Webhook').item.json.body.custom_text }}\nGeneric Topic: {{ $('Webhook').item.json.body.genericType }}\n\nwebsite_text_content: {{ $json.body }}",
+        "options": {
+          "systemMessage": "=Generate a professional post for the {social media platform}.\nThe post is for a {Industry} company named {Company Name} ({Website}).\nThe post should be less than 100 words.\nThe post type is {Post Type} and the topic is {Generic Topic}.\nIf {Custom_text} is provided, use it to shape the theme and message.\nYou also have access to the company’s website content in {website_text_content} — use this as context to reflect the company’s tone, values, or unique offerings.\nIf {Custom_text} is not provided, create content around {Generic Topic}, using {website_text_content} for inspiration.\nThe tone should match the audience on {Social Media Platform} — clear, professional, and engaging.\nAvoid buzzwords and fluff. Keep it insightful and end with a subtle call to action (e.g., visit {Website}, share your tools, etc.).\nMention {Company Name} once, and make the post feel organic, not overly promotional."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -660,
+        240
+      ],
+      "id": "b04ad9d9-f42d-42c9-96ce-6d3905c4f66b",
+      "name": "Generate Post Text"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=### Social Media Image Prompt Generator\n\n**Overview**  \nYou are a master image prompt generator specialized in crafting vivid, high-quality prompts for advanced image models like Flux. Your goal is to generate compelling, visually balanced image prompts designed specifically for use in social media posts. These prompts should showcase any business-relevant subject — from digital tools to abstract concepts — styled with clarity and creativity, and supported by a cohesive, scroll-friendly background.\n\n---\n\n**Input:**  \nIndustry: Technology  \nCompany Name: TheGood  \nWebsite: https://thegood.com/  \nSocial Media Platform: LinkedIn  \nPost Type: Generic  \nCustom_text:  \nGeneric Topic: Tools  \n\nwebsite_text_content: Skip to ContentPrimary MenuTHE GOODOptimizing Digital Experiences * SaaS Optimization * How We Help * Increase Registration [https://thegood.com/increase-registration/] * Improve Onboarding [https://thegood.com/improve-onboarding/] * Monetize Free Users [https://thegood.com/monetize-free-users/] * Improve Retention [https://thegood.com/improve-retention/] * Increase Referrals [https://thegood.com/increase-referrals/] * Mitigate Cancellations [https://thegood.com/mitigate-cancellations/] * Explore the DXO Program™ [https://thegood.com/digital-experience-optimization-program/] * Results * Autodesk grew subscriptions by 11% [https://thegood.com/results/autodesk/] * IDX increased B2C registrations by 20% [https://thegood.com/insights/idx/] * The Economist increased paid subscription conversions by 5% [https://thegood.com/results/the-economist/] * Helium 10 increased registrations by 12% [https://thegood.com/results/helium-10/] * View All Case Studies → [https://thegood.com/results/] * Featured Insight * Learn the secret to the strategic value of ongoing SaaS user research [https://thegood.com/insights/saas-user-research/]  \n\n---\n\n**Instructions:**\n\n- Limit the output to **under 100 words**.  \n- Describe the **main subject** clearly — focus on tools, environments, products, or ideas relevant to business or brand identity.  \n- Ensure the subject reflects the company’s tone and content from **website_text_content**.  \n- Style the image with colors, mood, and layout suitable for **LinkedIn**.  \n- Create a **complementary background** that visually supports the main subject while maintaining simplicity and clarity.  \n- Use specific, polished, and creative language — no generic terms.  \n- Write as a **single paragraph**, no line breaks, no quotes.\n\n---\n\n**Restrictions**\n\n- All prompts must be **family-friendly** and suitable for general audiences.  \n- Avoid references to **weapons**, **violence**, or **sensitive content**.  \n- Focus on business creativity, clarity, and storytelling through visuals.  \n- Do **not** use quotation marks \"\" in the output.  \n\n---\n\n**Sample Output:**  \nA clean digital interface filled with minimalistic tools and icons floats against a soft gradient background in shades of blue and teal, reflecting clarity and innovation. Subtle overlays of graphs, onboarding steps, and user pathways suggest optimization and SaaS efficiency. The layout draws inspiration from TheGood’s website content, hinting at strategies like user retention, registration boosts, and data-backed decisions. The composition is balanced and visually appealing for LinkedIn, designed to catch attention without clutter while reinforcing themes of smart digital transformation.\n",
+              "role": "system"
+            },
+            {
+              "content": "=Industry: {{ $('Webhook').item.json.body.industry }}\nCompany Name: {{ $('Webhook').item.json.body.companyName }}\nWebsite: {{ $('Webhook').item.json.body.websiteUrl }}\nSocial Media Platform: {{ $('Webhook').item.json.body.socialPlatform }}\nPost Type: {{ $('Webhook').item.json.body.postType }}\nCustom_text: {{ $('Webhook').item.json.body.custom_text }}\nGeneric Topic: {{ $('Webhook').item.json.body.genericType }}\n\nwebsite_text_content: {{ $('HTML').item.json.body }}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -284,
+        240
+      ],
+      "id": "555be58e-dff0-49f8-9c90-a644cc4c94e5",
+      "name": "Generate Image Prompts",
+      "credentials": {
+        "openAiApi": {
+          "id": "9RWAaaO3Wu3uNVX7",
+          "name": "n8n Jono"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Sending the Response back to Lovable",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        540,
+        120
+      ],
+      "id": "8d200ce8-0fbe-44ee-a7f3-8d0c17b651b5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -572,
+        460
+      ],
+      "id": "80e8c3fa-f67c-4375-a2b6-6be239446357",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "9RWAaaO3Wu3uNVX7",
+          "name": "n8n Jono"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "={{ $json.message.content.trim() }}",
+        "options": {
+          "returnImageUrls": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        92,
+        240
+      ],
+      "id": "e58a2843-e922-4287-8cbc-649cab6e5ade",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "9RWAaaO3Wu3uNVX7",
+          "name": "n8n Jono"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Receive response from Lovable",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1320,
+        120
+      ],
+      "id": "fd88c085-753b-4970-bbde-3d1f85ec3787",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Generate Post Text": [
+      {
+        "json": {
+          "output": "🚀 Exciting News from Automatable! 🎉 \n\nWe're thrilled to announce the launch of our Skool community! This is an incredible opportunity for those looking to implement AI automation into their businesses. Join us for exclusive group calls, access to over 100 videos, and a wealth of resources—all designed to help you automate 95% of your routine tasks. Our goal is to foster a supportive environment where like-minded individuals can learn and grow together. \n\nReady to dive in? Check out our community here: [Skool Community](https://www.skool.com/automatable/about) and start your automation journey today! \n\n#Automation #AI #Community"
+        }
+      }
+    ],
+    "Generate Image Prompts": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "A dynamic digital workspace illustration showcases sleek automation tools seamlessly interacting with AI elements, symbolizing efficiency and innovation. The interface is organized with vibrant yet professional overlays of flowcharts, blueprints, and task automation icons, reflecting the content from Jono Catliff's Skool Community and Coaching services. Set against a sophisticated, gradient background of silver and cobalt blue, the design exudes modernity and collaborative energy, perfectly tailored for LinkedIn audiences. The composition is clean and compelling, inviting viewers to explore the evolution of business processes through automation and AI integration.",
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ],
+    "OpenAI": [
+      {
+        "json": {
+          "revised_prompt": "Create an illustrative representation of a dynamic digital workspace. The image should include sleek automation tools interacting with artificial intelligence elements, a vivid symbol of efficiency and innovative technology. The user interface should be organized and filled with vibrant yet professional overlays of flowcharts, blueprints, and task automation icons, resigned to reflect a thriving online educational ecosystem aiming at enhancing business processes. The backdrop should be a sophisticated gradient blend of silver and cobalt blue, radiating a sensation of modernity and collaborative energy. The design is targeted at a professional social media audience, displaying cleanliness, compelling visuals, and inviting viewers to explore the evolution of business procedures through automation and artificial intelligence integration.",
+          "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-YjM0nosjMRq8492JYagZNrrq/user-Kf6obiQsyFFejJRZlPZiIR1L/img-DobHGn3f9rTfOTHtkmIaXcEW.png?st=2025-04-23T20%3A33%3A56Z&se=2025-04-23T22%3A33%3A56Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=52f8f7b3-ca8d-4b21-9807-8b9df114d84c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-04-23T07%3A44%3A18Z&ske=2025-04-24T07%3A44%3A18Z&sks=b&skv=2024-08-04&sig=5z37cmS8uqa6N8tFu4bK3ooi1PKMtbL09WLpvTKywbw%3D"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Scrape website data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape website data": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Generate Post Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Post Text": {
+      "main": [
+        [
+          {
+            "node": "Generate Image Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Prompts": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Post Text",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "aade3983-0cb3-4bd5-aca6-14aa6d8fe0e5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "D2NG0ccgpY0soEBQ",
+  "tags": []
+}

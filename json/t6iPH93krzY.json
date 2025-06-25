@@ -1,0 +1,857 @@
+{
+  "name": "Trending YouTube Videos copy",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a179d690-a6da-41ef-9ca4-7346864f7233",
+              "leftValue": "={{ $json.viewCount }}",
+              "rightValue": 1000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "b66e2013-6fc7-414d-bf7b-5c6c7e23bcae",
+              "leftValue": "={{ $json.viewCount }}",
+              "rightValue": "={{ $json.numberOfSubscribers }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        -100
+      ],
+      "id": "ab184e2e-0831-4327-aecb-764d652f038b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "id",
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        940,
+        -120
+      ],
+      "id": "5f3d69d9-9a88-414c-97cd-06d52b547fa3",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1XXb4bHq2Dmdj9a0suVa9TzyC2RiSw_npTRHbQUKpeSk",
+          "mode": "list",
+          "cachedResultName": "YouTube Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXb4bHq2Dmdj9a0suVa9TzyC2RiSw_npTRHbQUKpeSk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1531469275,
+          "mode": "list",
+          "cachedResultName": "Step 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXb4bHq2Dmdj9a0suVa9TzyC2RiSw_npTRHbQUKpeSk/edit#gid=1531469275"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "viewCount": "={{ $('If').item.json.viewCount }}",
+            "numberOfSubscribers": "={{ $('If').item.json.numberOfSubscribers }}",
+            "likes": "={{ $('If').item.json.likes }}",
+            "id": "={{ $json.id }}",
+            "input": "={{ $('If').item.json.input }}",
+            "title": "={{ $('If').item.json.title }}",
+            "url": "={{ $('If').item.json.url }}",
+            "fromYTUrl": "={{ $('If').item.json.fromYTUrl }}",
+            "channelName": "={{ $('If').item.json.channelName }}",
+            "channelUrl": "={{ $('If').item.json.channelUrl }}",
+            "duration": "={{ $('If').item.json.duration }}",
+            "thumbnailUrl": "={{ $('If').item.json.thumbnailUrl }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "input",
+              "displayName": "input",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fromYTUrl",
+              "displayName": "fromYTUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thumbnailUrl",
+              "displayName": "thumbnailUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "channelName",
+              "displayName": "channelName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channelUrl",
+              "displayName": "channelUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duration",
+              "displayName": "duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "likes",
+              "displayName": "likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numberOfSubscribers",
+              "displayName": "numberOfSubscribers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "viewCount",
+              "displayName": "viewCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1120,
+        -120
+      ],
+      "id": "134b92a4-d6ca-4eae-bc9b-f0ccdde57a8f",
+      "name": "Step 1 Results",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nuIKS89ZnY7gxINP",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XXb4bHq2Dmdj9a0suVa9TzyC2RiSw_npTRHbQUKpeSk",
+          "mode": "list",
+          "cachedResultName": "YouTube Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXb4bHq2Dmdj9a0suVa9TzyC2RiSw_npTRHbQUKpeSk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1531469275,
+          "mode": "list",
+          "cachedResultName": "Step 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXb4bHq2Dmdj9a0suVa9TzyC2RiSw_npTRHbQUKpeSk/edit#gid=1531469275"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "id",
+              "lookupValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        680,
+        -220
+      ],
+      "id": "f41473f6-25f3-4557-9307-7b470d744aee",
+      "name": "Find Duplicate Entries",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nuIKS89ZnY7gxINP",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Video Title: {{ $('Step 1 Results').item.json.title }}\nThumbnail Description: {{ $('Analyze Thumbnail').item.json.choices[0].message.content }}\nVideo Transcript: {{ $('HTTP Request').item.json.captions }}"
+            },
+            {
+              "content": "=# Overview  \nYou are an AI agent responsible for generating an optimized YouTube video title and corresponding thumbnail text based on an original title, visual thumbnail analysis, and video transcript. Your goal is to retain the original message while improving clarity, engagement, and visual storytelling.\n\n## Context  \n- You will receive:\n  - The original video title  \n  - A natural language description of the thumbnail image  \n  - The full video transcript  \n- Your output should be a single JSON object that includes:\n  - A revised, SEO-optimized video title  \n  - Concise thumbnail text (3–5 words) that complements the revised title and aligns with the thumbnail’s visual tone.\n\n## Instructions  \n1. Read and analyze the original video title for its main topic and keywords.  \n2. Use the thumbnail description and video transcript to better understand the visual and content themes.  \n3. Generate a new title that:\n   - Maintains the original intent and main keywords  \n   - Improves structure, clarity, or emotional appeal  \n   - Stays under 70 characters  \n4. Create 3–5 words of thumbnail text that:\n   - Adds insight, urgency, or intrigue to support the title  \n   - Aligns with the visual style of the thumbnail  \n   - Feels natural when paired with the title  \n\n5. Output a single JSON object with both the revised title and thumbnail text in the following format:  \n   ```json\n   {\n     \"newTitle\": \"Improved YouTube video title\",\n     \"thumbnailText\": \"3–5 word thumbnail text\"\n   }\n   ```\n\n## Tools  \n- Original Title: `{{ $('Step 1 Results').item.json.title }}`  \n- Thumbnail Description: `{{ $('Analyze Thumbnail').item.json.choices[0].message.content }}`  \n- Video Transcript: `{{ $('HTTP Request').item.json.captions }}`  \n\n## Examples  \n**Input:**  \n- Title: `\"He Built an AI Business With Just $100\"`  \n- Thumbnail Description: `\"A thumbnail showing a confident man pointing at a laptop, with large text reading 'From $100 to CEO'. The background features glowing tech icons on a dark gradient backdrop.\"`  \n- Transcript: *Describes how the subject bootstrapped a business using AI tools and minimal funding.*\n\n**Output:**  \n```json\n{\n  \"newTitle\": \"How He Launched an AI Startup with $100\",\n  \"thumbnailText\": \"AI Startup for $100\"\n}\n```\n\n**Input:**  \n- Title: `\"Top 10 ChatGPT Hacks You Didn't Know\"`  \n- Thumbnail Description: `\"A sleek modern thumbnail with neon text that says 'ChatGPT Tricks', showing a split screen of a person thinking and a glowing terminal interface.\"`  \n- Transcript: *Lists lesser-known prompts and features to boost productivity.*\n\n**Output:**  \n```json\n{\n  \"newTitle\": \"10 ChatGPT Hacks to Boost Productivity\",\n  \"thumbnailText\": \"Hidden GPT Features\"\n}\n```\n\n## SOP (Standard Operating Procedure)  \n1. Parse the input values: original title, thumbnail description, and transcript.  \n2. Identify key themes and keywords from the title.  \n3. Use visual and transcript context to improve the relevance and appeal of the new title.  \n4. Draft 1–2 thumbnail text options based on visual cues and the revised title.  \n5. Select the most compelling option.  \n6. Return the output as a clean JSON object with both fields.\n\n## Final Notes  \n- Do not include brand names or identifiable individuals unless they are generic and essential.  \n- Avoid vague adjectives and hype-driven phrasing.  \n- Keep the output concise, natural, and clear — ready for immediate use in automation or upload.\n---",
+              "role": "system"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        460,
+        120
+      ],
+      "id": "c089ccdf-d214-499b-966f-8f0006c902fe",
+      "name": "YouTube Title Generator",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "=# Overview  \nYou are an AI agent responsible for analyzing a YouTube thumbnail via a provided URL and generating a single, well-written **natural language description** that captures the visual style, layout, and tone of the thumbnail. This description will be used as part of an image generation prompt to recreate a similarly styled thumbnail.\n\n## Context  \n- The agent uses OpenAI’s image understanding capabilities to visually analyze YouTube thumbnails.  \n- The goal is to create a **descriptive text output** that reflects the design, mood, and layout of the thumbnail — not to copy the content directly.  \n- The output should be a standalone sentence or paragraph in natural language, ready to be embedded in a larger prompt.\n\n## Instructions  \n1. Retrieve and analyze the thumbnail image from the given YouTube URL.  \n2. Identify and describe the following elements:\n   - Overall layout and composition  \n   - Character or subject placement (if applicable)  \n   - Background type and visual treatment  \n   - Font and text style, including content if legible  \n   - Dominant color palette and mood  \n3. Compose a fluent, single-string natural language description of the thumbnail.  \n4. The output should read like part of a prompt, e.g., \"An energetic YouTube thumbnail showing...\"  \n5. Do not include any structured formatting (like JSON, lists, or metadata).  \n\n## Tools  \n- OpenAI Image Understanding Node  \n\n## Examples  \n- **Input:**  \n  `https://i.ytimg.com/vi/HpkZU34fqUM/maxresdefault.jpg`  \n- **Output:**  \n  A high-energy YouTube thumbnail featuring a surprised man on the right side, with a bold red radial gradient background. Large comic-style yellow text appears on the left, creating a dramatic and urgent visual tone.\n\n- **Input:**  \n  `https://i.ytimg.com/vi/abc123xyz/default.jpg`  \n- **Output:**  \n  A clean, professional thumbnail showing a laptop with a blurred tech-themed background. Soft blue and gray tones dominate the scene, with sleek sans-serif text centered above the device.\n\n## SOP (Standard Operating Procedure)  \n1. Validate the provided YouTube thumbnail URL.  \n2. Retrieve the image and perform visual analysis using image capabilities.  \n3. Extract and synthesize details about layout, colors, subjects, and visual emphasis.  \n4. Write a **natural language description** that feels prompt-ready, descriptive, and cohesive.  \n5. Return only the final descriptive sentence or paragraph — no metadata, formatting, or JSON.\n\n## Final Notes  \n- Do not refer to brand names, creators, or exact text unless it's generic and descriptive.  \n- Focus on tone, layout, and composition to support style transfer, not replication.  \n- The description should serve as a high-quality visual summary usable in generative models.\n---",
+        "imageUrls": "={{ $('Step 1 Results').item.json.thumbnailUrl }}",
+        "simplify": false,
+        "options": {
+          "detail": "high"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        20,
+        120
+      ],
+      "id": "2c19fcfa-b9d7-4d30-86c9-22da1447be15",
+      "name": "Analyze Thumbnail",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1XXb4bHq2Dmdj9a0suVa9TzyC2RiSw_npTRHbQUKpeSk",
+          "mode": "list",
+          "cachedResultName": "YouTube Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXb4bHq2Dmdj9a0suVa9TzyC2RiSw_npTRHbQUKpeSk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1531469275,
+          "mode": "list",
+          "cachedResultName": "Step 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXb4bHq2Dmdj9a0suVa9TzyC2RiSw_npTRHbQUKpeSk/edit#gid=1531469275"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "newTitle": "={{ $('YouTube Title Generator').item.json.choices[0].message.content.newTitle }}",
+            "thumbnailText": "={{ $('YouTube Title Generator').item.json.choices[0].message.content.thumbnailText }}",
+            "id": "={{ $('Step 1 Results').item.json.id }}",
+            "thumbnailDescription": "={{ $('Analyze Thumbnail').item.json.choices[0].message.content }}",
+            "videoTranscript": "={{ $('HTTP Request').item.json.captions }}",
+            "newOutline": "={{ $json.choices[0].message.content }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "input",
+              "displayName": "input",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "fromYTUrl",
+              "displayName": "fromYTUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "thumbnailUrl",
+              "displayName": "thumbnailUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "channelName",
+              "displayName": "channelName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "channelUrl",
+              "displayName": "channelUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "duration",
+              "displayName": "duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "likes",
+              "displayName": "likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "numberOfSubscribers",
+              "displayName": "numberOfSubscribers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "viewCount",
+              "displayName": "viewCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "videoTranscript",
+              "displayName": "videoTranscript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "thumbnailDescription",
+              "displayName": "thumbnailDescription",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "thumbnailText",
+              "displayName": "thumbnailText",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "newTitle",
+              "displayName": "newTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "newOutline",
+              "displayName": "newOutline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1160,
+        120
+      ],
+      "id": "4f707e20-6176-4b7d-bb5a-2068adf6755f",
+      "name": "Update Rows",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nuIKS89ZnY7gxINP",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/h7sDV53CddomktSi5/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer <token>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"dateFilter\": \"month\",\n  \"downloadSubtitles\": false,\n  \"hasCC\": false,\n  \"hasLocation\": false,\n  \"hasSubtitles\": false,\n  \"is360\": false,\n  \"is3D\": false,\n  \"is4K\": false,\n  \"isBought\": false,\n  \"isHD\": false,\n  \"isHDR\": false,\n  \"isLive\": false,\n  \"isVR180\": false,\n  \"lengthFilter\": \"between420\",\n  \"maxResultStreams\": 0,\n  \"maxResults\": 100,\n  \"maxResultsShorts\": 0,\n  \"preferAutoGeneratedSubtitles\": false,\n  \"saveSubsToKVS\": false,\n  \"scrapeLastNDays\": 60,\n  \"searchQueries\": [\n    \"{{ $json['Keyword or Topic'] }}\"\n  ],\n  \"sortVideosBy\": \"NEWEST\",\n  \"sortingOrder\": \"date\",\n  \"videoType\": \"video\"\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        -100
+      ],
+      "id": "21de949e-f048-41f2-a45a-bfd5b345b967",
+      "name": "YouTube Video Scrape"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/1s7eXiaukVuOr4Ueg/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer <token>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channelHandleBoolean\": true,\n  \"channelIDBoolean\": false,\n  \"channelNameBoolean\": true,\n  \"commentsBoolean\": false,\n  \"datePublishedBoolean\": false,\n  \"dateTextBoolean\": false,\n  \"descriptionBoolean\": false,\n  \"keywordsBoolean\": true,\n  \"likesBoolean\": false,\n  \"maxRetries\": 8,\n  \"outputFormat\": \"singleStringText\",\n  \"proxyOptions\": {\n    \"useApifyProxy\": true,\n    \"apifyProxyGroups\": []\n  },\n  \"relativeDateTextBoolean\": false,\n  \"subscriberCountBoolean\": false,\n  \"thumbnailBoolean\": false,\n  \"uploadDateBoolean\": false,\n  \"urls\": [\n    \"{{ $('Step 1 Results').item.json.url }}\"\n  ],\n  \"viewCountBoolean\": false\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        120
+      ],
+      "id": "b67eb84b-541f-407a-8a4a-8083e6a3780c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "## From here... \nYou can send these items to a project management software like clickup, monday, or trello and assign a due date, owner, etc. \n",
+        "height": 220,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2360,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "7b021e54-37c8-49c3-a703-01bfad535829",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "YouTube Topic Research",
+        "formDescription": "Enter a keyword or topic below, and I'll find trending videos related to that topic. ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Keyword or Topic",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -40,
+        -100
+      ],
+      "id": "32b5d9dc-a1d4-455f-8ff1-6dfe5fdebfc2",
+      "name": "On form submission",
+      "webhookId": "29de0389-1bc3-46b2-8125-f2cfc5bd0d29"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Overview  \nYou are an AI agent responsible for analyzing high-performing YouTube video transcripts and generating improved, original video outlines with a unique perspective.  \n\n## Context  \n- The agent receives the transcript of a successful YouTube video from another creator.  \n- The goal is not to copy, but to use the structure and content as a benchmark to craft a new outline that offers a distinct angle or interpretation of the topic.  \n- The resulting outline should maintain the engaging qualities of the original while providing fresh value to the target audience.  \n\n## Instructions  \n1. Analyze the input transcript to understand the topic, flow, structure, and elements that likely contributed to its performance.  \n2. Identify opportunities to reinterpret, reframe, or expand on the topic in a unique way.  \n3. Develop a new outline that:\n   - Retains the core appeal of the original video.  \n   - Presents a different perspective, argument, or theme.  \n   - Enhances clarity, relatability, and retention where possible.  \n4. Structure the new outline into standard YouTube sections (Hook, Introduction, Main Points, Call to Action, etc.).  \n5. Ensure the tone and content are original and distinct while still appealing to a similar audience.  \n\n## Tools  \n- None (analysis and outline generation only)  \n\n## Examples  \n- Input:  \n {{ $('HTTP Request').item.json.captions }}\n\n- Output:  \n  - Hook: Challenge a commonly held belief related to the topic.  \n  - Introduction: Present your own experience or angle on the issue.  \n  - Section 1: Explore the topic using a new metaphor or real-world example.  \n  - Section 2: Address a subtopic the original did not cover.  \n  - Section 3: Offer actionable advice or a unique conclusion.  \n  - Call to Action: Encourage viewers to comment with their own experiences or thoughts.  \n\n## SOP (Standard Operating Procedure)  \n1. Review the transcript to understand key takeaways, pacing, and style.  \n2. Extract the main topic and how the original creator approached it.  \n3. Brainstorm unique takes, new angles, or opposing views that can form the basis of a fresh outline.  \n4. Draft an outline that follows a proven structure but deviates meaningfully in substance or perspective.  \n5. Return the new outline in a clean, sectioned bullet-point format ready for video scripting.  \n\n## Final Notes  \n- The goal is to differentiate while building on what worked.  \n- Avoid mirroring phrases or points from the original—reframe and rephrase.  \n- The final outline should feel original, relevant, and optimized for YouTube engagement.  \n---",
+              "role": "system"
+            },
+            {
+              "content": "=Video Transcript: {{ $('HTTP Request').item.json.captions }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        820,
+        120
+      ],
+      "id": "00c36b2f-9f19-480c-8545-ecf02af015dc",
+      "name": "Outline Generator",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Find Duplicate Entries",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Step 1 Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Duplicate Entries": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Step 1 Results": {
+      "main": [
+        [
+          {
+            "node": "Analyze Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YouTube Title Generator": {
+      "main": [
+        [
+          {
+            "node": "Outline Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Rows": {
+      "main": [
+        []
+      ]
+    },
+    "YouTube Video Scrape": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "YouTube Title Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "YouTube Video Scrape",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline Generator": {
+      "main": [
+        [
+          {
+            "node": "Update Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a240e86e-a7ff-498f-935a-9d861bcbe2a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9da288905fbe9354dea4b543fd7e960ac33b487ac1b02440ad591d7c90022103"
+  },
+  "id": "0LPcdfQHZ2oALALh",
+  "tags": []
+}

@@ -1,0 +1,443 @@
+{
+  "name": "Proposal Generator Template",
+  "nodes": [
+    {
+      "parameters": {
+        "form": "251206359432049"
+      },
+      "type": "n8n-nodes-base.jotFormTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0f93244c-6c6f-4e05-a79a-f3f645037753",
+      "name": "JotForm Trigger",
+      "webhookId": "6add8d04-abe5-475a-8425-f7c2ea455b0d",
+      "credentials": {
+        "jotFormApi": {
+          "id": "GIoga6Spw65SwHox",
+          "name": "JotForm account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "1DSHUhq_DoM80cM7LZ5iZs6UGoFb3ZHsLpU3mZDuQwuQ",
+          "mode": "id"
+        },
+        "name": "={{ $json['Company Name'] }} | Ai Proposal",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        0
+      ],
+      "id": "179b3578-cd68-41ec-820a-8ad8a0f5ae71",
+      "name": "Google Drive",
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "DZT3s8QvslFc03sj",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('JotForm Trigger').item.json['Call Link'] }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        440,
+        0
+      ],
+      "id": "208f7158-28a6-4ac1-a2ee-16d6cbc71213",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "DZT3s8QvslFc03sj",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        660,
+        0
+      ],
+      "id": "bcdcf6d8-08ca-4c41-8e22-3e889d053979",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Please analyze the following data.\n\nProspect Details\nFirst Name:{{ $('JotForm Trigger').item.json['First Name'] }}\nLast Name:{{ $('JotForm Trigger').item.json['Last Name'] }}\nCompany Name: {{ $('JotForm Trigger').item.json['Company Name'] }}\n\nSales Call Transcript: {{ $json.text }}"
+            },
+            {
+              "content": "# Overview  \nYou are an AI agent responsible for generating tailored proposal components in JSON format based on a sales call transcript and basic prospect details.\n\n## Context  \n- Your role is to craft high-conversion proposal content using a professional but conversational tone.  \n- Outputs must be JSON elements only — no explanatory or surrounding text.  \n- Each piece should reflect a deep understanding of the prospect’s problems and clearly explain how the proposed solution and upsell will provide meaningful outcomes.  \n- Pricing should range from $2,000 to $10,000 and reflect 5–10% of the value being saved or generated over the next year.  \n\n## Instructions  \n1. Analyze the sales call transcript to identify the core pain point of the prospect, ideally using their own words.  \n2. Construct a compelling problem statement and expand with three concise supporting bullets.  \n3. Name the proposed AI system based on the outcome it delivers and align it with the problem.  \n4. Write a clear solution statement and elaborate with three supporting bullets.  \n5. Explain why this solution works in 2–3 benefit-focused sentences.  \n6. Outline the detailed scope of work for the solution.  \n7. Generate a price in $USD aligned with the estimated annual value, keeping within the $2K–$10K range.  \n8. Define pricing type as either \"one time\" or \"monthly\".  \n9. Calculate and return 50% of the solution price in $USD.  \n10. Craft a complementary upsell offer that addresses the next logical or adjacent problem.  \n11. Follow a similar format for the upsell: name, scope (1–2 sentences), three supporting bullets, price, and pricing type.  \n\n## Tools  \n- Input:  \n  - Prospect Details  \n  - Sales Call Transcript  \n\n## Examples  \n- Input:  \n  - Sales Call Transcript: \"We spend hours manually tagging customer support tickets, which delays our response times.\"  \n- Output (JSON):  \n  ```json\n  {\n    \"problemStatement\": \"Your team is bogged down by the manual tagging of support tickets, causing delays in response times and reducing customer satisfaction.\",\n    \"problemStatementBulletOne\": \"Manual tagging consumes hours of valuable time weekly.\",\n    \"problemStatementBulletTwo\": \"Delayed ticket handling frustrates customers and risks churn.\",\n    \"problemStatementBulletThree\": \"Lack of automation is limiting your scalability.\",\n    \"aiSystem\": \"Smart Support Tagger\",\n    \"solutionStatement\": \"Smart Support Tagger is an AI-powered system that automatically classifies and tags incoming support tickets, ensuring faster routing and response.\",\n    \"solutionStatementBulletOne\": \"Automates initial support triage using natural language understanding.\",\n    \"solutionStatementBulletTwo\": \"Reduces average handling time by 40–60%.\",\n    \"solutionStatementBulletThree\": \"Integrates with existing support platforms like Zendesk and Intercom.\",\n    \"whyThisWorks\": \"This solution eliminates your team's repetitive workload and boosts response speed, directly improving the customer experience. It’s designed to scale as you grow, creating long-term efficiency gains.\",\n    \"workScope\": \"Setup and training of the AI model using your past ticket data, integration with current support platform, testing and QA, and deployment.\",\n    \"price\": \"$7000\",\n    \"solutionPricingType\": \"one time\",\n    \"50percentDiscount\": \"$3500\",\n    \"upsellOne\": \"Support Sentiment Monitor\",\n    \"upsellOneScope\": \"Support Sentiment Monitor analyzes incoming tickets and ongoing chats to detect customer emotions in real time. Paired with Smart Support Tagger, this enables even smarter routing and faster escalation of critical tickets.\",\n    \"upsellOneBulletOne\": \"Monitors sentiment to highlight at-risk customers.\",\n    \"upsellOneBulletTwo\": \"Pairs well with ticket tagging for full visibility.\",\n    \"upsellOneBulletThree\": \"Boosts NPS and customer retention by flagging issues early.\",\n    \"upsellOnePricing\": \"$5000\",\n    \"upsellOnePricingType\": \"one time\"\n  }\n  ```\n\n## SOP (Standard Operating Procedure)  \n1. Parse the sales call transcript and extract emotional or urgent language to form the problem statement.  \n2. Use clear and outcome-driven naming conventions for the AI system.  \n3. Create a concise yet compelling solution pitch with benefits and clarity.  \n4. Estimate solution pricing based on annual value potential.  \n5. Create a logical, adjacent upsell opportunity and match structure to the core offer.  \n6. Output only the final proposal JSON object with all specified keys.  \n\n## Final Notes  \n- Avoid abstract names for systems — prioritize clarity and outcome orientation.  \n- Make sure each bullet adds distinct value and insight.  \n- Keep tone professional but conversational to build rapport and trust.  \n---",
+              "role": "system"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        880,
+        0
+      ],
+      "id": "b60cd5f1-8c5f-48f7-9ed2-020b8ce44e51",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Google Drive').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "{{prospectFirstName}}",
+              "replaceText": "={{ $('JotForm Trigger').item.json['First Name'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{companyName}}",
+              "replaceText": "={{ $('JotForm Trigger').item.json['Company Name'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{problemStatement}}",
+              "replaceText": "={{ $json.choices[0].message.content.problemStatement }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{problemStatementBulletOne}}",
+              "replaceText": "={{ $json.choices[0].message.content.problemStatementBulletOne }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{problemStatementBulletTwo}} ",
+              "replaceText": "={{ $json.choices[0].message.content.problemStatementBulletTwo }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{problemStatementBulletThree}}",
+              "replaceText": "={{ $json.choices[0].message.content.problemStatementBulletThree }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{aiSystem}}",
+              "replaceText": "={{ $json.choices[0].message.content.aiSystem }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{solutionStatement}}",
+              "replaceText": "={{ $json.choices[0].message.content.solutionStatement }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{solutionStatementBulletOne}}",
+              "replaceText": "={{ $json.choices[0].message.content.solutionStatementBulletOne }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{solutionStatementBulletTwo}}",
+              "replaceText": "={{ $json.choices[0].message.content.solutionStatementBulletTwo }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{solutionStatementBulletThree}}",
+              "replaceText": "={{ $json.choices[0].message.content.solutionStatementBulletThree }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{whyThisWorks}}",
+              "replaceText": "={{ $json.choices[0].message.content.whyThisWorks }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{workScope}}",
+              "replaceText": "={{ $json.choices[0].message.content.workScope }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{price}}",
+              "replaceText": "={{ $json.choices[0].message.content.price }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{solutionPricingType}}",
+              "replaceText": "={{ $json.choices[0].message.content.solutionPricingType }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{50percentDiscount}}",
+              "replaceText": "={{ $json.choices[0].message.content['50percentDiscount'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{upsellOne}}",
+              "replaceText": "={{ $json.choices[0].message.content.upsellOne }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{upsellOneScope}}",
+              "replaceText": "={{ $json.choices[0].message.content.upsellOneScope }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{upsellOneBulletOne}} ",
+              "replaceText": "={{ $json.choices[0].message.content.upsellOneBulletOne }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{upsellOneBulletTwo}}",
+              "replaceText": "={{ $json.choices[0].message.content.upsellOneBulletTwo }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{upsellOneBulletThree}}",
+              "replaceText": "={{ $json.choices[0].message.content.upsellOneBulletThree }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{upsellOnePricing}}",
+              "replaceText": "={{ $json.choices[0].message.content.upsellOnePricing }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{upsellOnePricingType}}",
+              "replaceText": "={{ $json.choices[0].message.content.upsellOnePricingType }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{date}}",
+              "replaceText": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        0
+      ],
+      "id": "16ebb0fb-f920-4dfc-ac41-9be4117a401e",
+      "name": "Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "2rpaEXXlmKXWSRWf",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "options": {
+          "binaryPropertyName": "proposal",
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          },
+          "fileName": "proposal.pdf"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1460,
+        0
+      ],
+      "id": "3dc7c2dd-82f1-4102-aaef-816ef1f5391f",
+      "name": "Google Drive2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "DZT3s8QvslFc03sj",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $('JotForm Trigger').item.json['Company Name'] }} | {{ $('OpenAI1').item.json.choices[0].message.content.aiSystem }} Proposal",
+        "message": "=Hey {{ $('JotForm Trigger').item.json['First Name'] }} - as discussed, here is the proposal for the {{ $('OpenAI1').item.json.choices[0].message.content.aiSystem }} build. Let me know if you have any questions at all. \n\nLook forward to hearing from you. \n\n- Nolan",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "proposal"
+              }
+            ]
+          },
+          "sendTo": "={{ $('JotForm Trigger').item.json.Email }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1680,
+        0
+      ],
+      "id": "3b2a2728-df85-485a-916f-5c26e75f10c8",
+      "name": "Gmail",
+      "webhookId": "4d4cb0cb-4793-423e-8a31-f6d6b87d1de3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "JotForm Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "590466c6-bd01-40d3-b359-788a7240ba5f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9da288905fbe9354dea4b543fd7e960ac33b487ac1b02440ad591d7c90022103"
+  },
+  "id": "nwGs2z1stZEu3M7e",
+  "tags": [
+    {
+      "createdAt": "2025-05-02T03:15:27.194Z",
+      "updatedAt": "2025-05-02T03:15:27.194Z",
+      "id": "k5oV44GXi8AmNboO",
+      "name": "Template"
+    }
+  ]
+}

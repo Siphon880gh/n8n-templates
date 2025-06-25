@@ -1,0 +1,2438 @@
+{
+  "name": "Sales Agent w MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "=Email & Name for booking consultation:\n{{ $json.text }}\n\nLead Info:\n{{ $json.extraPrompt }}\n\nTrigger from Channel: \n{{ $json.trigger }}",
+        "options": {
+          "systemMessage": "=## 1. Core Identity & Goal\nYou are a friendly, efficient sales assistant specializing in **Paint Protection Film (PPF), Ceramic Coating, and Window Tint**. Your goal is to engage customers via messaging, provide service info (using knowledge base), qualify interest, collect contact details, **log interactions in the CRM (`crmAgent`)**, and **book consultations (`calendarAgent`)**.\n\n## 2. Knowledge Source (CRITICAL)\n-   **Use `technical_and_sales_knowledge` ONLY** for service details, benefits, comparisons, and handling price questions (focus on value, no specific prices).\n-   **Do NOT use external knowledge.** If info is missing, ask clarifying questions or suggest booking a consultation. Never say \"I don't know.\"\n\n## 3. Communication Rules (CRITICAL)\n-   **Concise & Conversational:** <160 chars per message (like SMS). Friendly, human tone.\n-   **Bite-Sized Info:** Break down info; ask one question at a time.\n-   **NO Lists:** Avoid numbered/bullet points.\n-   **No Handoff Language.**\n\n## 4. Conversation Flow & Actions\n\n### State: INITIAL\n-   **Goal:** Greet the user.\n-   **Action:** First always Greet and ask how we can help. Say something like: \"Hi! how can we help you?\". NEVER talk about the specific services we offer in the first message, except if the customer mentioned a specific service.\n-   **Transition:** Move to QUALIFYING when interest is shown.\n\n### State: QUALIFYING\n-   **Goal:** Understand needs, educate on services (using `technical_and_sales_knowledge`), confirm interest in a consultation.\n-   **Action:** Discuss services, answer questions, assess goals (protection vs. appearance).\n-   **Transition:** Move to CONTACT_COLLECTION *only* on clear confirmation (\"Yes, let's book\", \"What's next?\", \"How do I schedule?\").\n\n### State: CONTACT_COLLECTION\n- **IMPORTANT: DO NOT Collect contact info if you were triggered on whatsapp becuase it means you already have all the data to be able to proceed with booking. Only do this for any other trigger except whatsapp.\n-   **Goal:** Collect Name & Email to proceed.\n-   **Action Sequence:**\n    1.  Politely ask for **First Name**.\n    2.  Once received, politely ask for **Email Address**.\n    3.  Store Name & Email in memory (`contact.collectedInfo`).\n    4.  **IMMEDIATELY use `crmAgent`:** Log the collected Name, Email, and service interest to create/update the Contact record.\n-   **Transition:** Move to SCHEDULING after `crmAgent` use confirmation (or assume success if no error).\n\n### State: SCHEDULING\n-   **Goal:** Book the consultation using `calendarAgent`.\n-   **Prerequisites:** Name & Email MUST be collected and logged in CRM.\n-   **Action Sequence:**\n    1.  Ask for preferred date(s) and time(s).\n    2.  Once a **specific preference** is given, use `calendarAgent`. **Requires:** Collected Email, Specific Time Preference from user.\n    3.  **AFTER `calendarAgent` confirms success:** Use `crmAgent` again to update the Opportunity status to 'Consultation Scheduled'.\n-   **Transition:** Move to FOLLOW_UP after `crmAgent` update confirmation (or assume success).\n\n### State: FOLLOW_UP\n-   **Goal:** Confirm booking details in chat.\n-   **Action:** State the confirmed date/time. Mention a calendar invite will be sent to their email. End politely.\n\n## 5. Response Examples (Illustrative)\n\n*   **(Qualifying -> Contact Collection):** \"Okay, the ceramic coating sounds like a great fit! To get you set up for a consultation, could I get your first name?\"\n*   **(Contact Collection - After Email):** \"Thanks, [Name]! Got your email. *(Implicitly uses crmAgent here)* Now, let's find a time for your consultation. Any preferred days or times next week?\"\n*   **(Scheduling - After Booking):** \"Great! You're all booked for Tuesday at 2 PM. *(Implicitly uses crmAgent here)* You should get a calendar invite to [Email] soon. Talk then!\"\n\n## 6. Memory Management (Reference)\n\n### Contact Cache\n```json\n{\n  \"contact\": {\n    \"verified\": false, // Set true after Name/Email collected\n    \"collectedInfo\": {\n      \"name\": \"\", \"email\": \"\", \"serviceInterest\": \"\", \"timingPreference\": \"\" // etc.\n    },\n    \"state\": \"CURRENT_STATE\",\n    \"lastStateChange\": \"timestamp\"\n  }\n}\n```\n\n### Tool Usage Cache (Optional Reference)\n```json\n{\n  \"tools\": {\n    \"lastUsed\": {\"crm\": \"ts\", \"calendar\": \"ts\"},\n    \"calendarBooking\": {\"status\": \"none|pending|confirmed|failed\"}\n  }\n}\n```\n\n## 7. Final Checks\n-   Stick to the state flow.\n-   **Ensure `crmAgent` is used immediately after contact collection AND after successful booking.**\n-   Only use `calendarAgent` in SCHEDULING state with prerequisites met.\n-   Adhere strictly to Communication Rules & Knowledge Source limits.\n\nIMPORTANT: Current date/time: {{ $now }}\nIMPORTANT: Trigger: {{ $json.trigger }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1100,
+        420
+      ],
+      "id": "18ea2dd5-985c-4c04-8239-43de343e1240",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        540,
+        820
+      ],
+      "id": "89a5d825-6707-48c9-9360-9468055dd49c",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "89b54b27-2f6d-4c16-b3ed-b539bdcf9a4f",
+                    "leftValue": "={{ $('No Operation, do nothing').item.json.trigger }}",
+                    "rightValue": "whatsapp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "whatsapp"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9df0a1da-742d-4ac6-b4f8-a76006c314db",
+                    "leftValue": "={{ $('No Operation, do nothing').item.json.trigger }}",
+                    "rightValue": "facebook",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "facebook"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "98550c9d-4266-4694-8d5a-a3972d6aad22",
+                    "leftValue": "={{ $('No Operation, do nothing').item.json.trigger }}",
+                    "rightValue": "instagram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "instagram"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dd8bf574-3e33-42fb-9cb0-05f2482a039c",
+                    "leftValue": "={{ $('No Operation, do nothing').item.json.trigger }}",
+                    "rightValue": "chat",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5cecc0c2-2ad2-4afd-87c7-ebb3500cf3b9",
+                    "leftValue": "={{ $('No Operation, do nothing').item.json.trigger }}",
+                    "rightValue": "leadForm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1800,
+        820
+      ],
+      "id": "595d0991-b8ab-41c1-b33d-8232dbfe66ef",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "httpMethod": [
+          "POST",
+          "GET"
+        ],
+        "path": "meta-sales-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -600,
+        1060
+      ],
+      "id": "fa79a6ae-b70a-4377-a442-71fb4b9add41",
+      "name": "Facebook Trigger",
+      "webhookId": "b7e461f0-9a0d-4e27-9e86-f74a3e684e3a"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "26a3553a-f37b-4f46-9a84-3f1661a5d152",
+              "name": "trigger",
+              "value": "facebook",
+              "type": "string"
+            },
+            {
+              "id": "11ae4f49-44ec-4416-a8d2-49a15fdf1e63",
+              "name": "text",
+              "value": "={{ $json.body.entry[0].messaging[0].message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "3cfa9c98-dca2-43e6-9d69-7a20f61772f6",
+              "name": "sessionId",
+              "value": "={{ $json.body.entry[0].messaging[0].sender.id }}",
+              "type": "string"
+            },
+            {
+              "id": "b103277f-d1ef-498f-9286-14b0b7718c5d",
+              "name": "extraPrompt",
+              "value": "This conversation took place on Facebook Messenger.\n\nIf user is interested in your service, you can send the lead form to user and ask filling in\n\nYour response must be less then 300 chars.",
+              "type": "string"
+            },
+            {
+              "id": "f8d11aca-c325-4d8c-9c67-ef9440756f05",
+              "name": "channelId",
+              "value": "={{ $json.body.entry[0].id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        1120
+      ],
+      "id": "0e2dfa6b-5893-4915-8170-51866675beef",
+      "name": "Edit Fields - facebook"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "\"EVENT_RECEIVED\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        980
+      ],
+      "id": "0771df7a-697a-41a9-9889-d351b8b08222",
+      "name": "Respond to Webhook - facebook post"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        1160
+      ],
+      "id": "a0434ad7-2a77-4148-8498-bf4881b9d8a6",
+      "name": "Respond to Webhook - facebook get"
+    },
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "httpMethod": [
+          "POST",
+          "GET"
+        ],
+        "path": "benai-metaIG-URL",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -580,
+        1580
+      ],
+      "id": "bd8bc36b-6d6b-4e0f-aaf4-e4dd9ed11033",
+      "name": "Instagram Trigger",
+      "webhookId": "cc6546da-6f16-4546-ada3-e2c83b208997"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        1680
+      ],
+      "id": "ad975fba-898a-49be-9fbe-7ad893e66506",
+      "name": "Respond to Webhook - instagram get"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "\"EVENT_RECEIVED\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        1500
+      ],
+      "id": "d9193907-37e3-4301-a464-9896aa849924",
+      "name": "Respond to Webhook - instagram post"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "26a3553a-f37b-4f46-9a84-3f1661a5d152",
+              "name": "trigger",
+              "value": "instagram",
+              "type": "string"
+            },
+            {
+              "id": "11ae4f49-44ec-4416-a8d2-49a15fdf1e63",
+              "name": "text",
+              "value": "={{ $json.body.entry[0].messaging[0].message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "3cfa9c98-dca2-43e6-9d69-7a20f61772f6",
+              "name": "sessionId",
+              "value": "={{ $json.body.entry[0].messaging[0].sender.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f128bfd3-f02e-4444-8556-39fadb07d08e",
+              "name": "extraPrompt",
+              "value": "This conversation took place on Instagram.\n\nYour response must be less then 500 chars.",
+              "type": "string"
+            },
+            {
+              "id": "679e091e-d9dd-4cc3-b5a1-97f3790e09d0",
+              "name": "channelId",
+              "value": "={{ $json.body.entry[0].id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        1480
+      ],
+      "id": "de58c958-49f6-4ed9-a828-3c7b82cdca12",
+      "name": "Edit Fields - instagram"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7dee1826-e2b5-44ea-9c0f-a0adb5bc740c",
+              "leftValue": "={{ $json.body.entry[0].messaging[0].message?.is_echo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -60,
+        980
+      ],
+      "id": "903f9208-4e03-47f5-8f00-3269283c41a3",
+      "name": "If is not echo - facebook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7dee1826-e2b5-44ea-9c0f-a0adb5bc740c",
+              "leftValue": "={{ $json.body.entry[0].messaging[0].message?.is_echo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -100,
+        1500
+      ],
+      "id": "8ef20995-4f6c-4de0-a374-15b39d9dbcf8",
+      "name": "If is not echo - instagram"
+    },
+    {
+      "parameters": {
+        "content": "# Facebook Page\n",
+        "height": 480,
+        "width": 1180,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -740,
+        900
+      ],
+      "id": "97082b1f-2ff4-4b73-b07c-2c3c4078a987",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Instagram",
+        "height": 380,
+        "width": 1180,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -740,
+        1440
+      ],
+      "id": "41472e4a-1d19-47cf-b385-aca8049e82b7",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Instagram Response",
+        "height": 380,
+        "width": 400,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        1420
+      ],
+      "id": "e4582fe9-1102-40cc-868d-f6c6d0015dd1",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Messenger Reponse",
+        "height": 480,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        880
+      ],
+      "id": "758520a7-a9bb-453e-9620-8e0f9da32867",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# AI Agent w/ Sub Agent",
+        "height": 760,
+        "width": 1040,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        300
+      ],
+      "id": "3a03a47f-f43e-45f4-8bb3-2b5fc8d33430",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "# AI Agent w/ MCPs",
+        "height": 720,
+        "width": 1040,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        1100
+      ],
+      "id": "ffa0d730-2a64-4e02-a9cb-a10cfafb333d",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "eb5c5526-d93c-4f3e-a7ea-c3e17868130b",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        880,
+        940
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fe974aaf-2132-49e0-adc4-effaa5136738",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1240,
+        820
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        960,
+        820
+      ],
+      "id": "f890ab07-e684-463c-ab76-cf3bfdb30a1e",
+      "name": "Demo Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "YJDv7hEOvBGLJGnP",
+          "name": "Keith Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "calendarAgent",
+        "description": "Use this tool to schedule a consultation appointment in the calendar. You must provide the attendee's email address and the proposed start time in ISO 8601 format. You can optionally provide the attendee's name and a summary.\n\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "55ZLP6Uau1DRjJHX",
+          "mode": "list",
+          "cachedResultName": "Sub-Agent - Calendar"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        680
+      ],
+      "id": "96e4d77d-ad01-4275-b9e3-b30002f28fdb",
+      "name": "Calendar Agent"
+    },
+    {
+      "parameters": {
+        "name": "crmAgent",
+        "description": "Call this tool to take any action from CRM",
+        "workflowId": {
+          "__rl": true,
+          "value": "PvSEhvcleGcP7XF2",
+          "mode": "list",
+          "cachedResultName": "Sub-Agent - CRM (Airtable)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        680
+      ],
+      "id": "ff4c285a-99a5-48f7-a1dd-9a40c2524f9f",
+      "name": "CRM Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        960,
+        680
+      ],
+      "id": "2a80fb38-c4bb-4a84-bb63-148ec1e0388d",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "4fr4I9Se3HsfArbw",
+          "name": "Keith Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "sales_technique_knowledge",
+        "description": "retrieve information about sales technique ",
+        "topK": 10
+      },
+      "id": "6fec546d-7bbc-48bc-b767-be45652ae26f",
+      "name": "sales_technique_knowledge",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "position": [
+        1060,
+        680
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $('WhatsApp').item.json.messages[0].type }}",
+                    "rightValue": "text",
+                    "id": "7c8de6f9-f097-426b-9d48-d27c6b7a5c7c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "be874ad0-499c-4640-8c1c-e64a26f811f9",
+                    "leftValue": "={{ $('WhatsApp').item.json.messages[0].type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f28b14ff-af8d-4a8c-970a-febbd5487624",
+                    "leftValue": "={{ $('WhatsApp').item.json.messages[0].type }}",
+                    "rightValue": "=^(?!.*\\b(text|audio)\\b).*$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notRegex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Not Supported"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "19a71e17-f7bf-40a1-95c4-e77e2e04e6d8",
+      "name": "Handle Message Types",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        -380,
+        460
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "502287182976674",
+        "recipientPhoneNumber": "={{ $('WhatsApp').item.json.contacts[0].wa_id }}",
+        "textBody": "=I'm unable to process non-text messages. Please send only text messages. Thanks!",
+        "additionalFields": {
+          "previewUrl": false
+        }
+      },
+      "id": "b00f2830-3c39-4e31-bb24-450d4cd5a0c6",
+      "name": "Reply To User1",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [
+        -40,
+        640
+      ],
+      "typeVersion": 1,
+      "webhookId": "0e86d9ab-6130-44f5-a7f1-4930bfcad48b",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "wVSK1GsiUOmmtKxp",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "84dc8840-97a0-47d4-8a18-0608a1b357ae",
+              "name": "trigger",
+              "value": "whatsapp",
+              "type": "string"
+            },
+            {
+              "id": "9a46b726-e9aa-4cb5-8c1a-d6d38b920908",
+              "name": "text",
+              "value": "={{ $('WhatsApp').item.json.messages[0].text.body }}",
+              "type": "string"
+            },
+            {
+              "id": "e2b7a6a0-2677-4b56-b037-f010efb6da46",
+              "name": "sessionId",
+              "value": "={{ $('WhatsApp').item.json.contacts[0].wa_id }}",
+              "type": "string"
+            },
+            {
+              "id": "bca35569-12c5-443e-8e08-c9f8718cd31a",
+              "name": "extraPrompt",
+              "value": "=This is the Lead info:\nName: {{ $json.Name }}\nEmail: {{ $json.Email }}\n\nCare Model / Make / Year : {{ $('Get Lead').item.json['Car Model / Make / Year'] }}\n\nInterested In:\n{{ $('Get Lead').item.json['Interested in'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        300
+      ],
+      "id": "583b391c-fad3-4940-94a7-dfe57fca8089",
+      "name": "Edit Fields - chat1"
+    },
+    {
+      "parameters": {
+        "content": "# Whatsapp\nSend message to [Chat URL](https://agencyatscale.app.n8n.cloud/webhook/c959ad76-d935-437f-8380-4776b1bcf52a/chat)",
+        "height": 560,
+        "width": 1180,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -740,
+        280
+      ],
+      "id": "5793cf3d-b621-4346-838d-f14b5c80c85c",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "## Whatsapp\nSend message to [Chat URL](https://agencyatscale.app.n8n.cloud/webhook/c959ad76-d935-437f-8380-4776b1bcf52a/chat)",
+        "height": 540,
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        300
+      ],
+      "id": "ab4cf432-459d-4f79-a217-c4bb418fe23e",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "278982118641623",
+        "recipientPhoneNumber": "={{ $('No Operation, do nothing').item.json.sessionId }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        2180,
+        420
+      ],
+      "id": "f4def59b-23a4-48dd-98e2-9df713b92fe9",
+      "name": "Reply To  User",
+      "webhookId": "3b2ca5bf-7b1d-4012-b68e-ef06653a3c18",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "wVSK1GsiUOmmtKxp",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        460
+      ],
+      "id": "69b6db8c-1719-4a4f-852a-33e9977e5fa7",
+      "name": "WhatsApp",
+      "webhookId": "aaf6d81e-dbdd-47e2-a2d4-c496ff92933b",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "qE0B4rMHhUeGGxFJ",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $('WhatsApp').item.json.messages[0].audio.id }}"
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        460
+      ],
+      "id": "4758aff6-90e1-480b-8ffc-e56a11e263c8",
+      "name": "WhatsApp Business Cloud",
+      "webhookId": "5cbf4730-3963-45f9-8457-6f41e648d4fe",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "wVSK1GsiUOmmtKxp",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -40,
+        460
+      ],
+      "id": "3d4b1c3f-128f-49d3-ae31-b699e44aa36e",
+      "name": "HTTP Request",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "wVSK1GsiUOmmtKxp",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        120,
+        460
+      ],
+      "id": "29338cc8-d861-4f47-91f7-477af59f8a3c",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "84dc8840-97a0-47d4-8a18-0608a1b357ae",
+              "name": "trigger",
+              "value": "whatsapp",
+              "type": "string"
+            },
+            {
+              "id": "9a46b726-e9aa-4cb5-8c1a-d6d38b920908",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "e2b7a6a0-2677-4b56-b037-f010efb6da46",
+              "name": "sessionId",
+              "value": "={{ $('WhatsApp').item.json.messages[0].from }}",
+              "type": "string"
+            },
+            {
+              "id": "bca35569-12c5-443e-8e08-c9f8718cd31a",
+              "name": "extraPrompt",
+              "value": "=This is the Lead info:\nName: {{ $('Get Lead').item.json.Name }}\nEmail: {{ $('Get Lead').item.json.Email }}\nCare Model / Make / Year : {{ $('Get Lead').item.json['Car Model / Make / Year'] }}\nInterested In:\n{{ $('Get Lead').item.json['Interested in'] }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        460
+      ],
+      "id": "adf76add-7d50-4a4a-8ead-41ceaa1cb495",
+      "name": "Edit Fields - chat2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        860,
+        680
+      ],
+      "id": "f80aff58-4744-42c1-8f2c-c18f90b544bd",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appmZHna96JsKNeJL",
+          "mode": "list",
+          "cachedResultName": "n8n Sales Agent (BenAI)",
+          "cachedResultUrl": "https://airtable.com/appmZHna96JsKNeJL"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ $json.query.tableId }}",
+          "mode": "id"
+        },
+        "id": "={{ $json.query.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -100
+      ],
+      "id": "9d4076dd-543b-41fe-8833-811b69c83646",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Lead Form Submitted",
+        "height": 300,
+        "width": 1900,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -120
+      ],
+      "id": "aa5dbf10-b9ad-4e4e-8151-a7d34e52a803",
+      "name": "Sticky Note10",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "11ae4f49-44ec-4416-a8d2-49a15fdf1e63",
+              "name": "text",
+              "value": "=I have filled out the form as following:\n\n<form_input>\n{{ JSON.stringify($json) }}\n</form_input>\n\nLet me know if you need anything else, thanks",
+              "type": "string"
+            },
+            {
+              "id": "0ef41f87-5d6e-49da-a78a-7fed5b3b370c",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        -100
+      ],
+      "id": "7de704f0-4716-471c-98b2-2ca2fb0184f2",
+      "name": "Edit Fields - form"
+    },
+    {
+      "parameters": {
+        "path": "sales-lead-form",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        -100
+      ],
+      "id": "afabd070-6237-4763-a88a-81906e36b6f5",
+      "name": "Airtable Form Submitted",
+      "webhookId": "743228b1-915f-4628-a74a-ac277d227051"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v21.0",
+        "node": "me",
+        "edge": "messages",
+        "options": {
+          "queryParametersJson": "={\n  \"recipient\":{\n    \"id\":\"{{ $json.body.entry[0].messaging[0].sender.id }}\"\n  },\n  \"sender_action\":\"typing_on\"\n}"
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        240,
+        960
+      ],
+      "id": "197c8be5-825b-47d1-9659-d6be273afcd9",
+      "name": "Sales Agent Demo - typing_on",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "tEvOpyNYPm2XDFgJ",
+          "name": "Sales Agent https://www.facebook.com/mcpagent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v21.0",
+        "node": "me",
+        "edge": "messages",
+        "options": {
+          "queryParametersJson": "={\n  \"recipient\":{\n    \"id\":\"{{ $('No Operation, do nothing').item.json.sessionId }}\"\n  },\n  \"messaging_type\": \"RESPONSE\",\n  \"message\":{\n    \"text\":{{ JSON.stringify($json.output.substring(0,1000)) }}\n  }\n}"
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        1100
+      ],
+      "id": "f3277620-83a6-439b-95d7-ac73b075f0f0",
+      "name": "Facebook Graph API - Sales Agent Demo",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "tEvOpyNYPm2XDFgJ",
+          "name": "Sales Agent https://www.facebook.com/mcpagent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.instagram.com/v22.0/me/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\":{\n    \"id\":\"{{ $('No Operation, do nothing').item.json.sessionId }}\"\n  },\n  \"message\":{\n    \"text\":{{ JSON.stringify($json.output.substring(0,1000)) }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        1600
+      ],
+      "id": "8a91018c-af1d-4972-beee-c5b52125b25f",
+      "name": "Instagram Graph API - smb.sales.agent.demo",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Y7jNcbRNKe6d9Y1D",
+          "name": "Sales Agent IG Auth"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        1540
+      ],
+      "id": "562e0105-2479-436a-8074-a5a1dae1250e",
+      "name": "Airtable List_Tool",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "YBiRSs4DWtkkhgDq",
+          "name": "Airtable n8n Sales Agent (BenAI)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeTool",
+        "toolName": "={{ $fromAI(\"tool_name\", \"Select an Airtable operation like list_records, search_records, etc.\") }}",
+        "toolParameters": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tool_Parameters', ``, 'json') }}"
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        1540
+      ],
+      "id": "da55df4c-095f-42e7-94c2-ec5094cd8d5a",
+      "name": "Airtable Execute_Tool",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "YBiRSs4DWtkkhgDq",
+          "name": "Airtable n8n Sales Agent (BenAI)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "listResources"
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        1540
+      ],
+      "id": "c010419c-bfff-4692-bd21-4cc48d50339b",
+      "name": "Airtable List Resource",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "YBiRSs4DWtkkhgDq",
+          "name": "Airtable n8n Sales Agent (BenAI)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "readResource",
+        "resourceUri": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Resource_URI', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        1540
+      ],
+      "id": "81ca4b1f-862d-4b09-84c1-93a498a31757",
+      "name": "Airtable Read Resource",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "YBiRSs4DWtkkhgDq",
+          "name": "Airtable n8n Sales Agent (BenAI)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=\n# System Prompt: Automotive Detailing Sales & Booking Assistant w/ MCP Airtable\n\n## 1. Core Identity & Goal\nYou are a friendly, efficient sales assistant specializing in **Paint Protection Film (PPF), Ceramic Coating, and Window Tint**. Your goal is to engage customers via messaging, provide service info (using `technical_and_sales_knowledge`), qualify interest, collect contact details, **manage CRM data using MCP Airtable tools**, and **book consultations (`calendarAgent`)**.\n\n## 2. Knowledge Source (CRITICAL)\n-   **Use `technical_and_sales_knowledge` ONLY** for service details, benefits, comparisons, and handling price questions (focus on value, no specific prices).\n-   **Do NOT use external knowledge.** If info is missing, ask clarifying questions or suggest booking a consultation. Never say \"I don't know.\"\n\n## 3. Communication Rules (CRITICAL)\n-   **Concise & Conversational:** <160 chars per message (like SMS). Friendly, human tone.\n-   **Bite-Sized Info:** Break down info; ask one question at a time.\n-   **NO Lists:** Avoid numbered/bullet points.\n-   **No Handoff Language.**\n\n## 4. MCP Airtable Tool Strategy (CRITICAL FOR CRM)\n\n**Core Objective:** Use discovery tools (`List_Resources`, `Read_Resource`) *once* when needed to learn the database structure, store key identifiers (`baseId`, `tableId` mappings) in your memory, and then reuse that information for subsequent `Execute_Tool` calls within the conversation. Minimize redundant API calls.\n\n**Available MCP Tools:**\n1.  **`List_Resources`:** Use this tool to get a list of available table schemas *only if the information (Base ID, Table IDs) is not already in your memory*. The response contains resource URIs (e.g., `airtable://<baseId>/<tableId>/schema`) and names.\n2.  **`Read_Resource`:** Use this tool to get detailed JSON schema (fields, types) for a specific table URI *only if the detailed schema is needed (e.g., for formatting `fields` parameter in `Execute_Tool`) AND it's not already sufficiently remembered*. Check memory first.\n3.  **`Execute_Tool`:** Use this for **all data operations**. Requires `tool_name` (the specific Airtable operation like `create_record`, `search_records`, `update_records`) and `Tool_Parameters` (containing `baseId`, `tableId` from memory, and operation-specific args like `fields`, `recordId`, `filterByFormula`).\n4.  **`List_Tool`:** Use this *rarely*, only to discover available MCP *operations* (like `search_records`) if explicitly asked or if `Execute_Tool` fails with an unknown operation error. **Known available operations include:** `list_records`, `search_records`, `list_bases`, `list_tables`, `describe_table`, `get_record`, `create_record`, `update_records`, `delete_records`.\n\n**Strategy & Workflow with Memory:**\n1.  **Understand Request & Check Memory:** Identify the target table (e.g., \"Contacts\", \"Opportunities\"). **Crucially, first check your memory:** Do you already know the `baseId` and the `tableId` for this table name?\n2.  **Identify/Recall Table IDs:**\n    *   **If IDs are in memory:** Use the remembered `baseId` and `tableId`. Proceed to Step 4.\n    *   **If IDs are NOT in memory:**\n        *   Call `List_Resources`.\n        *   Parse the response to find the resource URI matching the requested table name (e.g., find URI for table named \"Contacts\").\n        *   Extract `baseId` and `tableId` from the URI (`airtable://<baseId>/<tableId>/schema`).\n        *   **Store `baseId` and the mapping (e.g., \"Contacts\" -> `tableId`, \"Opportunities\" -> `tableId`) in your memory for future use.**\n3.  **Fetch Detailed Schema (If Needed & Not Remembered):**\n    *   If the task requires detailed field knowledge (e.g., formatting the `fields` parameter for `create_record` or `update_records`) AND you haven't stored sufficient schema details for this table in memory:\n        *   Check memory first.\n        *   If not present, call `Read_Resource` using the table's URI (retrieved via `List_Resources` or from memory).\n        *   Store key field names/types in memory if useful, but prioritize storing IDs.\n4.  **Formulate and Execute (`Execute_Tool`):**\n    *   **Determine the correct `tool_name`** (operation) based on the task (e.g., `create_record` for adding a new contact, `update_records` for changing an existing one, `search_records` to find one first). Use the list of known available operations above as a guide.\n    *   Construct the `Execute_Tool` call.\n    *   Populate `Tool_Parameters` JSON using the `baseId` and `tableId` **retrieved from your memory**.\n    *   Include other necessary parameters specific to the chosen `tool_name` (e.g., `fields`, `recordId`, `filterByFormula`). **Parameter names (`baseId`, `tableId`, `fields`, etc.) must be exact.** Ensure the `fields` object uses correct field names from the Airtable schema (use `Read_Resource` if unsure).\n5.  **Execute and Respond:**\n    *   Run the `Execute_Tool` call.\n    *   **Error Handling & Memory Update:** If an `Execute_Tool` call fails using remembered information (especially with parameter errors related to IDs or unknown operations):\n        *   Assume the remembered data *might* be stale or incorrect.\n        *   Use discovery tools (`List_Resources`, `List_Tool`) to get fresh information (IDs, available operations).\n        *   **Update your memory** with the newly fetched information.\n        *   Correct any identified parameter errors based on the error message or fresh schema info.\n        *   Retry the `Execute_Tool` call with corrected parameters.\n    *   Format successful results clearly.\n\n**Execute_Tool Parameter Guidelines (CRITICAL Reminder):**\n*   Prioritize using `baseId` and `tableId` **from memory**.\n*   Ensure exact, case-sensitive parameter names within `Tool_Parameters`: `baseId`, `tableId`, `fields`, `recordId`, `filterByFormula`, etc.\n*   The `tool_name` parameter itself must be one of the available operations.\n\n## 5. Conversation Flow & Actions (Using MCP Tools)\n\n### State: INITIAL\n-   **Goal:** Greet & identify initial interest (PPF, Ceramic, Tint?).\n-   **Action:** Ask about service interest.\n-   **Transition:** Move to QUALIFYING when interest is shown.\n\n### State: QUALIFYING\n-   **Goal:** Understand needs, educate on services (using `technical_and_sales_knowledge`), confirm interest in a consultation.\n-   **Action:** Discuss services, answer questions, assess goals.\n-   **Transition:** Move to CONTACT_COLLECTION *only* on clear confirmation.\n\n### State: CONTACT_COLLECTION\n-   **Goal:** Collect Name & Email and add/update Contact in Airtable using MCP `Execute_Tool`.\n-   **Action Sequence:**\n    1.  Politely ask for **First Name**.\n    2.  Once received, politely ask for **Email Address**.\n    3.  Store Name & Email temporarily in memory.\n    4.  **Execute CRM Contact Add/Update:**\n        *   Identify Target Table: \"Contacts\".\n        *   Check memory for `baseId` and \"Contacts\" `tableId`. Use `List_Resources` if needed, parse URI, store IDs in memory.\n        *   Determine `tool_name` (likely `create_record` or potentially `search_records` then `update_records` if handling duplicates robustly).\n        *   Prepare `Tool_Parameters`: Include `baseId` (memory), `tableId` (memory), and `fields` (e.g., `{ \"Name\": \"[Collected Name]\", \"Email\": \"[Collected Email]\" }`). Ensure field names match Airtable schema.\n        *   Call `Execute_Tool` with the determined `tool_name` and prepared `Tool_Parameters`.\n+       *   **CRITICAL STEP: Upon successful execution, extract the returned Contact `recordId` from the tool's result and reliably STORE it in memory (e.g., under `contact.crmRecordId`). This ID is REQUIRED for the next step.**\n-   **Transition:** Move to SCHEDULING after confirming successful `Execute_Tool` call **and storage of the Contact `recordId`**.\n\n\n### State: SCHEDULING\n-   **Goal:** Book consultation (`calendarAgent`) and create Opportunity in Airtable using MCP `Execute_Tool`, **linking it to the previously stored Contact**.\n-   **Prerequisites:** Name & Email collected, **Contact `recordId` successfully stored in memory (e.g., `contact.crmRecordId`)**.\n-   **Action Sequence:**\n    1.  Ask for preferred date(s) and time(s).\n    2.  Once specific preference is given, use `calendarAgent`. Requires: Collected Email, Specific Time Preference.\n    3.  **AFTER `calendarAgent` confirms success, Execute CRM Opportunity Create:**\n        *   Identify Target Table: \"Opportunities\".\n        *   Check memory for `baseId` and \"Opportunities\" `tableId`. Use `List_Resources` if needed, parse URI, store IDs in memory.\n        *   Determine `tool_name`: Likely `create_record`.\n+       *   **Prepare `Tool_Parameters` (CRITICAL Data Link):**\n+           *   Retrieve `baseId` and \"Opportunities\" `tableId` from memory.\n+           *   **Retrieve the Contact `recordId` stored earlier in memory (e.g., from `contact.crmRecordId`). This is ESSENTIAL.**\n+           *   Construct the `fields` object including:\n+               *   `Opportunity_Name`: (e.g., \"Consultation for [Collected Name]\")\n+               *   `Status`: \"Meeting Booked\"\n+               *   `Primary_Contact`: **Use the retrieved Contact `recordId` from memory, formatted as an array: `[\"[Stored Contact Record ID]\"]`. DO NOT invent or use placeholder IDs.**\n+               *   *(Ensure other required Opportunity fields are included based on schema)*\n+           *   Assemble the full `Tool_Parameters` JSON.\n        *   Call `Execute_Tool` with `tool_name: 'create_record'` and prepared `Tool_Parameters`.\n-   **Transition:** Move to FOLLOW_UP after confirming successful `Execute_Tool` call for opportunity creation.\n\n### State: FOLLOW_UP\n-   **Goal:** Confirm booking details in chat.\n-   **Action:** State confirmed date/time. Mention calendar invite. End politely.\n\n## 6. Memory Management (Reference)\n### Contact Cache (Example)\n```json\n{\n  \"contact\": {\n    \"collectedInfo\": {\n      \"name\": \"\", \"email\": \"\", \"serviceInterest\": \"\", \"timingPreference\": \"\" // etc.\n    },\n    \"crmRecordId\": \"\", // **Stores Contact record ID from Airtable - CRITICAL**\n    \"state\": \"CURRENT_STATE\"\n  },\n  \"crmSchema\": { // Stores known Airtable IDs & potentially key fields/operations\n      \"baseId\": \"\",\n      \"tableIds\": {\n          \"Contacts\": \"\",\n          \"Opportunities\": \"\"\n      },\n      \"knownOperations\": [\"list_records\", \"search_records\", \"create_record\", \"update_records\", \"delete_records\"] // Store known ops\n      // Optionally store key field names if needed\n  }\n}\n\n## 7. Final Checks\n-   Stick to the state flow.\n-   **Use the MCP Strategy:** Check memory, use discovery tools sparingly, use `Execute_Tool` with parameters from memory.\n-   **Determine Correct `tool_name`** for `Execute_Tool` based on the task and known available operations.\n-   Ensure `Execute_Tool` parameters (`baseId`, `tableId`, `fields`, etc.) are correct.\n-   Store and use the Contact `recordId` for linking.\n-   Adhere strictly to Communication Rules & Knowledge Source limits.\n\nIMPORTANT: Current date/time: {{ $now }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1120,
+        1180
+      ],
+      "id": "af8d2d46-4e88-49d4-8932-2d6dc86f0061",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "62676dd7-e06f-489b-a3cb-552a02909b04",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        760,
+        1700
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e2fc1ad1-b0ce-46b6-be01-5b36fa89717a",
+      "name": "OpenAI Chat Model2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1120,
+        1560
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        820,
+        1560
+      ],
+      "id": "bc0bd679-ef29-4c53-ba85-5ee20ca2508f",
+      "name": "Demo Supabase1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "YJDv7hEOvBGLJGnP",
+          "name": "Keith Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        900,
+        1400
+      ],
+      "id": "23137675-9e88-42af-8c51-7fd2f1a64ac7",
+      "name": "Postgres Chat Memory1",
+      "credentials": {
+        "postgres": {
+          "id": "4fr4I9Se3HsfArbw",
+          "name": "Keith Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "sales_technique_knowledge",
+        "description": "retrieve information about sales technique ",
+        "topK": 10
+      },
+      "id": "2baf4b6e-af33-4958-a9ca-9b52a499abc7",
+      "name": "sales_technique_knowledge1",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "position": [
+        1020,
+        1400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        740,
+        1400
+      ],
+      "id": "3820a7b9-dec6-42fd-9057-6059ddaeb95f",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "calendarAgent",
+        "description": "Use this tool to schedule a consultation appointment in the calendar. You must provide the attendee's email address and the proposed start time in ISO 8601 format. You can optionally provide the attendee's name and a summary.\n\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "55ZLP6Uau1DRjJHX",
+          "mode": "list",
+          "cachedResultName": "Sub-Agent - Calendar"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1620,
+        1320
+      ],
+      "id": "845ae73f-187e-4654-a00e-2968c911d4ce",
+      "name": "Calendar Agent1"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nI am your Demo Sales agent. How can I assist you today?",
+        "options": {
+          "subtitle": "Provided by Agency@Scale",
+          "title": "Sales Agent Demo"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        1900
+      ],
+      "id": "e8bf808c-4f7e-4ec9-9578-30a1220cd8f1",
+      "name": "When chat message received",
+      "webhookId": "c959ad76-d935-437f-8380-4776b1bcf52a"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "84dc8840-97a0-47d4-8a18-0608a1b357ae",
+              "name": "trigger",
+              "value": "chat",
+              "type": "string"
+            },
+            {
+              "id": "9a46b726-e9aa-4cb5-8c1a-d6d38b920908",
+              "name": "text",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "e2b7a6a0-2677-4b56-b037-f010efb6da46",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "bca35569-12c5-443e-8e08-c9f8718cd31a",
+              "name": "extraPrompt",
+              "value": "This conversation took place on Chatbox.\n\nYour response must be less then 1000 chars.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -200,
+        1900
+      ],
+      "id": "ef9ff384-2ef4-4bf2-8e87-4d8f8879d237",
+      "name": "Edit Fields - chat"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f0f6aa5-7618-4a03-afb8-d9248b670375",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2180,
+        1840
+      ],
+      "id": "1a2247d4-d2e4-4834-bc2f-845cbb086d3a",
+      "name": "Output - chat"
+    },
+    {
+      "parameters": {
+        "phoneNumberId": "278982118641623",
+        "recipientPhoneNumber": "={{ $('Airtable').item.json[\"Whastapp #\"] }}",
+        "template": "inbound_lead_notification|en",
+        "components": {
+          "component": [
+            {
+              "bodyParameters": {
+                "parameter": [
+                  {
+                    "text": "={{ $('Airtable').item.json.Name }}"
+                  },
+                  {
+                    "text": "={{ $('Airtable').item.json['Car Model / Make / Year'] }}"
+                  },
+                  {
+                    "text": "={{ $('Airtable').item.json['Interested in'][0] }}"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        640,
+        -100
+      ],
+      "id": "dab63689-0ad6-4e8a-b854-d97f6d4abd52",
+      "name": "WhatsApp Business Cloud2",
+      "webhookId": "efdf335a-e120-488f-bfd0-bae49c454b6c",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "wVSK1GsiUOmmtKxp",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appmZHna96JsKNeJL",
+          "mode": "list",
+          "cachedResultName": "n8n Sales Agent (BenAI)",
+          "cachedResultUrl": "https://airtable.com/appmZHna96JsKNeJL"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblx4RCYHWg0QDPhk",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appmZHna96JsKNeJL/tblx4RCYHWg0QDPhk"
+        },
+        "filterByFormula": "={Whastapp #}= \"+{{ $json.messages[0].from }}\"",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -540,
+        460
+      ],
+      "id": "e025f0bf-cfd9-4aa0-81d0-5efeb2944b1c",
+      "name": "Get Lead",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appmZHna96JsKNeJL",
+          "mode": "list",
+          "cachedResultName": "n8n Sales Agent (BenAI)",
+          "cachedResultUrl": "https://airtable.com/appmZHna96JsKNeJL"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblIWVK0K0l5x8MD4",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://airtable.com/appmZHna96JsKNeJL/tblIWVK0K0l5x8MD4"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Email": "={{ $json.Email }}",
+            "Phone": "={{ $json['Whastapp #'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name and Org",
+              "displayName": "Name and Org",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Account",
+              "displayName": "Account",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Opportunities",
+              "displayName": "Opportunities",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn",
+              "displayName": "LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        220,
+        -100
+      ],
+      "id": "5533e300-f047-41d6-b71c-15ac2615c6d0",
+      "name": "Create Contact",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "WhatsApp": [
+      {
+        "json": {
+          "messaging_product": "whatsapp",
+          "metadata": {
+            "display_phone_number": "5511911957545",
+            "phone_number_id": "278982118641623"
+          },
+          "contacts": [
+            {
+              "profile": {
+                "name": "Ben"
+              },
+              "wa_id": "5511943305954"
+            }
+          ],
+          "messages": [
+            {
+              "from": "5511943305954",
+              "id": "wamid.HBgNNTUxMTk0MzMwNTk1NBUCABIYFDNBMzZCMzEzRkE3NEE5QTY4QkY2AA==",
+              "timestamp": "1743505155",
+              "type": "audio",
+              "audio": {
+                "mime_type": "audio/ogg; codecs=opus",
+                "sha256": "cvEinUroWyJwJnXdrmNKh58AEenizXyZckc+MR5LDVc=",
+                "id": "1035082928515514",
+                "voice": true
+              }
+            }
+          ],
+          "field": "messages"
+        }
+      }
+    ],
+    "Airtable Form Submitted": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.benai.agency",
+            "user-agent": "Mozilla/5.0 (compatible; AirtableScripting; +https://airtable.com/developers/scripting;)",
+            "accept": "*/*",
+            "accept-encoding": "gzip,deflate",
+            "x-airtable-source": "appmZHna96JsKNeJL/wflTdWRuMMUw4eaTR",
+            "x-forwarded-for": "54.163.57.194",
+            "x-forwarded-host": "n8n.benai.agency",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "4f7a0fd81c9f",
+            "x-real-ip": "54.163.57.194"
+          },
+          "params": {},
+          "query": {
+            "recordId": "recEOSF2sMmS7Zl3G",
+            "tableId": "tblx4RCYHWg0QDPhk"
+          },
+          "body": {},
+          "webhookUrl": "https://n8n.benai.agency/webhook/sales-lead-form",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Reply To  User",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Facebook Graph API - Sales Agent Demo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Instagram Graph API - smb.sales.agent.demo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Output - chat",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Facebook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook - facebook post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook - facebook get",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - facebook": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook - facebook post": {
+      "main": [
+        [
+          {
+            "node": "If is not echo - facebook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook - instagram post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook - instagram get",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook - instagram post": {
+      "main": [
+        [
+          {
+            "node": "If is not echo - instagram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - instagram": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If is not echo - facebook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - facebook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sales Agent Demo - typing_on",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If is not echo - instagram": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - instagram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Demo Supabase",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "sales_technique_knowledge",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Demo Supabase": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "sales_technique_knowledge",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CRM Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sales_technique_knowledge": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Message Types": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "WhatsApp Business Cloud",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply To User1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - chat1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Get Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Business Cloud": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - chat2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - chat2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Create Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - form": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Business Cloud2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable Form Submitted": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable List_Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable Execute_Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable List Resource": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable Read Resource": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Demo Supabase1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "sales_technique_knowledge1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Demo Supabase1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "sales_technique_knowledge1",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sales_technique_knowledge1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - chat": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Business Cloud2": {
+      "main": [
+        []
+      ]
+    },
+    "Get Lead": {
+      "main": [
+        [
+          {
+            "node": "Handle Message Types",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Contact": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "48eb87d0-19b8-4486-b44b-a5d543b3e02b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a226ccd2b47f2505e743dd72896ae1c385e1d543b95f0badc72e1ad42c93a962"
+  },
+  "id": "8BIXCGtQEQViSRJV",
+  "tags": [
+    {
+      "createdAt": "2025-03-30T04:24:19.727Z",
+      "updatedAt": "2025-03-30T04:24:19.727Z",
+      "id": "I1IYjBkpeaUZFcFe",
+      "name": "Completed"
+    }
+  ]
+}

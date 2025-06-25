@@ -1,0 +1,267 @@
+{
+  "name": "DeepSeek R1",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "405c037b-62a2-4e05-840f-a3767e4edd1e",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        260
+      ],
+      "webhookId": "5b04dea3-1a5d-4ac5-9866-8d3af35e9e7f"
+    },
+    {
+      "parameters": {},
+      "id": "49e295f3-35ff-4072-81ba-9170de0b67c7",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1840,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant who tells jokes\n"
+        }
+      },
+      "id": "b212a1ae-d03e-4655-a8f5-beb916faee9b",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1740,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82427028-d5b1-4567-acd4-bf70ff796f07",
+              "name": "Result",
+              "value": "={{ $json.choices[0].message.content }}",
+              "type": "string"
+            },
+            {
+              "id": "4cc18bd4-ee8c-4692-9f6f-697ef134e0c9",
+              "name": "Reasoning",
+              "value": "={{ $json.choices[0].message.reasoning_content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ef012a74-1481-4c86-8598-9bd06a03d9f2",
+      "name": "Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2040,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1b65d70c-2066-4ab8-b03d-35d43a2ac051",
+              "name": "query",
+              "value": "You are in a room with three light switches. Each switch controls one of three lightbulbs in a separate room, but you can't see the lightbulbs from where you are. You can only enter the room with the lightbulbs once. How can you figure out which switch controls which bulb?",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "74af9a99-f60d-4131-b68a-27fc7cc0a205",
+      "name": "Set Query",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        880
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        880
+      ],
+      "id": "9de79817-25ef-4c18-87ed-a482b00226d5",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer <YOUR API KEY>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"deepseek-reasoner\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful assistant.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.query }}\"\n    }\n  ],\n  \"stream\": false\n}",
+        "options": {}
+      },
+      "id": "08d4e4dc-63f6-4c38-b16f-6a4e28399e64",
+      "name": "DeepSeek R1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1820,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "model": "=deepseek/deepseek-r1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        1680,
+        480
+      ],
+      "id": "28b0470b-ab22-4950-8cde-cd9ae6e119c9",
+      "name": "DeepSeek R1 Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "fXtTahbw3MLUnDUr",
+          "name": "Test R1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# HTTP Method\n",
+        "height": 420,
+        "width": 960,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1280,
+        720
+      ],
+      "typeVersion": 1,
+      "id": "71085067-4151-46ed-a57e-ce6007006d09",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Open Router Method\n\n",
+        "height": 480,
+        "width": 960,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1280,
+        140
+      ],
+      "typeVersion": 1,
+      "id": "514b464d-09ac-42f0-84b0-98c33be65dd8",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Query": {
+      "main": [
+        [
+          {
+            "node": "DeepSeek R1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek R1": {
+      "main": [
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek R1 Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "25adc0a4-1e82-4c04-a157-96b6473153fa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "q3vKuFyHKTav5Fnw",
+  "tags": []
+}

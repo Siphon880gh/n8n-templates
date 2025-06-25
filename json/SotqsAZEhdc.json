@@ -1,0 +1,1430 @@
+{
+  "name": "Airtable AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "799d2e0c-29b9-494c-b11a-d79c7ed4a06d",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        920,
+        480
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "zJhr5piyEwVnWtaI",
+          "name": "OpenAi club"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "agent": "openAiFunctionsAgent",
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "You are Airtable assistant. \nYou need to process user's requests and run relevant tools for that. \n\nPlan and execute in right order runs of tools to get data for user's request.\n\nFeel free to ask questions before do actions - especially if you noticed some inconcistency in user requests that might be error/misspelling. \n\nIMPORTANT Always check right table and base ids before doing queries.\n\nIMPORTANT Use Code function to do aggregation functions that requires math like - count, sum, average and etc.  Aggegation function could be recognized by words like \"how many\",\"count\",\"what number\" and etc.\nUse Code function to generate graph and images.\n\nIMPORTANT If search with filter failed - try to fetch records without filter\n\nIMPORTANT Ask yourself before answering - am I did everything is possible? Is the answer is right? Is the answer related to user request?\n\nIMPORTANT Always return in response name of Base and Table where records from. ",
+          "maxIterations": 10
+        }
+      },
+      "id": "6254ef4e-9699-404e-96a4-569326cce48d",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1160,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "name": "get_base_tables_schema",
+        "description": "Fetches the schema of tables in a specific base by id.\n\nInput:\nbase_id: appHwXgLVrBujox4J\n\nOutput:\ntable 1: field 1 - type string, fields 2 - type number",
+        "workflowId": {
+          "__rl": true,
+          "value": "zVd0G4m33K6KrBvV",
+          "mode": "list",
+          "cachedResultName": "Airtable Agent Tools"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "command",
+              "stringValue": "get_base_tables_schema"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"base_id\": {\n      \"type\": \"string\",\n      \"description\": \"ID of the base to retrieve the schema for. Format - appHwXgLVrBujox4J\"\n    }\n  },\n  \"required\": [\"base_id\"]\n}"
+      },
+      "id": "cd4781d0-f873-4aea-951c-6809358c1db6",
+      "name": "get_base_tables_schema",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1340,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "name": "get_bases",
+        "description": "Fetches the list of available bases.\n\nOutput:\n- List of bases with their IDs and names.",
+        "workflowId": {
+          "__rl": true,
+          "value": "zVd0G4m33K6KrBvV",
+          "mode": "list",
+          "cachedResultName": "Airtable Agent Tools"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "command",
+              "stringValue": "get_bases"
+            }
+          ]
+        }
+      },
+      "id": "135078ea-6a3f-4aee-9f60-c6d5832e446e",
+      "name": "get_bases",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1220,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "name": "search",
+        "description": "Search records in specific base and table.\n\n- Use Filter (optional) rules for filtering - describe what logic you want to see in filter including field names. \nIMPORTANT - specify all related fields with types for Filter query with right names based on schema. Tool doesn't know schema and type of fields.\n\n- Use Limit (optional) to get more/less records - default = All records. IMPORTANT use default value only when user ask to get all records for analysis.\n\n- Always try to limit list of fields based on user request or in case of number of fields > 30. IMPORTANT Use fields names only.\n \n- Sort by one/multiple fields if needed - order in array is order of level for sorting.\n\nInput example:\nbase_id - appHwXgLVrBujox4J\ntable_id - tblrGzFneREP5Dktl\nlimit - 100\nsort (optional) - [{\"field\":\"Name\",\"direction\":\"asc\"}]\nfilter_desc (optional) - field Name (string) should be equal/contains Mark\nfields (optional) - [\"Name\",\"Email\"]\n\nOutput example:\nRecord 1 - value 1, value 2",
+        "workflowId": {
+          "__rl": true,
+          "value": "zVd0G4m33K6KrBvV",
+          "mode": "list",
+          "cachedResultName": "Airtable Agent Tools"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "command",
+              "stringValue": "search"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"base_id\": {\n      \"type\": \"string\",\n      \"description\": \"ID of the base to search in\"\n    },\n    \"table_id\": {\n      \"type\": \"string\",\n      \"description\": \"ID of the table to search in\"\n    },\n    \"limit\": {\n      \"type\": \"number\",\n      \"description\": \"Number of records to retrieve (default is all records)\"\n    },\n    \"filter_desc\": {\n      \"type\": \"string\",\n      \"description\": \"Text description of the filter logic\"\n    },\n    \"sort\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"field\": { \"type\": \"string\" },\n          \"direction\": { \"type\": \"string\", \"enum\": [\"asc\", \"desc\"] }\n        },\n        \"required\": [\"field\", \"direction\"]\n      },\n      \"description\": \"Array of sorting rules for the query\"\n    },\n    \"fields\": {\n      \"type\": \"array\",\n      \"items\": { \"type\": \"string\" },\n      \"description\": \"List of fields to retrieve\"\n    }\n  },\n  \"required\": [\"base_id\", \"table_id\"]\n}"
+      },
+      "id": "0c86638f-7220-415d-a920-13761da925a6",
+      "name": "search",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1480,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "name": "code",
+        "description": "Process data with code. Use for math functions and image (graphs) generation. \nIMPORTANT Provide raw data only, don't preprocess or use math functions by yourself\n\nInput example:\nrequest - Count average\ndata - 1,2,3\n\nOutput example:\nAverage is 2\nImage file",
+        "workflowId": {
+          "__rl": true,
+          "value": "zVd0G4m33K6KrBvV",
+          "mode": "list",
+          "cachedResultName": "Airtable Agent Tools"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "command",
+              "stringValue": "code"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"request\": {\n      \"type\": \"string\",\n      \"description\": \"Description of the operation to perform.\"\n    },\n    \"data\": {\n      \"type\": \"string\",\n      \"description\": \"Stringified data - JSON, strings, arrays and etc.\"\n    }\n  },\n  \"required\": [\"request\", \"data\"]\n}"
+      },
+      "id": "7ba1d6ac-f1a2-4b8d-a9a5-ce92eaa4e7fa",
+      "name": "code",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1600,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "name": "create_map",
+        "description": "Create link with image for map graph.\nUse addresses' longitude and latitude to create input data.\n\nInput Example:\npin-s+555555(-74.006,40.7128),pin-s+555555(-118.2437,34.0522)\n\nOutput Example:\nImage link.",
+        "jsCode": "// Example: convert the incoming query to uppercase and return it\n\nreturn `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${query.markers}/-96.9749,41.8219,3.31,0/800x500?before_layer=admin-0-boundary&access_token=pk.eyJ1IjoiaGljaG9jayIsImEiOiJjbTU0ZWt1Zm8yZngyMmlzZnAwa3kxODY1In0.sWng_ORRZhRMzN6v75q6rw`;",
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\t\"markers\": {\n\t\t\"type\": \"string\",\n\t\t\"description\": \"List of markers with longitude and latitude data separated by comma. Keep the same color 555555|Example: pin-s+555555(-74.006,40.7128),pin-s+555555(-118.2437,34.0522)\"\n\t\t}\n\t}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        1740,
+        480
+      ],
+      "id": "3754175c-6f74-4750-b2e7-00e2bd3caf6d",
+      "name": "create_map"
+    },
+    {
+      "parameters": {
+        "content": "### Replace Mapbox public key",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1680,
+        620
+      ],
+      "typeVersion": 1,
+      "id": "227a5427-c270-47dc-bc08-4bb321314926",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### Replace OpenAI connection",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        840,
+        640
+      ],
+      "typeVersion": 1,
+      "id": "667751f4-9815-45b7-8dd2-9a0821a7a5a7",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When chat message received').item.json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1100,
+        480
+      ],
+      "id": "a9cdec25-4167-44a9-9d3c-fb04aac7bb32",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "content": "### Replace Airtable workspace_id",
+        "height": 80,
+        "width": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        920,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "7fae8391-36b3-4b05-8835-88112f97eb5f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        940,
+        200
+      ],
+      "id": "dfab4eb2-ba30-4756-8a52-5d73de9fba53",
+      "name": "When chat message received",
+      "webhookId": "abf9ab75-eaca-4b91-b3ba-c0f83d3daba4"
+    },
+    {
+      "parameters": {},
+      "id": "259e3d13-ca92-4756-af69-34065dbe08f3",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        760,
+        1340
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfdbe2f5-921e-496d-87bd-9c57fdc22a7a",
+              "name": "response",
+              "value": "={{$json}}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5b80c2c8-7649-40f2-b9be-d090d8bd5ae9",
+      "name": "Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2740,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Execute Workflow Trigger').item.json.command }}",
+                    "rightValue": "get_bases",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_bases"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "26a3ffe8-c8a6-4564-8d18-5494a8059372",
+                    "leftValue": "={{ $('Execute Workflow Trigger').item.json.command }}",
+                    "rightValue": "get_base_tables_schema",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_base_tables_schema"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0f51cc26-2e42-42e1-a5c2-cb1d2e384962",
+                    "leftValue": "={{ $('Execute Workflow Trigger').item.json.command }}",
+                    "rightValue": "search",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "search"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "51031140-5ceb-48aa-9f33-d314131a9653",
+                    "leftValue": "={{ $('Execute Workflow Trigger').item.json.command }}",
+                    "rightValue": "code",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "code"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "761f5593-f85c-44cd-abbd-aeac78bc31f8",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        980,
+        1320
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "base",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1580,
+        980
+      ],
+      "id": "45c8b2eb-f43a-48b1-a270-9caeda9da0b0",
+      "name": "Get Bases1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xZwG0YpqsxpWrzVM",
+          "name": "Mark Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "base",
+        "operation": "getSchema",
+        "base": {
+          "__rl": true,
+          "value": "={{ $('Execute Workflow Trigger').item.json.query.base_id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1580,
+        1140
+      ],
+      "id": "bb8036bc-1c23-461b-bd03-2461e31c6cb6",
+      "name": "Get Base/Tables schema1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xZwG0YpqsxpWrzVM",
+          "name": "Mark Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.airtable.com/v0/{{ $('Execute Workflow Trigger').item.json.query.base_id }}/{{ $('Execute Workflow Trigger').item.json.query.table_id }}/listRecords",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ \n  Object.fromEntries(\n    Object.entries({\n      sort: $('Execute Workflow Trigger').item.json.query.sort,\n limit: $('Execute Workflow Trigger').item.json.query.limit,\nfields: $('Execute Workflow Trigger').item.json.query.fields,\nfilterByFormula:  $('Merge').item.json.choices == undefined ? undefined : JSON.parse($json.choices[0].message.content).filter\n    }).filter(([key, value]) => value !== undefined)\n  )\n}}",
+        "options": {
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "type": "body",
+                    "name": "offset",
+                    "value": "={{ $response.body.offset}}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ $response.body.offset==undefined}}"
+            }
+          }
+        }
+      },
+      "id": "4cc416aa-50bd-4b60-ae51-887c4ee97c88",
+      "name": "Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2100,
+        1360
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "1DXeuNaLSixqGPaU",
+          "name": "Query Auth account Youtube"
+        },
+        "airtableTokenApi": {
+          "id": "xZwG0YpqsxpWrzVM",
+          "name": "Mark Airtable account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dc09a5b4-ff6a-4cee-b87e-35de7336ac05",
+              "name": "prompt",
+              "value": "=Analyse user request for Airtable filtration. User filter rules to build right formula. Think smart about filter (e.g. instead of search where Name equal to value - search where name contains lowercase value)\nIMPORTANT Check examples and best practices before building formula. \n\nIMPORTANT best practices:\n\nSEARCH(LOWER('example'), LOWER({Field})) ensures both the search term and field are compared in lowercase for consistent case-insensitive matching\n\nIMPORTANT Examples:\n\n- AND(SEARCH('urgent', {Notes}), {Priority} > 3) fetch records where “Notes” contain “urgent” and “Priority” is greater than 3\n- AND({Status} = 'Pending', IS_BEFORE({Due Date}, TODAY())) fetch records where “Status” is “Pending” and “Due Date” is before today\n- OR(SEARCH('error', {Logs}), SEARCH('warning', {Logs})) fetch records where “Logs” contain “error” or “warning”\n- AND(LEN({Description}) > 10, {Price} > 50) fetch records where “Description” is longer than 10 characters and “Price” is greater than 50\n- RECORD_ID() = 'rec12345' fetch a specific record by its ID\n- SEARCH('rec67890', ARRAYJOIN({Linked Records}, ',')) fetch records linked to a specific record ID rec67890\n- AND(SEARCH('rec12345', ARRAYJOIN({Linked Records}, ',')), {Status} = 'Active') fetch records where “Linked Records” contain rec12345 and “Status” is “Active”\n\nFormula rules:\nOperators - =,!=,>,<,>=,<= \n- AND(condition1, condition2, ...) logical AND\n- OR(condition1, condition2, ...) logical OR\n- NOT(condition) logical NOT\n- SEARCH('substring', {Field}) finds position of substring, case-insensitive\n- FIND('substring', {Field}) finds position of substring, case-sensitive\n- IS_BEFORE({Date}, 'YYYY-MM-DD') checks if date is before\n- IS_AFTER({Date}, 'YYYY-MM-DD') checks if date is after\n- IS_SAME({Date1}, {Date2}, 'unit') checks if dates are the same by unit\n- RECORD_ID() = 'recXXXXXX' filters by record ID\n- {Field} = '' field is blank\n- {Field} != '' field is not blank\n- ARRAYJOIN({Linked Field}, ',') joins linked records into a string\n- LOWER({Field}) converts to lowercase for case-insensitive comparison\n- UPPER({Field}) converts to uppercase for case-insensitive comparison\n- VALUE({Text}) converts text to number for numeric comparisons\n- LEN({Field}) gets text length\n- ROUND(number, precision) rounds number\n- TODAY() current date\n- NOW() current timestamp\n- IF(condition, true_value, false_value) conditional logic\n- DATETIME_FORMAT({Date}, 'format') formats date as text\n- DATETIME_DIFF(date1, date2, 'unit') difference between dates\n- DATEADD({Date}, number, 'unit') adds time to date\n- LEFT({Text}, number) extracts leftmost characters\n- RIGHT({Text}, number) extracts rightmost characters\n- AND({Field1} = 'Value1', {Field2} > 50) multiple conditions\n- SEARCH('Value', {Field}) substring match\n- ROUND({Field1} / {Field2}, 2) numeric calculation\n- AND(IS_BEFORE({Date}, TODAY()), {Status} = 'Active') filter by date and status\n- ISERROR(expression) checks if an expression has an error\n- ABS(number) absolute value\n- MIN(value1, value2) minimum value\n- MAX(value1, value2) maximum value\n\n",
+              "type": "string"
+            },
+            {
+              "id": "4e0f9af6-517f-42af-9ced-df0e8a7118b0",
+              "name": "schema",
+              "value": "={\n  \"name\": \"filter\",\n  \"schema\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"filter\": {\n        \"type\": \"string\"\n      }\n    },\n    \"required\": [\n      \"filter\"\n    ],\n    \"additionalProperties\": false\n  },\n  \"strict\": true\n}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "16e4ea97-ea73-45a0-aa88-0f9a2969a6a3",
+      "name": "Set Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1580,
+        1420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"model\": \"gpt-4o-mini\",\n    \"messages\": [\n      {\n        \"role\": \"system\",\n        \"content\": {{ JSON.stringify($('Set Fields1').item.json.prompt) }}\n      },\n      {\n        \"role\": \"user\",\n        \"content\": \"{{ $('Execute Workflow Trigger').item.json.query.filter_desc }}\"\n      }],\n  \"response_format\":{ \"type\": \"json_schema\", \"json_schema\":  {{ $('Set Fields1').item.json.schema }}\n\n }\n  }",
+        "options": {}
+      },
+      "id": "9dc71d31-8499-4b69-b87c-898217447d50",
+      "name": "OpenAI - Extract Line Items",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        1420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "zJhr5piyEwVnWtaI",
+          "name": "OpenAi club"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        980
+      ],
+      "id": "d6252c5b-a820-4ded-b59b-ab2fb2e277c3",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        1140
+      ],
+      "id": "1442ca2e-1793-4029-b398-61d6e6f1c346",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fcb24127-53f9-4498-b0fd-463bd4966ac9",
+              "leftValue": "={{ $('Execute Workflow Trigger').item.json.query.filter_desc }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1340,
+        1360
+      ],
+      "id": "dab309d9-3629-44ba-9f0a-ede55f96488f",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1960,
+        1360
+      ],
+      "id": "a81b4dcc-c999-43be-a0ea-e37f3c7c9f9d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "records"
+            }
+          ]
+        },
+        "options": {
+          "mergeLists": true
+        }
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2260,
+        1360
+      ],
+      "id": "8029213c-fd8a-4673-a2a0-11b90fd23971",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/threads/{{ $('OPENAI - Create thread').item.json.id }}/messages ",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "OpenAI-Beta",
+              "value": "assistants=v2"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "role",
+              "value": "user"
+            },
+            {
+              "name": "content",
+              "value": "=Request:\n{{ $('Execute Workflow Trigger').item.json.query.request }}\n\nData:\n{{ $('Execute Workflow Trigger').item.json.query.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e5339ad2-36c7-40c5-846b-2bd242f41ea5",
+      "name": "OPENAI - Send message",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1560,
+        1720
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "fLfRtaXbR0EVD0pl",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/threads/{{ $('OPENAI - Create thread').item.json.id }}/runs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "OpenAI-Beta",
+              "value": "assistants=v2"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "assistant_id",
+              "value": "asst_PGUuvzEGJWOE8p8vwV56INLO"
+            },
+            {
+              "name": "stream",
+              "value": "={{true}}"
+            },
+            {
+              "name": "tool_choice",
+              "value": "={{ {\"type\": \"code_interpreter\"} }}"
+            },
+            {
+              "name": "tools",
+              "value": "={{ [{\"type\": \"code_interpreter\"}] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9874eec1-61e2-45fe-8c57-556957a15473",
+      "name": "OPENAI - Run assistant",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1760,
+        1720
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "fLfRtaXbR0EVD0pl",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.openai.com/v1/threads/{{ $('OPENAI - Create thread').item.json.id }}/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "OpenAI-Beta",
+              "value": "assistants=v2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bf378b21-07fb-4f9e-bfc5-9623ebcb8236",
+      "name": "OPENAI - Get messages",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1960,
+        1720
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "zJhr5piyEwVnWtaI",
+          "name": "OpenAi club"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.openai.com/v1/files/{{ $json.data[0].attachments[0]?.file_id ?? $json.data[0].content.find(x=>x.type==\"image_file\")?.image_file.file_id }}/content",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "OpenAI-Beta",
+              "value": "assistants=v2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b7569d19-3a10-41e5-932b-4be04260a58e",
+      "name": "OPENAI - Download File",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2400,
+        1720
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "vBLHyjEnMK9EaWwQ",
+          "name": "Mark OpenAi "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/threads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "OpenAI-Beta",
+              "value": "assistants=v2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5b822c15-af63-43f6-ac30-61a34dcd91ee",
+      "name": "OPENAI - Create thread",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1360,
+        1720
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "vBLHyjEnMK9EaWwQ",
+          "name": "Mark OpenAi "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fcb24127-53f9-4498-b0fd-463bd4966ac9",
+              "leftValue": "={{ $json.data[0].attachments[0].file_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "016ecba7-f6af-4881-a7d6-780dcb43223c",
+              "leftValue": "={{ $json.data[0].content.find(x=>x.type==\"image_file\").image_file.file_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2120,
+        1720
+      ],
+      "id": "f5f99038-9d19-49ed-9f50-3cd0270bf9ce",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://tmpfiles.org/api/v1/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6e670074-8508-4282-9c40-600cc445b10f",
+      "name": "Upload File",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2580,
+        1720
+      ],
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfdbe2f5-921e-496d-87bd-9c57fdc22a7a",
+              "name": "response",
+              "value": "={{ $json.data.url.replace('org/','org/dl/') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "abc7ddae-9ca9-4cf6-89a4-a63da8c1e036",
+      "name": "Response1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2760,
+        1720
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Replace Airtable connection",
+        "height": 80,
+        "width": 160
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2120,
+        1540
+      ],
+      "typeVersion": 1,
+      "id": "6f40d50f-70e8-4b64-aa42-ae9262fb8381",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "### Replace OpenAI connection",
+        "height": 80,
+        "width": 160
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1740,
+        1600
+      ],
+      "typeVersion": 1,
+      "id": "de99a161-5ab3-4b54-bdf7-340d74aa5a93",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "### Replace Airtable connection",
+        "height": 80,
+        "width": 160
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1540,
+        860
+      ],
+      "typeVersion": 1,
+      "id": "c1e030fd-4449-43ca-a4e7-a863f9487614",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "### Replace OpenAI connection",
+        "height": 80,
+        "width": 1180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1360,
+        1900
+      ],
+      "typeVersion": 1,
+      "id": "4375d3a4-0b3b-4de6-9db7-42af4148af2b",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "### Workflow 1",
+        "height": 780,
+        "width": 1320,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        700,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "138f813c-d0b0-4a2b-8833-69f1decc9253",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "### Workflow 2",
+        "height": 1180,
+        "width": 2240,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        700,
+        840
+      ],
+      "typeVersion": 1,
+      "id": "ca87c7b7-ab34-4ff9-8d74-cef90e6f1e5e",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "### ... or watch set up video [20 min]\n[![Youtube Thumbnail](https://cflobdhpqwnoisuctsoc.supabase.co/storage/v1/object/public/my_storage/Video%2012%20-%20Chat%20with%20Airtable%20Blur.png)](https://youtu.be/SotqsAZEhdc)\n",
+        "height": 239.5888196628349,
+        "width": 330.5152611046425,
+        "color": 7
+      },
+      "id": "a5cdf41a-f2ca-4203-94ce-45795395ea92",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        300,
+        680
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "![5min Logo](https://cflobdhpqwnoisuctsoc.supabase.co/storage/v1/object/public/my_storage/banner.png)\n## AI Agent to chat with Airtable and analyze data\n**Made by [Mark Shcherbakov](https://www.linkedin.com/in/marklowcoding/) from community [5minAI](https://www.skool.com/5minai)**\n\nEngaging with data stored in Airtable often requires manual navigation and time-consuming searches. This workflow allows users to interact conversationally with their datasets, retrieving essential information quickly while minimizing the need for complex queries.\n\nThis workflow enables an AI agent to facilitate chat interactions over Airtable data. The agent can:\n- Retrieve order records, product details, and other relevant data.\n- Execute mathematical functions to analyze data such as calculating averages and totals.\n- Optionally generate maps for geographic data visualization.\n\n1. **Dynamic Data Retrieval**: The agent uses user prompts to dynamically query the dataset.\n2. **Memory Management**: It retains context during conversations, allowing users to engage in a more natural dialogue.\n3. **Search and Filter Capabilities**: Users can perform tailored searches with specific parameters or filters to refine their results.",
+        "height": 657,
+        "width": 636,
+        "color": 7
+      },
+      "id": "697889c4-15e7-4099-89b8-f4e2e3a3abac",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Set up steps\n\n1. **Separate workflows**:\n\t- Create additional workflow and move there Workflow 2.\n\n2. **Replace credentials**:\n\t- Replace connections and credentials in all nodes.\n\n3. **Start chat**:\n\t- Ask questions and don't forget to mention required base name.",
+        "height": 346,
+        "width": 280,
+        "color": 7
+      },
+      "id": "a9f7c4fd-c07a-4c7c-875d-74b27e3f1fbf",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        680
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_base_tables_schema": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_bases": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "code": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_map": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get Bases1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Base/Tables schema1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OPENAI - Create thread",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Bases1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Base/Tables schema1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Extract Line Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Extract Line Items": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OPENAI - Send message": {
+      "main": [
+        [
+          {
+            "node": "OPENAI - Run assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OPENAI - Run assistant": {
+      "main": [
+        [
+          {
+            "node": "OPENAI - Get messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OPENAI - Get messages": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OPENAI - Download File": {
+      "main": [
+        [
+          {
+            "node": "Upload File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OPENAI - Create thread": {
+      "main": [
+        [
+          {
+            "node": "OPENAI - Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OPENAI - Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload File": {
+      "main": [
+        [
+          {
+            "node": "Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ece316a6-a34d-4d1c-81d7-42ecb1e2bb4d",
+  "meta": {
+    "instanceId": "6a2a7715680b8313f7cb4676321c5baa46680adfb913072f089f2766f42e43bd"
+  },
+  "id": "N9RALd7956r0dLB9",
+  "tags": [
+    {
+      "createdAt": "2024-11-14T15:30:35.836Z",
+      "updatedAt": "2024-11-14T15:30:35.836Z",
+      "id": "HrnqkmhNNezXBFbh",
+      "name": "N8N Template"
+    }
+  ]
+}

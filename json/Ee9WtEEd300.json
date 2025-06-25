@@ -1,0 +1,257 @@
+{
+  "name": "Firecrawl Extract Template",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7de4ab62-0f00-41ec-aac7-fb008b96e767",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v1/extract",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"urls\": [\n    \"https://quotes.toscrape.com/*\"\n  ],\n  \"prompt\": \"Extract all quotes and their corresponding authors from the website.\",\n  \"schema\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"quotes\": {\n        \"type\": \"array\",\n        \"items\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"text\": {\n              \"type\": \"string\"\n            },\n            \"author\": {\n              \"type\": \"string\"\n            }\n          },\n          \"required\": [\n            \"text\",\n            \"author\"\n          ]\n        }\n      }\n    },\n    \"required\": [\n      \"quotes\"\n    ]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "6fd3297c-4493-4bf7-9746-5c57fba4746f",
+      "name": "Extract",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JHkHTppUOMRTBBf0",
+          "name": "Firecrawl"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ff812e47-d747-4f1a-8fa8-9f3d40ec2acd",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        0
+      ],
+      "id": "a707e2ea-a150-4bae-8bc5-1977f46c7cb2",
+      "name": "If",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.firecrawl.dev/v1/extract/{{ $('Extract').item.json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "eeb5988b-285f-46d4-83dd-acce3f8c6f86",
+      "name": "Get Results",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JHkHTppUOMRTBBf0",
+          "name": "Firecrawl"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "d3e89442-d167-4a14-9b7f-32f7cf50707f",
+      "name": "30 Secs",
+      "webhookId": "e4866198-b806-4746-b57f-97333c497dbf"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        120
+      ],
+      "id": "8403e221-b1e7-41d6-b3d3-eec696250d32",
+      "name": "10 Seconds",
+      "webhookId": "6cc8c637-bafb-4d64-9cd4-8ae2a9f5b7ca"
+    },
+    {
+      "parameters": {
+        "content": "# Firecrawl Extract\n",
+        "height": 740,
+        "width": 1520,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        -320
+      ],
+      "id": "2c5d5f78-3f78-4a27-978e-1649e91bbf94",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        -140
+      ],
+      "id": "5b62f485-a897-4e83-9f34-e8db8d811cc8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "# 🚀 Setup Guide  \n**Author:** [Nate Herk](https://www.youtube.com/@nateherk)\n\n---\n\n## 🔥 Firecrawl Setup  \n- **[Get 10% Off Firecrawl](https://firecrawl.link/nateherk)**  \n- Set up your **Firecrawl API credential** in `n8n` under **Credentials > HTTP Request**  \n- In your workflow, configure the **URL** or a **List of URLs** you want to extract content from\n\n---\n\n## 🧑‍💻 Self-Hosting?\nIf you're self-hosting n8n, you can use the Firecrawl **Community Node**:  \n👉 [n8n Firecrawl Community Node](https://www.npmjs.com/package/n8n-nodes-firecrawl?activeTab=readme)\n\n---\n\n✅ Once set up, Firecrawl will intelligently extract relevant content from the provided pages based on your workflow logic.\n",
+        "height": 740,
+        "width": 340
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -500,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "6de21a87-b99d-4cad-8793-b7992b5b1134",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Extract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract": {
+      "main": [
+        [
+          {
+            "node": "30 Secs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "10 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Results": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "30 Secs": {
+      "main": [
+        [
+          {
+            "node": "Get Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "10 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Get Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4fb74789-b3af-4452-9c2b-3155eacbc876",
+  "meta": {
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "7UwKlPfE54MBwtPB",
+  "tags": []
+}

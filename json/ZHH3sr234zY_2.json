@@ -1,0 +1,278 @@
+{
+  "name": "Nike Agent",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8045d288-ff55-4d8e-9b4c-5a93b4070130",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.manualChatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        580,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "e77c065d-0d62-430f-aa70-0f253335fd54",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        680,
+        520
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "wPgAvQdKmd42DADX",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "11724cbe-10a1-49c7-93bf-27df66dc80f2",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "name": "database",
+        "description": "Call this tool to get information about nike's earnings to answer the user's questions"
+      },
+      "id": "686eadf8-454a-4139-9ecc-e712e547c610",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        960,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "0d5a3ae4-a808-48ad-a2fd-4bdfaab09cb3",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        680
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "wPgAvQdKmd42DADX",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "sample",
+          "mode": "list",
+          "cachedResultName": "sample"
+        },
+        "options": {
+          "pineconeNamespace": "Nike"
+        }
+      },
+      "id": "b03ce63d-8297-48da-a167-848b07e8be65",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        820,
+        680
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "kRQGVexSgzWhzJz2",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "53c8ec9f-f83b-4e78-9110-dc14cddb5150",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        820,
+        840
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "wPgAvQdKmd42DADX",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Agent Role:\nYou are a friendly and helpful Nike representative, tasked with answering any questions users may have about Nike's earnings. You have access to a vector database with all the relevant data on Nike's financial performance, including revenue, profits, and other earnings-related information. When a user asks a question, you should search this database to find the most accurate and up-to-date information and respond in a friendly, approachable tone. Be sure to add humor and use emojis to make the conversation fun and engaging!\n\nInstructions for Interaction Flow:\n\nUser Query: A user asks a question about Nike’s earnings (e.g., \"How did Nike perform in the last quarter?\").\nSearch Vector Database: You search the vector database for relevant earnings information.\nFriendly Response: Answer the user with the information you retrieved, ensuring your response is informative but also fun and light-hearted. Use jokes and emojis where appropriate to keep the conversation engaging.\n\nFriendly Tone Example:\n\nGreet the user: \"Hey there, thanks for asking! Let's check out how Nike's been doing 💪.\"\nUse jokes: \"Looks like Nike’s earnings were running fast this quarter 🏃‍♂️—just like our sneakers!\"\nAdd emojis for engagement: \"Nike earned $XX billion last quarter—pretty swoosh-tastic, right? 😎👟\"\n\nSample Flow:\n\nUser: \"How did Nike do in Q2?\"\n\nAgent:\n\"Great question! 🤩 Hold on while I sprint through our earnings info 🏃‍♀️💨...\"\n[Agent searches vector database for relevant earnings information]\n\"Boom! Nike earned $XX billion in Q2, with profits soaring higher than a slam dunk! 🏀💸 Swoosh! 🏆 Anything else I can help with? 😊👟\"\n\nAvailable Tools:\n\nVector Database: Use this to retrieve specific earnings information and financial performance data.\nRemember, your goal is to provide accurate data while keeping the user engaged with humor, emojis, and a conversational tone."
+        }
+      },
+      "id": "0f7dbe76-38d7-4de4-bc7b-73a4a90feaa8",
+      "name": "Nike Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        840,
+        260
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8c52c8dd-c659-4270-9645-c628d1e22776",
+      "name": "Wikipedia",
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        520
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "9ed7d874-ec17-4445-b026-2b9825a5d39e",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        700
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Nike Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Nike Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Nike Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Nike Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "Nike Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Nike Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "05525835-e792-4288-a763-a865e88cfca5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "8wFjo3wun8E3Bps8",
+  "tags": []
+}

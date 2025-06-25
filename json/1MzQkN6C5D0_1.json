@@ -1,0 +1,561 @@
+{
+  "name": "Airtable sales agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "https://airtable.com/appBWdLFc1R5bpIkP/tblcxM2cpPdkwmd0F",
+          "mode": "url"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "https://airtable.com/appBWdLFc1R5bpIkP/tblcxM2cpPdkwmd0F/viwrtfghsr6jvknNZ?blocks=hide",
+          "mode": "url"
+        },
+        "triggerField": "=Status",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        0
+      ],
+      "id": "6be97e30-4b1b-4e61-89c3-1d099cc6f5b1",
+      "name": "Airtable Trigger",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vFpkQCyaQrhDPzFz",
+          "name": "Leads/clients"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Leads name:  {{ $('Switch').item.json.fields.Name }}\nTemplate email: {{ $json.content }}",
+        "options": {
+          "systemMessage": "Your job is to manage automated emails for my leads.\n\nYou will receive the name of a lead and email template and i want you to simply add in the name variable into the email template and subject line then use the draft email tool to draft the email.\n\nPlease ensure you format the email to look nice with proper gaps and spacing"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        680,
+        -20
+      ],
+      "id": "7ade4196-7235-48c0-be73-3a8c6d496afe",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        200
+      ],
+      "id": "069360b8-3531-42fa-9c0a-06183b830a5a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.fields.Status }}",
+                    "rightValue": "New lead",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0c0a50d2-59e5-4692-9660-277e71d7d87b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "New lead"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "98dbab9b-bd9b-494e-a444-8a2b800360ea",
+                    "leftValue": "={{ $json.fields.Status }}",
+                    "rightValue": "Meeting scheduled",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Meeting scheduled"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0b431a04-7d0f-460f-b211-bbc78b857e66",
+                    "leftValue": "={{ $json.fields.Status }}",
+                    "rightValue": "Discovery call done",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Discovery call done"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a8977427-0001-48bf-8162-870a63d50b4e",
+                    "leftValue": "={{ $json.fields.Status }}",
+                    "rightValue": "Proposal sent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Proposal sent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a8f8a2a7-75dd-41ca-be81-6d6863960a9f",
+                    "leftValue": "={{ $json.fields.Status }}",
+                    "rightValue": "Won",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Won"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "358762b8-56ba-4841-a8c4-6ba8f7ccf659",
+                    "leftValue": "={{ $json.fields.Status }}",
+                    "rightValue": "Lost",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Lost"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        100,
+        -60
+      ],
+      "id": "231dc4dc-0e1e-4002-b849-a0075ba04071",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1TcChzS2bsh4CkcNYQlXt2BbLZYgXH4XwCvVA5NK7dd8/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        360,
+        -400
+      ],
+      "id": "a1d82b03-96ba-4c10-8e88-8aa97823b4fe",
+      "name": "Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YXhpI5pDsJTsKaoR",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1W0ctdFLtNvH2B4bcFBg3ReThw_d-0TUI8nKvf3z6DTk/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        360,
+        -240
+      ],
+      "id": "589babf8-9df3-40cc-83d7-d9b1addf42e6",
+      "name": "Google Docs1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YXhpI5pDsJTsKaoR",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1XIM-kBJ792delPpWMC6MMyzZpJHfHLvtFmfAJr79y7k/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        360,
+        -80
+      ],
+      "id": "8046d95e-fdad-429e-9cc5-432e923eac7e",
+      "name": "Google Docs2",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YXhpI5pDsJTsKaoR",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/12fHOeTfJywZq2GGynY0j_eNpdKFw43JoSzBsNo5BXog/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        360,
+        80
+      ],
+      "id": "fe4e8c64-b181-422c-8ddc-3717f13b6837",
+      "name": "Google Docs3",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YXhpI5pDsJTsKaoR",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1GbH9HC4enB7JFfbkwOa7iMkmkSI1QpIyIpgW3jWwbMM/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        360,
+        220
+      ],
+      "id": "99d7c8e9-dee7-45f9-9ebf-077b9284470a",
+      "name": "Google Docs4",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YXhpI5pDsJTsKaoR",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1iUg1CseWiYVKWERnHN5FfC7dDaJtD-i05ewGOz73Fx8/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        360,
+        380
+      ],
+      "id": "d4192601-3ce4-48b0-b2fa-150af6d76b8c",
+      "name": "Google Docs5",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YXhpI5pDsJTsKaoR",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "sendTo": "={{ $('Switch').item.json.fields['Email Address'] }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        920,
+        200
+      ],
+      "id": "cb88b39f-5cf0-42dc-bc88-f0760b86454c",
+      "name": "Gmail",
+      "webhookId": "2dd23eca-0dc7-4a28-affa-b43c29d654f7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LnrPa2bag9FoINre",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Airtable Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Docs1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Docs2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Docs3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Docs4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Docs5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs4": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs5": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0d8cdd92-48c6-42f4-bd7e-c87937fbaa0f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8711ef6aba5ff6781b8ed3c0d9d8ad1fb3b9e4be41f1c9a056c02209236d4a91"
+  },
+  "id": "Rn9BiTiduenJrXos",
+  "tags": [
+    {
+      "createdAt": "2025-04-06T12:36:28.131Z",
+      "updatedAt": "2025-04-06T12:36:28.131Z",
+      "id": "k9UmBYLU9osQaKsn",
+      "name": "Sales agent"
+    }
+  ]
+}

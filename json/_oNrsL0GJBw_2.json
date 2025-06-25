@@ -1,0 +1,294 @@
+{
+  "name": "RE Assistant - Project folder",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "9013498866",
+        "events": [
+          "taskStatusUpdated"
+        ],
+        "filters": {
+          "listId": "901309224514"
+        }
+      },
+      "type": "n8n-nodes-base.clickUpTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2a0c3c5f-f07c-4379-a7a1-093d183d350d",
+      "name": "ClickUp Trigger",
+      "webhookId": "4e501f6f-b031-48ae-8f45-2c4b1217aab0",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "SokbGwvfXAzEZAfj",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json.name }}",
+        "limit": 1,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1BBO9_RkueeTHz7rPgo9cHY4_nsJqP_26",
+            "mode": "list",
+            "cachedResultName": "RE Deals",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1BBO9_RkueeTHz7rPgo9cHY4_nsJqP_26"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        660,
+        0
+      ],
+      "id": "ce3929ae-728c-4650-a191-637804ec3931",
+      "name": "Folder Exist?",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tcQTtcknCiecyI7b",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Get Project Name').item.json.name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1BBO9_RkueeTHz7rPgo9cHY4_nsJqP_26",
+          "mode": "list",
+          "cachedResultName": "RE Deals",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1BBO9_RkueeTHz7rPgo9cHY4_nsJqP_26"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "157856d7-91d6-4275-839b-a9e0af067742",
+      "name": "Create Project Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tcQTtcknCiecyI7b",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "={{ $json.task_id }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "c38e9533-aa68-436a-93fa-1ea1c015ef43",
+      "name": "Get Project Name",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "SokbGwvfXAzEZAfj",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4d41d727-f471-4e6a-8251-7bee2b944aa4",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        0
+      ],
+      "id": "e9b2b723-35fb-4575-b1c5-ef708faa8615",
+      "name": "Not duplicate?"
+    },
+    {
+      "parameters": {
+        "content": "**Needs setup**",
+        "height": 280,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -80
+      ],
+      "id": "1cbd3d24-5205-4740-b712-3c098e5af58d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "48641330-c200-48e9-a2d0-7250d1432ed3",
+              "leftValue": "={{ $json.history_items[0].after.status }}",
+              "rightValue": "active client",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d7aa817d-d70f-4e59-91f1-75b1cdd8c5d4",
+      "name": "Status: Active client?"
+    },
+    {
+      "parameters": {
+        "content": "**Needs setup**",
+        "height": 280,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        620,
+        -80
+      ],
+      "id": "4aadd2be-2845-4faa-844f-4bc420c8255d",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "ClickUp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Status: Active client?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Folder Exist?": {
+      "main": [
+        [
+          {
+            "node": "Not duplicate?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project Name": {
+      "main": [
+        [
+          {
+            "node": "Folder Exist?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Not duplicate?": {
+      "main": [
+        [
+          {
+            "node": "Create Project Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status: Active client?": {
+      "main": [
+        [
+          {
+            "node": "Get Project Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "88ae8882-d1c5-48c3-8d5b-e8cd6bc6439b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "605a683b81a6e587f4e29323845487f54ca9ffb48ef0a7180153d72d510ddc13"
+  },
+  "id": "wdEsh15BeDjvK4aY",
+  "tags": [
+    {
+      "createdAt": "2025-03-27T17:12:19.584Z",
+      "updatedAt": "2025-03-27T17:12:19.584Z",
+      "id": "C7LTB8ZW6taP4KDT",
+      "name": "vid 6"
+    }
+  ]
+}

@@ -1,0 +1,1014 @@
+{
+  "name": "AI Faceless Shorts Template",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3880,
+        -1860
+      ],
+      "id": "4a380678-669a-47f4-9b9c-809f057c7603",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 17
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3880,
+        -2040
+      ],
+      "id": "f0f2be0f-5c00-4034-9c6c-5c4762a0b696",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all incoming items\nconst items = $input.all();\n\n// Extract the text field from each item\nconst texts = items.map(item => item.json.title);\n\n// Concatenate them (adjust the separator as needed)\nconst concatenated = texts.join(\", \");\n\n// Return a single item with the concatenated text\nreturn [{ json: { mergedText: concatenated } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3540,
+        -1980
+      ],
+      "id": "fe597e34-c2a4-41ee-bc90-185e86802fac",
+      "name": "Sheet Process"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3340,
+        -1820
+      ],
+      "id": "8c7303ae-c9d4-4a04-b8bf-c13fcd6cd363",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aefd1ab6-29fc-46a8-b817-cf86d62d5e4d",
+              "name": "characters",
+              "value": "=[\"Donald Trump\", \"Vladimir Putin\", \"Narendra Modi\", \"Emmanuel Macron\"]",
+              "type": "array"
+            },
+            {
+              "id": "10306eb9-43d8-4200-8c04-0ba31682e854",
+              "name": "title",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3060,
+        -1980
+      ],
+      "id": "d6860615-0d97-4e2b-8040-6f1eb854d4a0",
+      "name": "Set Characters"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2640,
+        -1820
+      ],
+      "id": "acbf441e-d0eb-4e78-819c-97e347464d76",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3860,
+        -1340
+      ],
+      "id": "93bb3850-8394-4a99-86f6-47ca67275e25",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate an idea for a new video to produce.\n\nHere are the ideas that we've already used: {{ $json.mergedText }}\n\nGive me one new, super viral idea, present it as 5-7 words:",
+        "options": {
+          "systemMessage": "=You're an expert in viral content creation with 5 years of experience.\n\nYou've created viral short videos that have gotten 10 billion views in total.\n\nYou specilize in short AI-generated videos with epic scenes, with well-known countries presidents and cultural things that the majority of people knows.\n\nExamples of videos that you did:\n- Countries as presidents bodybuilders💪🏻 (showing scenes how Donald Trump is working out with Arnold Schwarznegger, then how Putin works out with Arnold, then how French president and so on)\n- Countries as presidents rockstars🤘 (showing major presidents one by one on the scene as rock artists)\n- Countries as presidents Kaiju💀 (showing presidents as huge giants walking in water and showing their power)\n- And many more in the same style\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -3380,
+        -1980
+      ],
+      "id": "5f509b8b-16e8-41d9-a89f-905873b789af",
+      "name": "Idea Generator"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Character: {{ $json.characters }}\nTitle: {{ $('Set Characters').item.json.title }}",
+        "options": {
+          "systemMessage": "=## Overview\nYou are an expert image prompt generator specializing in crafting highly detailed, captivating prompts for advanced image models like Flux. Your goal is to generate visually engaging, epic scenes featuring people transformed into iconic roles or cultural figures that resonate widely.\n\n## Instructions\nDescribe in detail the man's appearance, including the skin color, notable facial expressions, build, and distinctive features of the face, body and hair.\nBut DON'T MENTION THEIR NAME OR ANYTHING THAT MIGHT HELP IDENTIFY HIM.\nThe image generation model should understand fully how the person's face looks like, even without knowing the name, so describe it well.\nMake the body of the man if transformed into BODYBUILDER.\nSpecify clothing, accessories, and elements of style that authentically reflect the specified role, ensuring they fit naturally.\nDetail a complementary background and environment that vividly reinforce the theme, enhancing visual coherence.\nUse precise, imaginative descriptions to maximize visual appeal and prompt effectiveness.\nFull body shot, slightly low angle to emphasize power and stature.\nThe man is centered in frame.\nPower walk straight toward the camera.\nNEVER OUTPUT QUOTATION MARKS (\"\") OR NEWLINES (\\n).\n\n## Example\nInput:\nCharacter: Donald Trump\nTitle: Countries as presidents movie stars\n\nOutput:\nFull-height shot of a man with an ultra steroid BODYBUILDER type body. His face is american male, mid-70s, tall, golden comb-over hair, orange-tanned skin, intense gaze, distinctive eyebrows. He is in the Iron man suit (while his head is in the helmet, but the face is clear). He is centered in frame. Power walk straight toward the camera. Full body shot, slightly low angle to emphasize power and stature. Around him scene of New York in Avengers 1.\n\n## Important\nNEVER EVER OUTPUT QUOTATION MARKS (\"\") OR NEWLINES (\\n)."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -2680,
+        -1980
+      ],
+      "id": "4af3a9d1-3146-488c-b570-1716da2f2228",
+      "name": "Image Prompt"
+    },
+    {
+      "parameters": {
+        "content": "# Generate a New Video Idea",
+        "height": 500,
+        "width": 1180,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3940,
+        -2140
+      ],
+      "typeVersion": 1,
+      "id": "fa0394c5-993b-4c92-9984-df1252d7a40f",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1J_bgTio5aBowvcIyKpfJvTROMEg9JLcfaOt34kRCD9g",
+          "mode": "list",
+          "cachedResultName": "Short Videos System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J_bgTio5aBowvcIyKpfJvTROMEg9JLcfaOt34kRCD9g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J_bgTio5aBowvcIyKpfJvTROMEg9JLcfaOt34kRCD9g/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -3700,
+        -1980
+      ],
+      "id": "5302d0e9-22ab-4535-a243-c5e6e77b2e1e",
+      "name": "Get Existing Ideas",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YtyW9Ev4ho1zc05E",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Generate Images",
+        "height": 500,
+        "width": 980,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2720,
+        -2140
+      ],
+      "typeVersion": 1,
+      "id": "3c1fc341-f22c-48fb-8a4e-dda0d2db760b",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3f7846c8-2c7f-440f-8245-71bf158ea311",
+              "name": "prompt",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2360,
+        -1980
+      ],
+      "id": "a4a9d49a-04d1-42db-9054-b916e64d70f5",
+      "name": "Set Prompts 1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"model\": \"Qubico/flux1-dev\",\n    \"task_type\": \"txt2img\",\n    \"input\": {\n        \"prompt\": \"{{ $json.prompt }}\",\n        \"width\": 765, \n        \"height\": 1360\n    } \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2200,
+        -1980
+      ],
+      "id": "371805b7-1f70-4adc-83d6-25eca54774aa",
+      "name": "Generate Images"
+    },
+    {
+      "parameters": {
+        "amount": 120
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2040,
+        -1980
+      ],
+      "id": "da4b8a0d-37c6-4343-9f24-6069981fa838",
+      "name": "Wait 1",
+      "webhookId": "769d8b2e-5314-40d4-9b91-6115f04c046d"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "characters",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2900,
+        -1980
+      ],
+      "id": "7510add2-3789-42ef-a166-6da0e1bb47fd",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.piapi.ai/api/v1/task/{{ $json.data.task_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1920,
+        -1860
+      ],
+      "id": "24379e8f-5970-4661-a05f-b40ad405b377",
+      "name": "Get Images"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Videos",
+        "height": 400,
+        "width": 840,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3940,
+        -1600
+      ],
+      "typeVersion": 1,
+      "id": "9e6a32ea-5003-44d3-a634-6ef04b50a3dc",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "# Render: Videos + Text + Audio",
+        "height": 400,
+        "width": 720,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3060,
+        -1600
+      ],
+      "typeVersion": 1,
+      "id": "e03a4101-fec8-4012-b1ff-549862f26571",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "# Publish the Final Video",
+        "height": 400,
+        "width": 560,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2300,
+        -1600
+      ],
+      "typeVersion": 1,
+      "id": "b8f7bde9-d9ee-4b73-b4ba-b54a74982702",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dev.runwayml.com/v1/image_to_video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer"
+            },
+            {
+              "name": "X-Runway-Version",
+              "value": "2024-11-06"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "promptImage",
+              "value": "={{ $('Get Images').item.json.data.output.image_url }}"
+            },
+            {
+              "name": "seed",
+              "value": "4294967295"
+            },
+            {
+              "name": "model",
+              "value": "gen4_turbo"
+            },
+            {
+              "name": "promptText",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "duration",
+              "value": "5"
+            },
+            {
+              "name": "ratio",
+              "value": "720:1280"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3560,
+        -1500
+      ],
+      "id": "6feb5cdb-7b67-4121-86c3-2ee9169b8835",
+      "name": "Generate Videos"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Title: {{ $('Set Characters').item.json.title }}\nImage prompt: {{ $('Set Prompts 1').item.json.prompt }}",
+        "options": {
+          "systemMessage": "=You're a helpful assistant.\n\nYour goal is to help me prepare a prompt for the video generator.\n\nI'll give you a prompt for the image generator, you will need to tweak it a little bit:\n- length of the prompt should be not more than 100 words\n- make the man WALK REALLY FAST\n- NEVER MENTION THE NAME OF THE PERSON DESCRIBED\n- NEVER MENTION THAT THE PERSON IS WELL KNOWN\n\nExample output:\nFull-height video of a walking man with an ultra steroid BODYBUILDER type body. His face is american male, mid-70s, tall, golden comb-over hair, orange-tanned skin, intense gaze, distinctive eyebrows. He is in the Iron man suit (while his face is without the helmet). He is centered in frame. He performs a power walk straight toward the camera. HE WALKS REALLY FAST. Full body video, slightly low angle to emphasize power and stature. Around him scene of New York in Avengers 1."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -3880,
+        -1500
+      ],
+      "id": "52fd9d1a-71c6-417e-8453-2cb3eba68d13",
+      "name": "Video Prompt"
+    },
+    {
+      "parameters": {
+        "amount": 360
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3380,
+        -1500
+      ],
+      "id": "e6b37448-3b10-4bc6-8a49-d0384f473e3f",
+      "name": "Wait 2",
+      "webhookId": "8d67e8a4-ff7f-4848-95a2-42d9092948de"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.dev.runwayml.com/v1/tasks/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer"
+            },
+            {
+              "name": "X-Runway-Version",
+              "value": "2024-11-06"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3220,
+        -1500
+      ],
+      "id": "280bd583-e43f-4de8-87c6-ed6433731230",
+      "name": "Get Videos"
+    },
+    {
+      "parameters": {
+        "jsCode": "// N8n Code Node to extract URLs from output arrays and combine them into a single array\n\n// This code assumes your input JSON is in items[0].json or is multiple items\n// Determine data source format\nlet inputArray;\n\nif (items.length === 1 && Array.isArray(items[0].json)) {\n  // If we have a single item containing our array\n  inputArray = items[0].json;\n} else if (items.length > 1) {\n  // If we already have multiple items, each containing part of our data\n  inputArray = items.map(item => item.json || item);\n} else {\n  throw new Error('Input structure not recognized. Please check your data format.');\n}\n\n// Create a single array to hold all URLs\nconst urlArray = [];\n\n// Process each item in the input array\nfor (const item of inputArray) {\n  // Get the data object\n  const data = item;\n  \n  // Check if the item has an output array\n  if (data.output && Array.isArray(data.output)) {\n    // For each URL in the output array, add to our URL array\n    for (const url of data.output) {\n      // You can choose to add just the URL or include metadata\n      urlArray.push({\n        url: url,\n        sourceId: data.id,\n        createdAt: data.createdAt\n      });\n    }\n  }\n}\n\n// Return a single item containing the array of all URLs\nreturn [{\n  json: {\n    urls: urlArray\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3000,
+        -1500
+      ],
+      "id": "ec6b205f-86d8-4931-9cc8-5e56bb84851f",
+      "name": "Split Out Parts"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"template_id\": \"e990409c-5317-458a-8894-1d58d9e44d1f\",\n  \"modifications\": {\n    \"Video-1.source\": \"{{ $json.urls[0].url }}\",\n    \"Video-2.source\": \"{{ $json.urls[1].url }}\",\n    \"Video-3.source\": \"{{ $json.urls[2].url }}\",\n    \"Video-4.source\": \"{{ $json.urls[3].url }}\",\n    \"Text-1.text\": \"{{ $('Idea Generator').first().json.output}}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2820,
+        -1500
+      ],
+      "id": "6acddf61-1859-4265-867e-762d65dd4270",
+      "name": "Render Video",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "amount": 120
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2660,
+        -1500
+      ],
+      "id": "efc13547-8a91-40a7-a989-981d549d1808",
+      "name": "Wait 3",
+      "webhookId": "316dc9ac-af7b-4cf6-80c1-b5ed26336f0d"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2500,
+        -1500
+      ],
+      "id": "c040a24d-72b9-4b13-a164-affd87d9775c",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Idea Generator').first().json.output}}",
+        "regionCode": "US",
+        "categoryId": "1",
+        "options": {
+          "privacyStatus": "unlisted"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        -2260,
+        -1500
+      ],
+      "id": "a3f336d3-ff6c-4b95-a386-7b2112478acb",
+      "name": "Upload Video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "c44QBKsABTQqjHBK",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "oleg@evolva.ai",
+        "subject": "=New Short Processed: {{ $('Idea Generator').first().json.output}}",
+        "emailType": "text",
+        "message": "=Oleg,\n\nA new short has been created and is awaiting your approval.\n\nIt is called \"{{ $('Idea Generator').first().json.output}}\".\n\nYou can view it here: {{ $json.youtubeLink }}\n\nCheers!",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1940,
+        -1500
+      ],
+      "id": "8447d31c-4aae-4752-aa1c-d44d83d82c3d",
+      "name": "Notification",
+      "webhookId": "bf3c6e22-a778-4c4a-b5bf-36f4c3043d07",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Ri9lF4W3JOL6ZzaZ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1J_bgTio5aBowvcIyKpfJvTROMEg9JLcfaOt34kRCD9g",
+          "mode": "list",
+          "cachedResultName": "Short Videos System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J_bgTio5aBowvcIyKpfJvTROMEg9JLcfaOt34kRCD9g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J_bgTio5aBowvcIyKpfJvTROMEg9JLcfaOt34kRCD9g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "videoLink": "={{ $('Render Video').item.json.url }}",
+            "title": "={{ $('Idea Generator').first().json.output}}",
+            "status": "review",
+            "youtubeLink": "= https://www.youtube.com/shorts/{{ $json.uploadId }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "videoLink",
+              "displayName": "videoLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "youtubeLink",
+              "displayName": "youtubeLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -2100,
+        -1500
+      ],
+      "id": "47fd6524-401a-4ebd-b7de-a1a9040e718a",
+      "name": "Add Record",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YtyW9Ev4ho1zc05E",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Existing Ideas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get Existing Ideas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Process": {
+      "main": [
+        [
+          {
+            "node": "Idea Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Idea Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Characters": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Prompt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Video Prompt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Idea Generator": {
+      "main": [
+        [
+          {
+            "node": "Set Characters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Set Prompts 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existing Ideas": {
+      "main": [
+        [
+          {
+            "node": "Sheet Process",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Prompts 1": {
+      "main": [
+        [
+          {
+            "node": "Generate Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Images": {
+      "main": [
+        [
+          {
+            "node": "Wait 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1": {
+      "main": [
+        [
+          {
+            "node": "Get Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Images": {
+      "main": [
+        [
+          {
+            "node": "Video Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Videos": {
+      "main": [
+        [
+          {
+            "node": "Wait 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2": {
+      "main": [
+        [
+          {
+            "node": "Get Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Videos": {
+      "main": [
+        [
+          {
+            "node": "Split Out Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Parts": {
+      "main": [
+        [
+          {
+            "node": "Render Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render Video": {
+      "main": [
+        [
+          {
+            "node": "Wait 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 3": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Upload Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video": {
+      "main": [
+        [
+          {
+            "node": "Add Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Record": {
+      "main": [
+        [
+          {
+            "node": "Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "106d4de3-cd19-49d3-a5a8-9e3db307887f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69f54ab0f1afba7dd61c0a7a7609df8a8bd98642cf42d92572ea26f947c9a1d8"
+  },
+  "id": "3KGf4ccqrYUEculA",
+  "tags": []
+}

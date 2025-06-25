@@ -1,0 +1,630 @@
+{
+  "name": "Personal assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Users prompt: {{ $json.text }}",
+        "options": {
+          "systemMessage": "##Role\n\nYou are a personal assistant agent that is able to send and retrieve emails, check my calendar, update an airtable database with lead data, search that same airtable database for lead data and also generate YouTube content ideas\n\n##Task\n\nYou will receive a request from the user to preform an action. The inputs can include sending emails, retrieving emails, searching their calendar, searching for leads, adding a new lead to the database or creating content ideas by scraping youtube. A user may specify one task or multiple meaning you may have to use only one tool or use multiple depending on the input I will give you breakdown of each of the tools now:\n\nget_emails - This tool will allow a user to retrieve emails from their inbox and find specific data. An input may look like \"has Lisa emailed me about the project deadline?\" and you would use this tool then look at the output which will be the last 20 emails and find any data on the project deadline from Lisa\n\nsend_email - This tool will simply send an email for the user. The inputs will be the recipient, subject line and email body. The email body will always be specified by the user and i want you to simply ad a sign or saying \"regards\" at the bottom of it. The subject line probably wont be given to you in the input so auto generate that based on the email body and the recipient may be specified to you however if it isn't then use the search_airtable_records to find the email address of the person the user specified in their prompt\n\ngoogle_calendar - This tool can simply search the user google calendar and retrieve events. Use this tool when a user says something like \"what events have i got this week\". the tool will output all the calendar events from this week and i want you to search through that and find the specific thing the user was looking for. For example they may have more complex query like \"am i free this Friday at 2:00pm\" so you would need to check the output of the events this week and se if they are free then\n\nadd_airtable_record - This tool is able to create a new record in the airtable database. This database contains lead data and the inputs are Name, Company name, Company website, Email Address and Notes. The user should specify all of these in their input and if they don't then ask then to clarify the missing inputs\n\nsearch_airtable_records - This tool can search the airtable records to get specific pieces of data on the leads. Simply input into the tool the users query which will be something like \"what was Lisa's website URL\" and the tool will output the answer back to you\n\nYoutube_Video_Ideas - This tool can simply create plans for youtube content. The only input is the users youtube query which will be something like \"i want to make a video on ai agents\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        880,
+        0
+      ],
+      "id": "1029932b-cc85-4831-b5fc-4270242d9894",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        740,
+        220
+      ],
+      "id": "0426bb52-3c76-4571-8e80-0c87bf34c526",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Add_Airtable_record",
+        "workflowId": {
+          "__rl": true,
+          "value": "R0y46a0ppa9okWdk",
+          "mode": "list",
+          "cachedResultName": "Airtable Create record"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Company name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Company_name', ``, 'string') }}",
+            "Company website": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Company_website', ``, 'string') }}",
+            "Email Address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email_Address', ``, 'string') }}",
+            "Notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Notes', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Company name",
+              "displayName": "Company name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Company website",
+              "displayName": "Company website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1220,
+        480
+      ],
+      "id": "e54a2737-aef0-4066-93f0-f6a162600929",
+      "name": "Add_Airtable_record"
+    },
+    {
+      "parameters": {
+        "name": "Youtube_Video_Ideas",
+        "workflowId": {
+          "__rl": true,
+          "value": "kQ4E6npSjxbWyePX",
+          "mode": "list",
+          "cachedResultName": "Youtube video ideas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Content ideas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Content_ideas', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Content ideas"
+          ],
+          "schema": [
+            {
+              "id": "Content ideas",
+              "displayName": "Content ideas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        380
+      ],
+      "id": "0b4d77a0-d4ac-4c5f-a1b6-c7544cc668e5",
+      "name": "Youtube_Video_Ideas"
+    },
+    {
+      "parameters": {
+        "name": "Search_Airtable_Records",
+        "workflowId": {
+          "__rl": true,
+          "value": "4OO9X6Kj8fVvvjt1",
+          "mode": "list",
+          "cachedResultName": "Airtable search records"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Airtable query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Airtable_query', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Airtable query"
+          ],
+          "schema": [
+            {
+              "id": "Airtable query",
+              "displayName": "Airtable query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        440
+      ],
+      "id": "91ec1632-7f1e-4be8-aebd-35b1dee549fc",
+      "name": "Search_Airtable_Records"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -20,
+        0
+      ],
+      "id": "8c059b80-0599-4650-8578-83c6ef704a3d",
+      "name": "Telegram Trigger",
+      "webhookId": "47bfd98b-694c-484d-9760-d2532dfdcdc4",
+      "credentials": {
+        "telegramApi": {
+          "id": "GaIDalUYl8cR4ROH",
+          "name": "Autonomously bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "925a7a01-d25d-4107-b3e4-9c3e1e9435bb"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5716b0d0-9220-4ac4-bd93-ece54dabb3da",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        180,
+        0
+      ],
+      "id": "2aeeee02-554e-4a1f-bb6d-c24f6a6c30d3",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        100
+      ],
+      "id": "b73b5b74-3d1e-4568-80e8-a193f7846b9f",
+      "name": "Telegram",
+      "webhookId": "bb5379c0-231f-489a-a16b-a7c271ba4e04",
+      "credentials": {
+        "telegramApi": {
+          "id": "GaIDalUYl8cR4ROH",
+          "name": "Autonomously bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        580,
+        100
+      ],
+      "id": "fa82d2f5-0c0d-49d4-8436-8ac34ee83f5a",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "953e4a2b-1fcc-4fa3-aba4-954b0cb3caa3",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        500,
+        -100
+      ],
+      "id": "f3e128d0-7859-4426-bace-312f7f55dbcc",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "c_d651ada466e0f9a22c1b0335ac92b65bcae53e53088daa5b00eff1a617cd0222@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Demo"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1080,
+        500
+      ],
+      "id": "49dee9d5-11fa-470f-a484-027d38e3778a",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "865r2pctYgIvca2b",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1240,
+        0
+      ],
+      "id": "54536d9a-aaf1-4665-bbba-ea78ed0001db",
+      "name": "Telegram1",
+      "webhookId": "6429f382-c6af-440c-a198-95d9b6265679",
+      "credentials": {
+        "telegramApi": {
+          "id": "GaIDalUYl8cR4ROH",
+          "name": "Autonomously bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        420
+      ],
+      "id": "645f5204-f13a-4db5-a746-31c47ef9643c",
+      "name": "get_emails",
+      "webhookId": "53693abe-bb2d-4cd5-bd27-43557d74692e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LnrPa2bag9FoINre",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        940,
+        480
+      ],
+      "id": "f18e5b88-87aa-4346-a759-a6c566719c69",
+      "name": "send_email",
+      "webhookId": "8ba3181d-fc37-4d5d-8430-19cb7326c189",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LnrPa2bag9FoINre",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add_Airtable_record": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Youtube_Video_Ideas": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search_Airtable_Records": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3f7036ae-2b2e-4523-9ee0-87538cade55e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8711ef6aba5ff6781b8ed3c0d9d8ad1fb3b9e4be41f1c9a056c02209236d4a91"
+  },
+  "id": "5PhLfh7wEjOE96le",
+  "tags": []
+}

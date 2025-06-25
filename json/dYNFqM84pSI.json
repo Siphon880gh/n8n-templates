@@ -1,0 +1,517 @@
+{
+  "name": "Job Seeking",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "70abe954-bdaf-42d8-8179-b49ec15fa636",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://rss.app/feeds/eLi2CzXTaHeeHkNE.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "fa920cdd-3193-48a7-ac3b-0084abe9d980",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1eyeda4g5YNjR80tayNwZihv-_O7GY8jEGeHki7cCdAY",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Job Listings",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eyeda4g5YNjR80tayNwZihv-_O7GY8jEGeHki7cCdAY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eyeda4g5YNjR80tayNwZihv-_O7GY8jEGeHki7cCdAY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('RSS Read').item.json.title }}",
+            "Link": "={{ $('RSS Read').item.json.link }}",
+            "Date": "={{ $('RSS Read').item.json.pubDate }}",
+            "Company Name": "={{ $('OpenAI').item.json.message.content.company_name }}",
+            "Benefits": "={{ $('OpenAI').item.json.message.content.benefits }}",
+            "Job Description": "={{ $('OpenAI').item.json.message.content.job_description }}",
+            "Rating": "={{ $('OpenAI1').item.json.choices[0].message.content.score }}",
+            "Cover Letter": "={{ $json.choices[0].message.content.cover_letter }}"
+          },
+          "matchingColumns": [
+            "Link"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Benefits",
+              "displayName": "Benefits",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cover Letter",
+              "displayName": "Cover Letter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2020,
+        0
+      ],
+      "id": "68a81f07-271f-481b-9856-4c57a072a9a2",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('RSS Read').item.json.link }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "6301a35d-0463-432d-855d-7f840e6fe84e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot capable of pulling out data from a job listing site.",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job site:\n {{ $json.data }}"
+            },
+            {
+              "content": "Please output the data in JSON format, using the following structure:\n\n{\n\"company_name\": \"\",\n\"benefits\": \"\", //401K plan, medical, etc, please separate by commas\n\"job_description\": \"\", //please make it 200 characters or less\n\"location\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        880,
+        0
+      ],
+      "id": "61f3753e-587c-4d0b-93fa-c1ba14eb09b8",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "9RWAaaO3Wu3uNVX7",
+          "name": "n8n Jono"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot perfect at creating cover letters for a job. Please take the candidates resume and create a customized cover letter to the job.",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job listing details:\nTitle: {{ $('RSS Read').item.json.title }}\nDescription: {{ $('OpenAI').item.json.message.content.job_description }}\nName: {{ $('OpenAI').item.json.message.content.company_name }}\nLocation: {{ $('OpenAI').item.json.message.content.location }}\n\nHere is the candidates skill set:\n📄 SAMPLE RESUME\n\nAlex Morgan\n📍 Toronto, ON, Canada | 📧 alex.morgan@email.com | 📞 (123) 456-7890 | 🌐 linkedin.com/in/alexmorgan | github.com/alexmseo (optional if portfolio on GitHub)\n\n🎓 Education\nBachelor of Business Administration – Marketing\nUniversity of Toronto, Toronto, ON\nGraduated: April 2025 | GPA: 3.7/4.0\n\nRelevant coursework:\n\nDigital Marketing Strategies\n\nData Analytics in Marketing\n\nConsumer Behaviour\n\nSEO & Content Marketing (elective)\n\n💼 Experience\nSEO Intern\nGrowthRocket Agency, Remote | Jan 2025 – Apr 2025\n\nConducted technical SEO audits for 10+ client websites using tools like Screaming Frog, Ahrefs, and Google Search Console.\n\nImplemented structured data (Schema.org) to improve click-through rates in search results.\n\nOptimized on-page elements such as meta titles, descriptions, H1-H3 tags, internal linking, and image alt text.\n\nCollaborated with the content team to develop keyword-rich blog content and updated outdated pages.\n\nImproved page speed performance using tools like PageSpeed Insights and GTmetrix.\n\nFreelance SEO Consultant\nSelf-Employed | May 2024 – Present\n\nHelped 3 small local businesses optimize their websites for search engines, increasing organic traffic by 30–70% within 3 months.\n\nConducted keyword research and competitive analysis to guide content creation.\n\nSet up Google Analytics 4 and Google Search Console for performance monitoring.\n\n🛠 Skills\nSEO Tools: Google Search Console, GA4, Ahrefs, Screaming Frog, SEMrush, Yoast SEO\nCMS: WordPress, Wix\nTechnical SEO: Site audits, page speed optimization, canonical tags, indexing & crawling\nOn-Page SEO: Meta tags, internal linking, content structure, image optimization\nSoft Skills: Communication, problem-solving, attention to detail, teamwork\n\n📚 Certifications\nGoogle Analytics Certification – Google\n\nSEO Fundamentals – Semrush Academy\n\nTechnical SEO Certification – Moz (or any other you’ve done)"
+            },
+            {
+              "content": "Please return JSON data structured the following way:\n{\n\"cover_letter\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1640,
+        0
+      ],
+      "id": "3a151c6e-d7d2-4a0d-bef7-8c7a4865e4e4",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "9RWAaaO3Wu3uNVX7",
+          "name": "n8n Jono"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot rating how closely a job listing is to a candidates skill set, on a score of 5.\nGive the following points:\na) 3 points for skills matching, 1 point for mostly matching\nb) 1 point for it being the right experience level\nc) 1 point for it being a remote position\nd) 1 point if past job experience matches the job role\ne) 1 point if the skills on the resume align with the job\nf) 3 points if I meet the job qualifications posted based on my resume",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job listing details:\n{{ $('HTTP Request').item.json.data }}\n\nHere is the candidates skill set:\n📄 SAMPLE RESUME\n\nAlex Morgan\n📍 Toronto, ON, Canada | 📧 alex.morgan@email.com | 📞 (123) 456-7890 | 🌐 linkedin.com/in/alexmorgan | github.com/alexmseo (optional if portfolio on GitHub)\n\n🎓 Education\nBachelor of Business Administration – Marketing\nUniversity of Toronto, Toronto, ON\nGraduated: April 2025 | GPA: 3.7/4.0\n\nRelevant coursework:\n\nDigital Marketing Strategies\n\nData Analytics in Marketing\n\nConsumer Behaviour\n\nSEO & Content Marketing (elective)\n\n💼 Experience\nSEO Intern\nGrowthRocket Agency, Remote | Jan 2025 – Apr 2025\n\nConducted technical SEO audits for 10+ client websites using tools like Screaming Frog, Ahrefs, and Google Search Console.\n\nImplemented structured data (Schema.org) to improve click-through rates in search results.\n\nOptimized on-page elements such as meta titles, descriptions, H1-H3 tags, internal linking, and image alt text.\n\nCollaborated with the content team to develop keyword-rich blog content and updated outdated pages.\n\nImproved page speed performance using tools like PageSpeed Insights and GTmetrix.\n\nFreelance SEO Consultant\nSelf-Employed | May 2024 – Present\n\nHelped 3 small local businesses optimize their websites for search engines, increasing organic traffic by 30–70% within 3 months.\n\nConducted keyword research and competitive analysis to guide content creation.\n\nSet up Google Analytics 4 and Google Search Console for performance monitoring.\n\n🛠 Skills\nSEO Tools: Google Search Console, GA4, Ahrefs, Screaming Frog, SEMrush, Yoast SEO\nCMS: WordPress, Wix\nTechnical SEO: Site audits, page speed optimization, canonical tags, indexing & crawling\nOn-Page SEO: Meta tags, internal linking, content structure, image optimization\nSoft Skills: Communication, problem-solving, attention to detail, teamwork\n\n📚 Certifications\nGoogle Analytics Certification – Google\n\nSEO Fundamentals – Semrush Academy\n\nTechnical SEO Certification – Moz (or any other you’ve done)"
+            },
+            {
+              "content": "Please return JSON data structured the following way:\n{\n\"score\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1260,
+        0
+      ],
+      "id": "12e09fd7-69d8-4877-8ab6-1382c0b16f8b",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "9RWAaaO3Wu3uNVX7",
+          "name": "n8n Jono"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "756431ae-9a71-45c9-877a-0d7936dfb493",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "https://rss.app/feeds/eLi2CzXTaHeeHkNE.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        1880,
+        -600
+      ],
+      "id": "9d71a010-6e33-4be6-af68-89cc327c513b",
+      "name": "RSS Read1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        -600
+      ],
+      "id": "880cdba7-9edc-4c1d-a8b9-c11badc6eb6b",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "993ff775-0e35-4844-8b30-6d19f605cbfa",
+              "name": "RSS feeds",
+              "value": "[\"https://rss.app/feeds/eLi2CzXTaHeeHkNE.xml\", \"https://rss.app/feeds/eLi2CzXTaHeeHkNE.xml\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1420,
+        -600
+      ],
+      "id": "be3d2736-2c5b-4a7d-9242-af1e6e20ce4c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['RSS feeds']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        -600
+      ],
+      "id": "334a89b0-205f-4553-a0ac-a2cf77c0f5fb",
+      "name": "Split Out"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "RSS Read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e287db00-0893-4a6b-9b7e-9d93b417f882",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "19IYicaNGbj5isMV",
+  "tags": []
+}

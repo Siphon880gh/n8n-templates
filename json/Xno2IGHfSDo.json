@@ -1,0 +1,690 @@
+{
+  "name": "YouTube Content Idea Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        125
+      ],
+      "id": "f756a3a4-fa79-4d7b-9820-884d53456465",
+      "name": "When chat message received",
+      "webhookId": "a3b75c51-c5a8-44cc-b116-8ac9ac5b67bd"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/mExYO4A2k9976zMfA/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer apify_api_TZIb2yKKetN4gclE8oTTpB4tfKNEc4250Rs6"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customMapFunction\": \"(object) => { return {...object} }\",\n  \"maxItems\": 100,\n  \"sort\": \"top\",\n  \"startUrls\": [\n    \"{{ $json.chatInput }}\"\n  ]\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        125
+      ],
+      "id": "6d3ba1aa-dbaf-4dcc-a102-5e79a10f87ca",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a helpful, intelligent content writing assistant. \n\nPlease review the following comment.\n\nComment: {{ $json.text }}"
+            },
+            {
+              "content": "=# Overview  \nYou are an AI agent responsible for analyzing YouTube comments and determining whether they contain a relevant idea or inspiration for new content on Nolan Harper's AI automation YouTube channel.\n\n## Context  \n- Nolan Harper is an AI automation entrepreneur who previously scaled a marketing agency to $102k/month.  \n- He has driven over $80M in revenue for clients through marketing strategies.  \n- His YouTube channel showcases how to build AI automations and agents using platforms like Make, n8n, and Zapier.  \n- Nolan is also an expert in paid advertising (Facebook/Meta, IG, Google), content creation, copywriting, funnels, and automations.  \n- The goal is to identify comments that could lead to tutorials, strategy breakdowns, tool walkthroughs, or deeper dives into marketing + automation intersections.  \n\n## Instructions  \n1. Read the YouTube comment provided via input.  \n2. Evaluate whether the comment contains one or more of the following types of content opportunities:  \n   - A direct or implied suggestion for a tutorial or walkthrough using Make, n8n, Zapier, or similar tools.  \n   - A question about building AI agents, automations, or real-world business use cases.  \n   - A comment that connects automation with paid ads, funnels, or scaling marketing systems.  \n   - Feedback or confusion that highlights areas where further explanation would help the audience.  \n   - Curiosity about integrating AI into marketing campaigns, lead generation, or sales automation.  \n   - Requests or suggestions that touch on Nolan's areas of authority: copywriting, media buying, automations, or digital business growth.  \n3. Output only:  \n   - \"Yes\" → if there is a viable content idea.  \n   - \"No\" → if the comment does not suggest a topic Nolan could turn into a video.  \n\n## Tools  \n- Input: `{{ $json.text }}`  \n\n## Examples  \n- Input: \"Can you show how to automate lead qualification using ChatGPT and Facebook ads?\"  \n  Output: Yes  \n\n- Input: \"How did you go from a marketing agency to AI automations? Would love that story.\"  \n  Output: Yes  \n\n- Input: \"Still confused about setting up filters in Make.com workflows.\"  \n  Output: Yes  \n\n- Input: \"Love your vibe man 🔥\"  \n  Output: No  \n\n- Input: \"Subscribed because AI is the future!\"  \n  Output: No  \n\n- Input: \"Is Zapier better than n8n for funnel automations?\"  \n  Output: Yes  \n\n## SOP (Standard Operating Procedure)  \n1. Parse the YouTube comment from `{{ $json.text }}`.  \n2. Review the content against the relevance checklist under Instructions.  \n3. Assess whether the comment aligns with Nolan’s expertise or the channel’s core topics.  \n4. Output \"Yes\" or \"No\" based on the presence or absence of content opportunity.  \n\n## Final Notes  \n- Emphasize relevance to Nolan’s brand: AI agents, automations, business systems, and marketing automation.  \n- Avoid tagging generic compliments or off-topic comments as relevant.  \n- When in doubt, favor inclusion if there's a clear path from the comment to a teachable, engaging, or high-leverage video topic.  \n---",
+              "role": "system"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        440,
+        125
+      ],
+      "id": "9d033fd7-8423-47cd-9620-47d07835d1b2",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1JoTrVYK7eEbh1Nx30B4s7u0urye_Sce5Zw2KFKolHlM",
+          "mode": "list",
+          "cachedResultName": "YouTube Comments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JoTrVYK7eEbh1Nx30B4s7u0urye_Sce5Zw2KFKolHlM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 647212516,
+          "mode": "list",
+          "cachedResultName": "dataset_youtube-comments-scraper_2025-05-04_22-04-27-288",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JoTrVYK7eEbh1Nx30B4s7u0urye_Sce5Zw2KFKolHlM/edit#gid=647212516"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('HTTP Request').item.json.id }}",
+            "contentIdea": "={{ $json.choices[0].message.content.output }}",
+            "text": "={{ $('HTTP Request').item.json.text }}",
+            "type": "={{ $('HTTP Request').item.json.type }}",
+            "likeCount": "={{ $('HTTP Request').item.json.likeCount }}",
+            "replyCount": "={{ $('HTTP Request').item.json.replyCount }}",
+            "publishedTime": "={{ $('HTTP Request').item.json.publishedTime }}",
+            "author": "={{ $('HTTP Request').item.json.author.name }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "likeCount",
+              "displayName": "likeCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "replyCount",
+              "displayName": "replyCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "publishedTime",
+              "displayName": "publishedTime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "author",
+              "displayName": "author",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contentIdea",
+              "displayName": "contentIdea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1036,
+        125
+      ],
+      "id": "aa0b700b-0af3-40f5-8b32-d9a7c066993d",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nuIKS89ZnY7gxINP",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b8035c7a-4a27-48b6-8632-93120cdf4b32",
+              "leftValue": "={{ $json.choices[0].message.content.output }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        125
+      ],
+      "id": "a744a4b5-e876-4c2d-8dfb-37d77b4775df",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1256,
+        125
+      ],
+      "id": "9055b7f8-f23b-4fdb-9c9d-7d72f0593fd8",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a helpful content creator assistant. \nTopic:  {{ $json.choices[0].message.content.topic }}\nResearch: {{ $json.choices[0].message.content.research_overview }}"
+            },
+            {
+              "content": "# Overview  \nYou are an AI agent tasked with transforming a researched YouTube video topic into a compelling video concept. Your responsibilities include crafting a high-engagement hook and structuring a clear outline based on provided research.\n\nNolan’s Prompt\n\n## Context  \n- You will receive a video topic and a 300–500 word research overview generated by a previous agent.  \n- Your role is to turn this into a viewer-grabbing **hook** and a logically sequenced **outline** for a potential YouTube video on Nolan Harper's AI automation channel.  \n- The channel focuses on building automations and AI agents using tools like Make, n8n, and Zapier, as well as strategies that connect automation with paid ads, funnels, and digital business systems.  \n- The target audience includes creators, entrepreneurs, agency owners, and marketers interested in using AI and automation to save time, scale systems, and boost profitability.  \n- The tone should be practical, high-leverage, and curiosity-driven while remaining structured and actionable.  \n- You are not responsible for scripting, only ideation and structuring.  \n\n## Instructions  \n1. Read the `topic` and `research_overview`.  \n2. Generate a one-sentence hook designed to immediately capture interest.  \n   - The hook should raise curiosity, pose a bold question, or present a powerful benefit or surprise.  \n   - It should resonate with viewers interested in systems, automation, growth, or time leverage.  \n3. Create a clear outline (3–6 bullet points) that logically sequences the video’s content.  \n   - The outline should align with the research and Nolan’s brand: automation, tools, systems, or marketing application.  \n   - Begin with a compelling context or insight, develop through practical or strategic steps, and end with a takeaway or next step.  \n4. Output your results in JSON format with two keys: `hook` and `outline`.  \n\n## Tools  \n- None (uses only provided data)\n\n## Examples  \n- Input:  \n```json\n{\n  \"topic\": \"How to Use Make.com to Fully Automate Your Lead Funnel\",\n  \"research_overview\": \"This automation stack uses Make.com to connect Facebook Lead Ads, ChatGPT, and Notion for seamless lead intake, qualification, and tracking...\"\n}\n```\n\n- Output:  \n```json\n{\n  \"hook\": \"What if your lead funnel could qualify and organize every prospect automatically—without lifting a finger?\",\n  \"outline\": [\n    \"Why traditional lead funnels waste time and energy\",\n    \"Quick intro to Make.com and the tools used\",\n    \"Step-by-step walkthrough of the automation flow\",\n    \"How ChatGPT handles lead qualification dynamically\",\n    \"Real-world use cases and time saved\",\n    \"What to improve or scale next after setup\"\n  ]\n}\n```\n\n## SOP (Standard Operating Procedure)  \n1. Ingest the `topic` and `research_overview`.  \n2. Find the most outcome-driven, intriguing, or time-leveraged angle.  \n3. Write a hook that grabs viewer attention within 5–10 seconds.  \n4. Break the research down into 3–6 clear, logically ordered outline points that reflect Nolan’s value-first style.  \n5. Output in strict JSON format with the keys: `hook` and `outline`.\n\n## Final Notes  \n- Avoid fluff or generic intros—each outline point should deliver actionable or intriguing substance.  \n- The hook should reflect Nolan’s unique value: automation, leverage, marketing, or systemized growth.  \n- Maintain viewer retention by front-loading curiosity and delivering value with each section.  \n---\n",
+              "role": "system"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1852,
+        0
+      ],
+      "id": "12357e5b-1001-4b6b-bae1-3fdfa62c2eb3",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a helpful research assistant.  \n\nYouTube comment to analyze: {{ $json.text }}"
+            },
+            {
+              "content": "# Overview  \nYou are an AI agent specialized in extracting content-worthy topics from YouTube comments and conducting real-time research to support video ideation.\n\n## Objectives:  \nBegin by analyzing the YouTube comment to identify a relevant, engaging, and curiosity-driven topic. Once the topic is extracted, use the Tavily tool to perform real-time research based on that topic.\n\nBased on your findings, return a structured JSON object that includes:\n- A clear and compelling video topic derived from the comment  \n- A 300–500 word research overview that:  \n  - Expands on the topic with current, factual information  \n  - Includes recent trends, statistics, and real-world examples (citing sources like “according to [source]”)  \n  - Maintains an educational, unbiased, and informative tone  \n  - Highlights why the topic is timely, interesting, or useful for a broad audience  \n\n## Output Instructions:  \n- Your ONLY output should be a JSON object with the keys: `topic` and `research_overview`.  \n- Do not include any setup text, notes, or formatting outside of the JSON object.  \n- Ensure the research overview is between 300–500 words and tightly aligned with the topic.  \n\n## Example Workflow:  \n1) Receive a YouTube comment (e.g., “Everyone’s ditching Ozempic for berberine. Is that stuff legit?”)  \n2) Extract the core topic implied by the comment (e.g., “Berberine vs Ozempic for weight loss”)  \n3) Use Tavily to search for up-to-date and credible information about the topic  \n4) Write a 300–500 word summary that outlines background, recent developments, and key takeaways  \n5) Return the result in this exact format:  \n```json\n{\n  \"topic\": \"Berberine vs Ozempic: Why This Natural Supplement is Gaining Popularity in Weight Loss Conversations\",\n  \"research_overview\": \"Berberine, a compound found in several plants, has recently gained traction as a potential natural alternative to Ozempic, a GLP-1 receptor agonist. As of 2025, TikTok and Reddit communities have seen a surge...\"\n}",
+              "role": "system"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1476,
+        0
+      ],
+      "id": "1aeef733-5bc6-416f-95f7-50c5047cc8d5",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1JoTrVYK7eEbh1Nx30B4s7u0urye_Sce5Zw2KFKolHlM",
+          "mode": "list",
+          "cachedResultName": "YouTube Comments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JoTrVYK7eEbh1Nx30B4s7u0urye_Sce5Zw2KFKolHlM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 647212516,
+          "mode": "list",
+          "cachedResultName": "dataset_youtube-comments-scraper_2025-05-04_22-04-27-288",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JoTrVYK7eEbh1Nx30B4s7u0urye_Sce5Zw2KFKolHlM/edit#gid=647212516"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Loop Over Items').item.json.id }}",
+            "topic": "={{ $('OpenAI2').item.json.choices[0].message.content.topic }}",
+            "research": "={{ $('OpenAI2').item.json.choices[0].message.content.research_overview }}",
+            "hook": "={{ $json.choices[0].message.content.hook }}",
+            "outline": "={{ $json.choices[0].message.content.outline }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "likeCount",
+              "displayName": "likeCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "replyCount",
+              "displayName": "replyCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "publishedTime",
+              "displayName": "publishedTime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "author",
+              "displayName": "author",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contentIdea",
+              "displayName": "contentIdea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "research",
+              "displayName": "research",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hook",
+              "displayName": "hook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "outline",
+              "displayName": "outline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2228,
+        125
+      ],
+      "id": "1c81d413-edd3-4909-9e12-68f4461a4328",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nuIKS89ZnY7gxINP",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the web. ",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"{searchTerm}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"advanced\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "searchTerm",
+              "description": "what the user is searching for information on. "
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        200
+      ],
+      "id": "e91b50db-c8a3-432c-b678-865221aca185",
+      "name": "Tavily"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5749557b-8b45-4f01-ab14-47977d837f75",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9da288905fbe9354dea4b543fd7e960ac33b487ac1b02440ad591d7c90022103"
+  },
+  "id": "8VZHV2dBDbnwzOOk",
+  "tags": []
+}

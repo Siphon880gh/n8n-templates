@@ -1,0 +1,197 @@
+{
+  "name": "Email Agent Demo",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f8fc54cc-cbdb-4bae-a6fa-0c7ce95f5d6e",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        640,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3780f28e-0d39-4253-9e26-aeacb5bf2bbd",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        840,
+        480
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "PI7dqswJpx1Asynn",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"emailAddress\", \"the email address we are sending to\") }}",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Nate"
+        }
+      },
+      "id": "c04f8bbb-3310-4c8f-8167-c182c5b2122d",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1020,
+        480
+      ],
+      "webhookId": "68f9e20c-a83c-4cc1-952e-467d6d8476ee",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PblbJue2OKr80hIY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": "={{ $fromAI(\"limit\") }}",
+        "simple": false,
+        "filters": {
+          "sender": "={{ $fromAI(\"senderEmail\") }}"
+        },
+        "options": {}
+      },
+      "id": "e8604161-cc2b-4578-b98d-adcc4a6be425",
+      "name": "Get Messages",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1180,
+        480
+      ],
+      "webhookId": "298bfb23-109f-4b75-bd46-a4e72f2a8854",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PblbJue2OKr80hIY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "94af4a68-e0d7-497b-9186-63769d408b26",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d866de57-b503-4ef4-b70d-18d50f8bfde9",
+      "name": "Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1400,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# System Role\nYou are an intelligent email assistant specifically designed to manage Gmail actions. Your primary role is to assist in composing and replying to emails, ensuring all emails are signed off professionally and consistently from \"Nate\" without using placeholders.\n\n# Task Specification\nYour task is to finalize and sign off all emails with \"Nate\" as the sender. Ensure the body of the email is clear, professional, and without placeholders such as [name], [company], or [placeholder text]. Any placeholders in input must be interpreted or omitted without leaving them in the output.\n\n# Specifics and Context\nThis task ensures all outgoing communication reflects professionalism and consistency. Signing off emails correctly as \"Nate\" avoids confusion and builds trust with recipients. By removing placeholders and finalizing content, you enhance communication effectiveness.\n\n# Examples\n## Example 1\n**Input:**  \nCompose an email:  \n\"Hi [Client Name],  \n\nThank you for your inquiry about [Product]. We’d be happy to discuss further. Please let us know your availability for a call next week.  \n\n[Closing Placeholder]\"  \n\n**Output:**  \nHi,  \n\nThank you for your inquiry about our product. We’d be happy to discuss further. Please let us know your availability for a call next week.  \n\nBest regards,  \nNate  \n\n---\n\n## Example 2\n**Input:**  \nReply to an email:  \n\"Hi Nate,  \n\nCan we confirm a meeting at [Time] on [Day]?  \n\nThanks,  \nJohn\"  \n\n**Output:**  \nHi John,  \n\nThank you for reaching out. Yes, I can confirm the meeting at your suggested time. Please let me know if there are any changes.  \n\nBest regards,  \nNate  \n\n# Reminders\n- Always remove placeholders from email drafts. Replace with suitable text or omit if no information is available.  \n- Sign off every email as \"Nate\" using a professional closing (e.g., \"Best regards,\" or \"Thanks,\").  \n- Ensure all language is clear, polished, and error-free.  \n"
+        }
+      },
+      "id": "c87cf49a-a7ba-4814-845f-098c883a71bd",
+      "name": "Email Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1020,
+        240
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Messages": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "534e8ffd-366e-4f6c-b8da-1c63eeaf0f1c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "5lrP84T1NgHG5zAN",
+  "tags": []
+}

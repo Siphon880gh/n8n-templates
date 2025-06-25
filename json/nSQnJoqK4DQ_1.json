@@ -1,0 +1,298 @@
+{
+  "name": "Prompt Chaining",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        440,
+        200
+      ],
+      "id": "53275b40-1b62-48b5-9b6b-60fe952630ab",
+      "name": "4o mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the topic to write a blog about: {{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "# Overview\nYou are an expert outline writer. Your job is to generate a structured outline for a blog post with section titles and key points."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        120,
+        -60
+      ],
+      "id": "bfcdca67-e28f-41f6-9f3c-71f7271d8537",
+      "name": "Outline Writer"
+    },
+    {
+      "parameters": {
+        "content": "# Prompt Chaining\n ✅ Improved Accuracy and Quality – Each step focuses on a specific task, reducing errors and hallucinations.\n\n ✅ Greater Control Over Each Step – You can refine or tweak individual steps without affecting the entire process.\n\n ✅ Specialization Leads to More Effective AI Agents – Each AI agent becomes a specialist rather than a generalist, improving reliability.\n\n ✅ Easier Debugging and Optimization – If an output isn’t ideal, you only need to fix the weak link rather than redoing everything.\n\n ✅ More Scalable and Reusable Workflows – A structured, step-by-step workflow can be repurposed for different use cases.\n",
+        "height": 260,
+        "width": 940,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -100,
+        -440
+      ],
+      "typeVersion": 1,
+      "id": "e8297f5e-4ab5-4311-b5d8-0ab50c74d39b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the outline: \n\n{{ $json.output }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert blog evaluator. Revise this outline and ensure it covers the following key criteria: \n(1) Engaging Introduction \n(2) Clear Section Breakdown\n(3) Logical Flow\n(4) Conclusion with Key Takeaways\n\n## Output\nOnly output the revised outline."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        440,
+        -60
+      ],
+      "id": "d15e23e2-ac3e-46d4-a262-e5b652585d80",
+      "name": "Outline Evaluation"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here if the revised outline: {{ $json.output }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert blog writer. Generate a detailed blog post using the outline with well-structured paragraphs and engaging content."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        780,
+        -60
+      ],
+      "id": "20caaf7c-47b9-4633-a18d-43dd3dfa093b",
+      "name": "Blog Writer"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "simple": false,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        -60
+      ],
+      "id": "69464fe3-f380-4350-bd71-87eaeefed4f4",
+      "name": "Post to Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "pEX7GDr771yL1CT3",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "deepseek-reasoner",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        960,
+        200
+      ],
+      "id": "54957470-a5da-4959-8af8-bc929cd544ff",
+      "name": "DeepSeek R1",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "UtrKBz6qKLtigWOT",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -60
+      ],
+      "id": "4e97b98c-5a13-4158-b17a-24a3aa85775b",
+      "name": "When chat message received",
+      "webhookId": "8b5d17e6-9356-437e-a97a-4f4027e6451d"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        120,
+        200
+      ],
+      "id": "d0d3309f-4cb7-4969-a0e1-3988e268df45",
+      "name": "2.0 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DW8owDXDeMHnr1rA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        200
+      ],
+      "id": "ef063d4a-2d81-46d6-b449-5e82f3677725",
+      "name": "Claude 3.5",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iEsH2oywXIJiWHnM",
+          "name": "Anthropic account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Outline Evaluation",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline Writer": {
+      "main": [
+        [
+          {
+            "node": "Outline Evaluation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline Evaluation": {
+      "main": [
+        [
+          {
+            "node": "Blog Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Blog Writer": {
+      "main": [
+        [
+          {
+            "node": "Post to Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Docs": {
+      "main": [
+        []
+      ]
+    },
+    "DeepSeek R1": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Outline Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.0 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Outline Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude 3.5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Blog Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6974ff76-01f9-4c56-b05b-97b675621039",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "9RT7chR2ilnTQwBV",
+  "tags": []
+}

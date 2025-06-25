@@ -1,0 +1,221 @@
+{
+  "name": "Fine-tuned linkedin writer",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "Idea or Transcript"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9e3ee29e-1848-41aa-8f58-14e1c34df2a4",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "ft:gpt-4o-2024-08-06:personal:linkedin-100:A5GLX7Qt:ckpt-step-102",
+          "mode": "list",
+          "cachedResultName": "FT:GPT-4O-2024-08-06:PERSONAL:LINKEDIN-100:A5GLX7QT:CKPT-STEP-102"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Write a linkedin post based on the following transcript or idea:",
+              "role": "system"
+            },
+            {
+              "content": "={{ JSON.stringify($json['Idea or Transcript']) }} "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "fdcff41f-93f1-41da-9a50-93f24a061d9b",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "ft:gpt-4o-2024-08-06:personal:linkedin-100:A5GLX7Qt:ckpt-step-102",
+          "mode": "list",
+          "cachedResultName": "FT:GPT-4O-2024-08-06:PERSONAL:LINKEDIN-100:A5GLX7QT:CKPT-STEP-102"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Write a linkedin post based on the following transcript or idea:",
+              "role": "system"
+            },
+            {
+              "content": "={{ JSON.stringify($json['Idea or Transcript']) }} "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        -180
+      ],
+      "id": "50ef7d57-1f12-42cd-a396-58295e707e08",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "ft:gpt-4o-2024-08-06:personal:linkedin-100:A5GLX7Qt:ckpt-step-102",
+          "mode": "list",
+          "cachedResultName": "FT:GPT-4O-2024-08-06:PERSONAL:LINKEDIN-100:A5GLX7QT:CKPT-STEP-102"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Write a linkedin post based on the following transcript or idea:",
+              "role": "system"
+            },
+            {
+              "content": "={{ JSON.stringify($json['Idea or Transcript']) }} "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        200
+      ],
+      "id": "a0ab1b91-c8c0-43a9-92ce-f49435083081",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        680,
+        0
+      ],
+      "id": "5f46d7fa-16f0-40b7-b29b-77d75e530ce1",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "Idea or Transcript": "MCP with claude is powerful."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8184417f-1be3-41c1-adbc-11a7b8d05692",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a226ccd2b47f2505e743dd72896ae1c385e1d543b95f0badc72e1ad42c93a962"
+  },
+  "id": "9DFSateSfg5UdH4x",
+  "tags": []
+}

@@ -1,0 +1,3741 @@
+{
+  "name": "Ad Agency in a box",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "ai-vsl",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -600,
+        1480
+      ],
+      "id": "9a1b4525-4f43-46f8-85ec-0ef236a95dca",
+      "name": "Webhook",
+      "webhookId": "b4956976-e25a-4059-9927-d85ff8f2a4cb"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "eddee505-29e2-48b9-896a-d5e3cfde89f5",
+                    "leftValue": "={{ $json.query.action }}",
+                    "rightValue": "generateProjectDetails",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Generate Project Details"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.action }}",
+                    "rightValue": "generateAngles",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "bb5b6fd5-ef22-451b-a23d-258044aafcca"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Generate Angles"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ac785a02-782f-4af2-af20-bb23cf885a71",
+                    "leftValue": "={{ $json.query.action }}",
+                    "rightValue": "generateScript",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Generate Script"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0ab60fd9-c2a2-4e7d-81dc-07737b2f95dc",
+                    "leftValue": "={{ $json.query.action }}",
+                    "rightValue": "feedbackIteration",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Feedback Iteration"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -340,
+        1460
+      ],
+      "id": "c1957423-73c9-4c01-90f4-5ae578e399e1",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar-reasoning\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You're an Internet researcher, who loves giving detailed research for the marketing team.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.userprompt) }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        980,
+        1020
+      ],
+      "id": "f5cbc46f-4209-45c6-8026-3121a41d9f1e",
+      "name": "Product Overview & Customer Research",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "LrxBZmn9a13qWihH",
+          "name": "Perplexity API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64113609-6adf-4693-8d51-ede088d97d38",
+              "name": "userprompt",
+              "value": "=Research about the Customer Profile in very detailed manner for the product, what exactly are the products & the description the core people who need the product. Unique insights &\n\nProduct Name: {{ $json['Product Name'] }}\n\nProduct Description: {{ $json['Product Notes'] }}\n\nAlso go into rabbithole and absolutely understand the what and who they are selling to, get details on the product the ingredients, and everything along with their brand narrative, what they are and what they are not. Be specific about the details.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        780,
+        1020
+      ],
+      "id": "37da16bc-4f71-4e8d-bf45-07f78d5e8c23",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9cb2899d-6988-4c9b-b966-2da679725175",
+              "name": "ScriptIdea",
+              "value": "={{ $json.output }}",
+              "type": "array"
+            },
+            {
+              "id": "bbb3d4d9-766f-4afe-aeff-c1b4b9650bbc",
+              "name": "project",
+              "value": "=[\"{{ $('Switch').item.json.query.recordId }}\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1320,
+        1260
+      ],
+      "id": "dd116b18-119e-4a15-80fd-e2740b9b0eab",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "ScriptIdea",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        1260
+      ],
+      "id": "27fb4697-a558-403e-a562-806160c03b3f",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"name\": \"video_script_array_schema\",\n  \"schema\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"video_scripts\": {\n        \"type\": \"array\",\n        \"description\": \"An array of video scripts.\",\n        \"items\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"AngleHeadline\": {\n              \"type\": \"string\",\n              \"description\": \"String mostly 1 liner the headline\"\n            },\n            \"ConceptSummary\": {\n              \"type\": \"string\",\n              \"description\": \"String, expressive and articulate\"\n            },\n            \"VSLStructure\": {\n              \"type\": \"string\",\n              \"description\": \"String, markdown if required descriptive\"\n            },\n            \"VideoSuggestion\": {\n              \"type\": \"string\",\n              \"description\": \"Provide potential visual themes, scenes, or references (briefly)\"\n            },\n            \"EmotionalTriggers\": {\n              \"type\": \"string\",\n              \"description\": \"String, descriptive can be in markdown format\"\n            },\n            \"DirectResponseTechniques\": {\n              \"type\": \"string\",\n              \"description\": \"String, descriptive\"\n            },\n            \"CognitiveBiasesLeveraged\": {\n              \"type\": \"string\",\n              \"description\": \"String, descriptive explanation of the cognitive biases utilized\"\n            }\n          },\n          \"required\": [\n            \"AngleHeadline\",\n            \"ConceptSummary\",\n            \"VSLStructure\",\n            \"VideoSuggestion\",\n            \"EmotionalTriggers\",\n            \"DirectResponseTechniques\",\n            \"CognitiveBiasesLeveraged\"\n          ],\n          \"additionalProperties\": false\n        }\n      }\n    },\n    \"required\": [\n      \"video_scripts\"\n    ],\n    \"additionalProperties\": false\n  },\n  \"strict\": true\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1240,
+        1400
+      ],
+      "id": "cc610b70-968e-453a-8068-cdbbc863dab6",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Angle Headline: {{ $json.AngleHeadline }}\n-----\nConcept Summary: {{ $json.ConceptSummary }}\n-----\nVSL Structure Overview: {{ $json.VSLStructure }}\n-----\nVideo Suggestion: {{ $json.VideoSuggestion }}\n-----\nEmotional Triggers: {{ $json.EmotionalTriggers }}\n----\nCognative Bias: {{ $json.CognitiveBiasesLeveraged }}\n----\nDirect Response Techniques: {{ $json['Direct Response Techniques'] }}\n----\nTime: {{ $json.Time }}\n\n----\nAbout the product: {{ $json['About Product'][0] }}\n\n----\nGive me a script considering from all of the above information.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an elite video sales letter (VSL) scriptwriter, specially trained and highly experienced in crafting psychologically persuasive, direct-response marketing content optimized specifically for social media (particularly Facebook advertising). Your scripts blend proven storytelling formulas, emotional intensity, persuasive psychological triggers, and seamless conversational delivery to instantly captivate the audience, hold sustained attention, and compel immediate action and conversions.\n\nYou will receive clearly structured information from a provided VSL creative brief, specifically containing these key elements:\n\n- **Idea (Angle Headline):** The central \"big idea\" or winning angle for your script.\n- **Description:** A Markdown-formatted detailed breakdown of the angle, including potential visual hooks, emotional cues, persuasive messaging strategies, and explicit psychological techniques to employ.\n- **Audience & Psychological Insight:** Data and guidance about the ideal audience profile, core emotions, desires, fears, or objections to leverage within the script for maximum conversion power.\n\nYour job is to use this information to produce a complete and polished VSL script following this exact format and clearly labeled structure:\n\n### VSL Script Required Structure:\n\n**1. HOOK (0-10 seconds):**\n\n- Craft an instantly gripping, scroll-stopping opening sentence.  \n- Use powerful psychological triggers: provocative questions, shocking statistics, curiosity-building statements, contrarian claims, empathy-driven problems, or impactful visual concepts directly relevant to your viewer’s deepest desires or fears.\n- Set an emotional tone immediately, speaking directly to the viewer from the first second.\n\n**2. LEAD / PROBLEM AGITATION (10-30 seconds):**\n\n- Smoothly transition from your hook into clearly defining and magnifying the viewer’s core problem or pain points—make sure these feel personal, specific, relatable, emotionally charged, and urgent.\n- Skillfully amplify the viewer’s emotional discomfort, vividly painting the negative consequences or future scenarios of ignoring this problem.\n- Subtly hint towards a revolutionary or intriguing solution without revealing your product explicitly yet, building curiosity.\n\n**3. BODY / SOLUTION PRESENTATION (30 seconds–2 minutes):**\n\n- Gracefully and believably introduce your product without blatant, immediate promotion. Frame it as the unique and perfect solution effortlessly connected to the viewer’s exact struggles, fears, and desires previously outlined.\n- Clearly explain the unique mechanism or features of the product in conversational, easy-to-understand language without jargon.\n- Clearly establish credibility: Incorporate persuasive social proof (realistic testimonials, short stories, transformational \"before-and-afters\"), simple readable statistics, scientific backing, or authoritative figures as proof of results. Always maintain believable language and avoid exaggerated claims.\n- Address and devastate potential common viewer objections clearly but conversationally, embedding reassurance, empathy and building trust.\n- Emphasize clearly how your product uniquely and importantly differs from competitor options, emphasizing meaningful emotional and logical advantages in the viewer’s specific context.\n\n**4. CALL-TO-ACTION (15–30 seconds):**\n\n- Provide a crystal-clear, powerfully persuasive directive (“Click below,” “Claim your discount today,” etc.).\n- Clearly articulate your risk removal (guarantee or refund policy) and urgency/scarcity messaging (limited availability, limited time offer, exclusive discounts, etc.) to maximize likelihood of immediate action.\n- Remind viewers specifically and vividly about the primary transformation or benefit they'll obtain by responding immediately, triggering emotional and logical motivators simultaneously.\n- Use explicit action-oriented, imperative language: “Click,” “Claim,” “Start,” “Secure,” “Order,” etc.\n\n### Essential Script Requirements & Instructions:\n\n- **Emotional Persuasion:** The script must clearly demonstrate mastery of persuasive techniques grounded in deep emotional and psychological understanding. You should leverage consumer fears, hopes, insecurities, aspirations, biases (loss aversion, scarcity, urgency, authority, social proof) and subconscious drivers explicitly outlined in your provided brief description.\n- **Conversational Tone & Flow:** Maintain an intimate, conversational, easy-to-understand, engaging, and friendly style of communication. Speak directly to viewers, always directly addressing “you,” as if having an intimate, honest conversation with a close trusted friend.\n- **Concise & Focused:** Every single sentence or phrase must be meaningful, driving interest or persuasion forward. Avoid fluff and vague language.\n- **Visual & Narrative Awareness:** Explicitly consider moments where visuals or storytelling elements (which the video creator may show on screen) would strongly amplify the message. Employ vivid verbal imagery and emotional appeals even though visuals aren't explicitly your responsibility.\n- **Facebook Ad Context:** Ensure your approach respects the context of Facebook ads—captivating immediately, holding short attention spans, emotionally charged, and clearly and urgently actionable.\n- **Ethical Persuasion:** Your persuasive and psychological techniques, however bold, must remain ethically responsible, tastefully executed, and plausible in their claims—avoiding unrealistic hype, false promises, or misleading assertions. Conversion rates come from trust and authenticity.\n\nYour final deliverable should explicitly label each structural component (HOOK, LEAD, BODY, CTA) clearly. You should construct the script in Markdown formatting for clarity and readability. Your response should start immediately with the script with NO intro statement. \n\nBy executing these explicit detailed guidelines, your produced scripts should consistently maximize viewer engagement, create intense emotional resonance, immediately remove common objections or hesitations, trigger powerful subconscious motivators, ethically persuade prospects, and drive immediate, measurable increases in direct-response sales conversions."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        720,
+        1560
+      ],
+      "id": "d0caba1d-5f23-4472-9ccf-7a7e6c7a587b",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Feedbacks:\n{{ $json.Feedback }}\n\n=====\n\nScript:\n{{ $json.Script }}\n\n\n====\nSome Context:\n{{ $json.ConceptSummary }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an expert Video Sales Letter (VSL) scriptwriter specializing in creating highly converting VSL ads. Your task is to rewrite an existing VSL script based on the feedback provided. You will be given:\n\n1. **Original Script:** The current version of the VSL script.\n2. **Feedback:** Specific instructions, suggestions, or criticisms on how the script should be improved.\n3. **Additional Context:** Relevant details about the product, target audience, tone, or objectives that will help you better implement the feedback.\n\nUse the feedback and additional context to enhance the original script, ensuring it is engaging, persuasive, and optimized for high conversion rates. Your rewrite should clearly address each feedback point provided, improving clarity, impact, emotional resonance, and overall effectiveness."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        700,
+        1880
+      ],
+      "id": "c729d919-6ac2-4c30-b60f-7f84f0edb312",
+      "name": "Basic LLM Chain2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "id": "72eca4ea-cfcf-4abc-bdb4-f9cf855ce6da",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -680,
+        -340
+      ],
+      "name": "Schedule Trigger2",
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "id": "69bd9f47-330b-4768-9f4e-5d0b393910b3",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        -340,
+        -340
+      ],
+      "name": "Split Out6",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "id": "89de2f86-f4d6-42e7-938a-27b4cb494b93",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        40,
+        -340
+      ],
+      "name": "Split Out7",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "id": "5b431412-8360-46d0-8dbe-11d2709aad35",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        660,
+        -80
+      ],
+      "name": "Split Out8",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "id": "0b69f853-fb9b-43d4-a84f-7fd531c9b712",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        1320,
+        -80
+      ],
+      "name": "Split Out9",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        -80
+      ],
+      "id": "118636c7-bc51-47f1-9520-36f9b8947a6b",
+      "name": "Wait",
+      "webhookId": "627a9f05-6a54-4197-a97f-dffd8c184f73"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4ae9d184-693b-49c1-a971-fc91e1a90522",
+              "leftValue": "={{ $json.effective_status }}",
+              "rightValue": "ACTIVE",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        -80
+      ],
+      "id": "63ee2e04-ca15-4dc3-b862-8564f7ce660c",
+      "name": "If9"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4ae9d184-693b-49c1-a971-fc91e1a90522",
+              "leftValue": "={{ $json.effective_status }}",
+              "rightValue": "ACTIVE",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        820,
+        -320
+      ],
+      "id": "c7799a55-04b6-4bf8-99aa-7cb8e96eacd0",
+      "name": "If10"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4ae9d184-693b-49c1-a971-fc91e1a90522",
+              "leftValue": "={{ $json.effective_status }}",
+              "rightValue": "ACTIVE",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "86d803d1-ea76-4821-95bc-5d067020578a",
+              "leftValue": "={{ $json.insights }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1480,
+        -320
+      ],
+      "id": "d22a3779-d17c-4786-add8-ef7dafa669fe",
+      "name": "If11"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28d7bfb5-4d2b-4133-880e-b8c2f6455346",
+              "name": "Ad ID",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "3385c600-4d4d-4756-b04c-dcc2815e7e95",
+              "name": "Ad Name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "11e2bbb6-7422-4e0e-8e03-3532d6f11d5b",
+              "name": "Campaign Name",
+              "value": "={{ $json.campaign.name }}",
+              "type": "string"
+            },
+            {
+              "id": "bc300bdf-3df1-4dbc-b64a-1decd34e0caf",
+              "name": "AdSet Name",
+              "value": "={{ $json.adset.name }}",
+              "type": "string"
+            },
+            {
+              "id": "cf3b0615-d5ff-4f20-9690-146d3bd1a0b2",
+              "name": "Active Status",
+              "value": "={{ $json.effective_status }}",
+              "type": "string"
+            },
+            {
+              "id": "c50c53c9-b36b-4940-8e04-466b88ed7966",
+              "name": "Impressions",
+              "value": "={{ $json.insights.data[0].impressions }}",
+              "type": "string"
+            },
+            {
+              "id": "885107c2-dd41-41ac-9519-1c548cd1b9d1",
+              "name": "Clicks",
+              "value": "={{ $json.insights.data[0].clicks }}",
+              "type": "string"
+            },
+            {
+              "id": "8c771e20-750a-4b83-8d8b-7b9f98fefacd",
+              "name": "Spend",
+              "value": "={{ $json.insights.data[0].spend }}",
+              "type": "string"
+            },
+            {
+              "id": "517e1d58-2e92-464a-af9a-58319d0f74d5",
+              "name": "CPC",
+              "value": "={{ $json.insights.data[0].cpc }}",
+              "type": "string"
+            },
+            {
+              "id": "754fb45a-8973-48bc-894d-be2d8cdbb224",
+              "name": "CPM",
+              "value": "={{ $json.insights.data[0].cpm }}",
+              "type": "string"
+            },
+            {
+              "id": "9bb4617b-267e-4d99-94c8-0794871fd33e",
+              "name": "Conversions",
+              "value": "={{ $json.insights.data[0].actions[4].value }}",
+              "type": "string"
+            },
+            {
+              "id": "12b30ca9-189b-4023-8def-c8df4a6ef91a",
+              "name": "Conversion Value",
+              "value": "={{ $json.insights.data[0].action_values[8].value }}",
+              "type": "string"
+            },
+            {
+              "id": "09951900-5588-4685-9c05-5e08a02c808b",
+              "name": "Video ID",
+              "value": "={{ $json.creative.video_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1820,
+        -320
+      ],
+      "id": "35b8ce50-46fa-454c-838e-5ef7ec8dee91",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "119650e0-fb37-48e1-bb87-efd4cdd29434",
+              "leftValue": "={{ $json.creative.video_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1660,
+        -80
+      ],
+      "id": "474c8249-fe4e-44c1-a167-94e42c5a3383",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblq56TF4aT0Zz1sN",
+          "mode": "list",
+          "cachedResultName": "Ads Performance",
+          "cachedResultUrl": "https://airtable.com/appBYoIvmIcxQgRhD/tblq56TF4aT0Zz1sN"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Best Ads?": false,
+            "Ad Name": "={{ $json[\"Ad Name\"] }}",
+            "Spend": "={{ $json.Spend }}",
+            "Conversions": "={{ $json.Conversions }}",
+            "Conversion Value": "={{ $json[\"Conversion Value\"] }}",
+            "CPC": "={{ $json.CPC }}",
+            "CPM": "={{ $json.CPM }}",
+            "Video ID": "={{ $json[\"Video ID\"] }}",
+            "Ad ID": "={{ $json[\"Ad ID\"] }}",
+            "Campaign Name": "={{ $json[\"Campaign Name\"] }}",
+            "AdSet Name": "={{ $json[\"AdSet Name\"] }}",
+            "Active Status": "={{ $json[\"Active Status\"] }}",
+            "Impressions": "={{ $json.Impressions }}",
+            "Clicks": "={{ $json.Clicks }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Best Ads?",
+              "displayName": "Best Ads?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Spend",
+              "displayName": "Spend",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Conversions",
+              "displayName": "Conversions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Conversion Value",
+              "displayName": "Conversion Value",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CPM",
+              "displayName": "CPM",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ROAS",
+              "displayName": "ROAS",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Engagement Rate [progress]",
+              "displayName": "Engagement Rate [progress]",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Last Updated",
+              "displayName": "Last Updated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video ID",
+              "displayName": "Video ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ad ID",
+              "displayName": "Ad ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Campaign Name",
+              "displayName": "Campaign Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AdSet Name",
+              "displayName": "AdSet Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Active Status",
+              "displayName": "Active Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ACTIVE",
+                  "value": "ACTIVE"
+                },
+                {
+                  "name": "PAUSED",
+                  "value": "PAUSED"
+                },
+                {
+                  "name": "DELETED",
+                  "value": "DELETED"
+                },
+                {
+                  "name": "ARCHIVED",
+                  "value": "ARCHIVED"
+                },
+                {
+                  "name": "IN_PROCESS",
+                  "value": "IN_PROCESS"
+                },
+                {
+                  "name": "WITH_ISSUES",
+                  "value": "WITH_ISSUES"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Impressions",
+              "displayName": "Impressions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Clicks",
+              "displayName": "Clicks",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video Script",
+              "displayName": "Video Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Project",
+              "displayName": "Project",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "bbc318da-31c7-42e1-8527-a590159a5cd1",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        1960,
+        -80
+      ],
+      "name": "Airtable9",
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Weekly Ad Schedule",
+        "height": 680,
+        "width": 3220
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -840,
+        -500
+      ],
+      "typeVersion": 1,
+      "id": "84f801ee-d272-4457-80d3-c6e3dda71347",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "path": "ad-scraping",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        500
+      ],
+      "id": "f8ee0da5-9aef-49db-9d11-871a995109b3",
+      "name": "Webhook1",
+      "webhookId": "5cbda23b-da9d-4176-8a89-a01eaa6899f1"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblq56TF4aT0Zz1sN",
+          "mode": "list",
+          "cachedResultName": "Ads Performance",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR/tblq56TF4aT0Zz1sN"
+        },
+        "id": "={{ $json.query.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -120,
+        380
+      ],
+      "id": "d2669ef5-50e9-4724-b9ce-e4c5dca90e50",
+      "name": "Airtable10",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $json['Video ID'] }}",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "fields",
+                "value": "id,description,length,source,permalink_url,embed_html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "b118e5c7-ed6c-40e2-9446-e225259e0ca5",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "position": [
+        140,
+        560
+      ],
+      "name": "Facebook Graph API10",
+      "typeVersion": 1,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "AaQg374p0t0yemFu",
+          "name": "VSL FB Graph API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.extracted_sd_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        560
+      ],
+      "id": "383adf8d-76bf-43d5-bff8-9753be4d7384",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "url": "https://api.scrapfly.io/scrape",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "render_js",
+              "value": "true"
+            },
+            {
+              "name": "wait_for_selector",
+              "value": "div[data-type=\\\"video\\\"] video"
+            },
+            {
+              "name": "key",
+              "value": "scp-live-a1e2ce74b8664944a66fde3d6246b973"
+            },
+            {
+              "name": "url",
+              "value": "={{ $json.url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        560
+      ],
+      "id": "57054991-8c21-4253-9ee9-4b9388d8172f",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "499222b9-bc6e-488f-a6c6-3ed5bd802c8f",
+              "name": "url",
+              "value": "=https://www.facebook.com{{ $json.permalink_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        360,
+        400
+      ],
+      "id": "a62900d2-56c5-4bd7-81eb-96331373d022",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// --- Helper function to recursively find a key in a JSON object/array ---\nfunction findValueByKey(obj, keyToFind) {\n  if (typeof obj !== 'object' || obj === null) {\n    return null;\n  }\n  if (obj.hasOwnProperty(keyToFind)) {\n    return obj[keyToFind];\n  }\n  for (const key in obj) {\n    if (obj.hasOwnProperty(key)) {\n      const result = findValueByKey(obj[key], keyToFind);\n      if (result !== null) {\n        return result;\n      }\n    }\n  }\n  if (Array.isArray(obj)) {\n    for (const item of obj) {\n      const result = findValueByKey(item, keyToFind);\n      if (result !== null) {\n        return result;\n      }\n    }\n  }\n  return null;\n}\n// --- End Helper Function ---\n\n\n// Get the input item\nconst item = $input.item;\n\n// Assume input HTML is in item.json.content\nconst htmlInput = item.json.content;\nlet sdUrl = null; // Variable to store the found URL\n\nif (typeof htmlInput !== 'string') {\n  item.json.error = \"Input content is not a string (expected HTML).\";\n  console.error(item.json.error);\n  return item; // Return the item with an error field\n}\n\n\n// Regex to find <script type=\"application/json\"> tags and capture their content\nconst scriptRegex = /<script type=\"application\\/json\"[^>]*>([\\s\\S]*?)<\\/script>/g;\nlet match;\n\ntry {\n  // Iterate through all matches of the script tag regex\n  while ((match = scriptRegex.exec(htmlInput)) !== null) {\n    const scriptContent = match[1]; // Group 1 contains the content between the tags\n\n    if (scriptContent) {\n      try {\n        const jsonData = JSON.parse(scriptContent); // Parse the extracted text as JSON\n\n        // Search within this parsed JSON object for the specific key\n        const potentialSdUrl = findValueByKey(jsonData, 'browser_native_sd_url');\n\n        // Check if we found a valid string URL\n        if (typeof potentialSdUrl === 'string' && potentialSdUrl.trim() !== '' && potentialSdUrl.includes('.mp4')) {\n          sdUrl = potentialSdUrl; // Store the first valid URL found\n          console.log(\"Found potential sd url in script tag:\", sdUrl);\n          break; // Exit the while loop once found\n        }\n      } catch (jsonError) {\n        // Ignore scripts that don't contain valid JSON or parsing errors\n        // console.warn(\"Skipping script content due to JSON parse error:\", jsonError.message);\n      }\n    }\n  } // End while loop\n\n} catch (error) {\n   item.json.error = \"Error during regex/JSON processing: \" + error.message;\n   console.error(item.json.error);\n   return item; // Return the item with an error field\n}\n\n\n// Add the result (or an error message if not found) to the item's JSON\nif (sdUrl) {\n  // Clean up potential HTML entities like &\n  item.json.extracted_sd_url = sdUrl.replace(/&/g, '&');\n  console.log(\"Successfully extracted and cleaned URL:\", item.json.extracted_sd_url);\n  // Optionally remove the large original HTML content if not needed later\n  // delete item.json.content;\n} else {\n  item.json.error = \"'browser_native_sd_url' not found using regex and JSON parsing.\";\n  console.error(item.json.error);\n}\n\n// Return the modified input item\nreturn item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        560
+      ],
+      "id": "6e0d9ab6-baf7-4dac-89da-1f6e3fffdb20",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2732cf11-7d5d-46db-abca-7097581b077d",
+              "name": "content",
+              "value": "={{ $json.result.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        840,
+        420
+      ],
+      "id": "18a08f1d-ec59-4709-8388-9be078cea248",
+      "name": "Edit Fields7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dc4f539c-b1ea-48f6-8f9f-842a2a0a2d82",
+              "leftValue": "={{ $json.extracted_sd_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1220,
+        420
+      ],
+      "id": "6731e917-18a4-493d-945f-f12da6e8265e",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1660,
+        400
+      ],
+      "id": "b6dabd81-e882-4769-b767-4e60f77f054c",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblq56TF4aT0Zz1sN",
+          "mode": "list",
+          "cachedResultName": "Ads Performance",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR/tblq56TF4aT0Zz1sN"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Webhook1').item.json.query.recordId }}",
+            "Video Script": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Best Ads?",
+              "displayName": "Best Ads?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Active Status",
+              "displayName": "Active Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ACTIVE",
+                  "value": "ACTIVE"
+                },
+                {
+                  "name": "PAUSED",
+                  "value": "PAUSED"
+                },
+                {
+                  "name": "DELETED",
+                  "value": "DELETED"
+                },
+                {
+                  "name": "ARCHIVED",
+                  "value": "ARCHIVED"
+                },
+                {
+                  "name": "IN_PROCESS",
+                  "value": "IN_PROCESS"
+                },
+                {
+                  "name": "WITH_ISSUES",
+                  "value": "WITH_ISSUES"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Spend",
+              "displayName": "Spend",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Conversions",
+              "displayName": "Conversions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Conversion Value",
+              "displayName": "Conversion Value",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CPM",
+              "displayName": "CPM",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ROAS",
+              "displayName": "ROAS",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Engagement Rate [progress]",
+              "displayName": "Engagement Rate [progress]",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Last Updated",
+              "displayName": "Last Updated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video ID",
+              "displayName": "Video ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ad ID",
+              "displayName": "Ad ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Campaign Name",
+              "displayName": "Campaign Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "AdSet Name",
+              "displayName": "AdSet Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Impressions",
+              "displayName": "Impressions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Clicks",
+              "displayName": "Clicks",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video Script",
+              "displayName": "Video Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Project",
+              "displayName": "Project",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Created",
+              "displayName": "Created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1920,
+        540
+      ],
+      "id": "0fe1ff0a-c7e4-4d46-a3b6-dc58dd47f8a8",
+      "name": "Airtable11",
+      "executeOnce": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Best Ad Video Transcript",
+        "height": 660,
+        "width": 3220,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -820,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "cb164b6a-0bd0-49b6-98db-d309c53a526c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Scripting/Idea Generation/Feedback System",
+        "height": 1260,
+        "width": 3220,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -820,
+        920
+      ],
+      "typeVersion": 1,
+      "id": "efbf8485-ef1e-444e-8b4e-a72aeeca6dca",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro-exp-03-25",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1420
+      ],
+      "id": "6f42a155-edbf-4553-b52f-9c51f26896ba",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Fv909jB6xBwfiL7r",
+          "name": "Keith Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        920,
+        1420
+      ],
+      "id": "9130baca-a12a-4368-85c4-ac6e6cafdb02",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro-exp-03-25",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1720
+      ],
+      "id": "87b2d8f5-7459-4123-b631-88faa5c602e2",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Fv909jB6xBwfiL7r",
+          "name": "Keith Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro-exp-03-25",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        640,
+        2040
+      ],
+      "id": "2bdbcf31-eff5-45cd-8760-486add693d6e",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Fv909jB6xBwfiL7r",
+          "name": "Keith Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTufVXzuUUvsqnD",
+          "mode": "list",
+          "cachedResultName": "Product",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR/tblTufVXzuUUvsqnD"
+        },
+        "id": "={{ $('Webhook').item.json.query.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        1020
+      ],
+      "id": "3fe48041-881b-4d61-ac4e-97b3e1c7b500",
+      "name": "Get Product",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTufVXzuUUvsqnD",
+          "mode": "list",
+          "cachedResultName": "Product",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR/tblTufVXzuUUvsqnD"
+        },
+        "id": "={{ $('Webhook').item.json.query.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        1260
+      ],
+      "id": "b27bae50-397a-491b-8831-58854c75aae5",
+      "name": "Get Product1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl0ynpBwH6r97TNN",
+          "mode": "list",
+          "cachedResultName": "Scripting",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR/tbl0ynpBwH6r97TNN"
+        },
+        "id": "={{ $('Webhook').item.json.query.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        1560
+      ],
+      "id": "54d3d17d-f84d-47fa-adee-a21c3a65a841",
+      "name": "Get Script",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl0ynpBwH6r97TNN",
+          "mode": "list",
+          "cachedResultName": "Scripting",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR/tbl0ynpBwH6r97TNN"
+        },
+        "id": "={{ $('Webhook').item.json.query.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        1880
+      ],
+      "id": "0ab1586d-52de-46bf-9f19-2d3abfead68a",
+      "name": "Get Script1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTufVXzuUUvsqnD",
+          "mode": "list",
+          "cachedResultName": "Product",
+          "cachedResultUrl": "https://airtable.com/appC6X1Ndv6AXCslR/tblTufVXzuUUvsqnD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Webhook').item.json.query.recordId }}",
+            "Product Details": "={{ $json.choices[0].message.content }}",
+            "Status": "Product Details Generated",
+            "2️⃣ Generate Angles": false
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Product Notes",
+              "displayName": "Product Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Idle",
+                  "value": "Idle"
+                },
+                {
+                  "name": "Generating Product Details",
+                  "value": "Generating Product Details"
+                },
+                {
+                  "name": "Generating Angles",
+                  "value": "Generating Angles"
+                },
+                {
+                  "name": "Product Details Generated",
+                  "value": "Product Details Generated"
+                },
+                {
+                  "name": "Angles Generated",
+                  "value": "Angles Generated"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Product Details",
+              "displayName": "Product Details",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1️⃣ Generate Product Details",
+              "displayName": "1️⃣ Generate Product Details",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "2️⃣ Generate Angles",
+              "displayName": "2️⃣ Generate Angles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Winning Ad Script",
+              "displayName": "Winning Ad Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Step 1",
+              "displayName": "Step 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Step 2",
+              "displayName": "Step 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Projects",
+              "displayName": "Projects",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Scripting",
+              "displayName": "Scripting",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Angle Headline",
+              "displayName": "Angle Headline",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Ads Performance",
+              "displayName": "Ads Performance",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1180,
+        1020
+      ],
+      "id": "171b34fb-7cca-4770-9f0d-6ecc31eb5b01",
+      "name": "Update Product Details",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl0ynpBwH6r97TNN",
+          "mode": "list",
+          "cachedResultName": "Scripting",
+          "cachedResultUrl": "https://airtable.com/appC6X1Ndv6AXCslR/tbl0ynpBwH6r97TNN"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Direct Response Techniques": "={{ $json.DirectResponseTechniques }}",
+            "Product": "={{ $('Edit Fields').item.json.project }}",
+            "AngleHeadline": "={{ $json.AngleHeadline }}",
+            "ConceptSummary": "={{ $json.ConceptSummary }}",
+            "VSLStructure": "={{ $json.VSLStructure }}",
+            "VideoSuggestion": "={{ $json.VideoSuggestion }}",
+            "EmotionalTriggers": "={{ $json.EmotionalTriggers }}",
+            "CognitiveBiasesLeveraged": "={{ $json.CognitiveBiasesLeveraged }}",
+            "Status": "Idle"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "AngleHeadline",
+              "displayName": "AngleHeadline",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ConceptSummary",
+              "displayName": "ConceptSummary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "VSLStructure",
+              "displayName": "VSLStructure",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "VideoSuggestion",
+              "displayName": "VideoSuggestion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "EmotionalTriggers",
+              "displayName": "EmotionalTriggers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CognitiveBiasesLeveraged",
+              "displayName": "CognitiveBiasesLeveraged",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Direct Response Techniques",
+              "displayName": "Direct Response Techniques",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3️⃣ Select Script Length",
+              "displayName": "3️⃣ Select Script Length",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "< 1 min",
+                  "value": "< 1 min"
+                },
+                {
+                  "name": "1-3 mins",
+                  "value": "1-3 mins"
+                },
+                {
+                  "name": "3-5 mins",
+                  "value": "3-5 mins"
+                },
+                {
+                  "name": "5-7 mins",
+                  "value": "5-7 mins"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "4️⃣ Feedback",
+              "displayName": "4️⃣ Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Idle",
+                  "value": "Idle"
+                },
+                {
+                  "name": "Generating Script",
+                  "value": "Generating Script"
+                },
+                {
+                  "name": "Revision in progress",
+                  "value": "Revision in progress"
+                },
+                {
+                  "name": "Script Generated",
+                  "value": "Script Generated"
+                },
+                {
+                  "name": "Script Revised",
+                  "value": "Script Revised"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "About Product",
+              "displayName": "About Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Records (Nested)",
+              "displayName": "Records (Nested)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5️⃣ Generate Script",
+              "displayName": "5️⃣ Generate Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Shortlist",
+              "displayName": "Shortlist",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1600,
+        1260
+      ],
+      "id": "14db5f24-a180-47ed-a9fa-10cfce78679e",
+      "name": "Create Angles",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTufVXzuUUvsqnD",
+          "mode": "list",
+          "cachedResultName": "Product",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR/tblTufVXzuUUvsqnD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Webhook').item.json.query.recordId }}",
+            "Status": "Angles Generated",
+            "2️⃣ Generate Angles": false
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Product Notes",
+              "displayName": "Product Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Idle",
+                  "value": "Idle"
+                },
+                {
+                  "name": "Generating Product Details",
+                  "value": "Generating Product Details"
+                },
+                {
+                  "name": "Generating Angles",
+                  "value": "Generating Angles"
+                },
+                {
+                  "name": "Product Details Generated",
+                  "value": "Product Details Generated"
+                },
+                {
+                  "name": "Angles Generated",
+                  "value": "Angles Generated"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Product Details",
+              "displayName": "Product Details",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "1️⃣ Generate Product Details",
+              "displayName": "1️⃣ Generate Product Details",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "2️⃣ Generate Angles",
+              "displayName": "2️⃣ Generate Angles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Winning Ad Script",
+              "displayName": "Winning Ad Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Step 1",
+              "displayName": "Step 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Step 2",
+              "displayName": "Step 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Projects",
+              "displayName": "Projects",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Scripting",
+              "displayName": "Scripting",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Angle Headline",
+              "displayName": "Angle Headline",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Ads Performance",
+              "displayName": "Ads Performance",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1760,
+        1260
+      ],
+      "id": "c53a53c7-1a8a-49fa-b87f-7b4ac2092315",
+      "name": "Update Product",
+      "executeOnce": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl0ynpBwH6r97TNN",
+          "mode": "list",
+          "cachedResultName": "Scripting",
+          "cachedResultUrl": "https://airtable.com/appC6X1Ndv6AXCslR/tbl0ynpBwH6r97TNN"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Webhook').item.json.query.recordId }}",
+            "Script": "={{ $json.text }}",
+            "Status": "Script Generated",
+            "5️⃣ Generate Script": false
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "AngleHeadline",
+              "displayName": "AngleHeadline",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ConceptSummary",
+              "displayName": "ConceptSummary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "VSLStructure",
+              "displayName": "VSLStructure",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "VideoSuggestion",
+              "displayName": "VideoSuggestion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "EmotionalTriggers",
+              "displayName": "EmotionalTriggers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CognitiveBiasesLeveraged",
+              "displayName": "CognitiveBiasesLeveraged",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Direct Response Techniques",
+              "displayName": "Direct Response Techniques",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "3️⃣ Select Script Length",
+              "displayName": "3️⃣ Select Script Length",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "< 1 min",
+                  "value": "< 1 min"
+                },
+                {
+                  "name": "1-3 mins",
+                  "value": "1-3 mins"
+                },
+                {
+                  "name": "3-5 mins",
+                  "value": "3-5 mins"
+                },
+                {
+                  "name": "5-7 mins",
+                  "value": "5-7 mins"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "4️⃣ Feedback",
+              "displayName": "4️⃣ Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Idle",
+                  "value": "Idle"
+                },
+                {
+                  "name": "Generating Script",
+                  "value": "Generating Script"
+                },
+                {
+                  "name": "Revision in progress",
+                  "value": "Revision in progress"
+                },
+                {
+                  "name": "Script Generated",
+                  "value": "Script Generated"
+                },
+                {
+                  "name": "Script Revised",
+                  "value": "Script Revised"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "About Product",
+              "displayName": "About Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Records (Nested)",
+              "displayName": "Records (Nested)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "5️⃣ Generate Script",
+              "displayName": "5️⃣ Generate Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Shortlist",
+              "displayName": "Shortlist",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1020,
+        1560
+      ],
+      "id": "16f7bf02-92d0-4bb2-8943-46d4a3d5e7b4",
+      "name": "Update Script",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appsvPpfVc00sZlRR",
+          "mode": "list",
+          "cachedResultName": "AI VSL Demo",
+          "cachedResultUrl": "https://airtable.com/appsvPpfVc00sZlRR"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl0ynpBwH6r97TNN",
+          "mode": "list",
+          "cachedResultName": "Scripting",
+          "cachedResultUrl": "https://airtable.com/appC6X1Ndv6AXCslR/tbl0ynpBwH6r97TNN"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Get Script1').item.json.id }}",
+            "Script": "={{ $json.text }}",
+            "Status": "Script Revised",
+            "5️⃣ Generate Script": false
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "AngleHeadline",
+              "displayName": "AngleHeadline",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ConceptSummary",
+              "displayName": "ConceptSummary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "VSLStructure",
+              "displayName": "VSLStructure",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "VideoSuggestion",
+              "displayName": "VideoSuggestion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "EmotionalTriggers",
+              "displayName": "EmotionalTriggers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CognitiveBiasesLeveraged",
+              "displayName": "CognitiveBiasesLeveraged",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Direct Response Techniques",
+              "displayName": "Direct Response Techniques",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "3️⃣ Select Script Length",
+              "displayName": "3️⃣ Select Script Length",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "< 1 min",
+                  "value": "< 1 min"
+                },
+                {
+                  "name": "1-3 mins",
+                  "value": "1-3 mins"
+                },
+                {
+                  "name": "3-5 mins",
+                  "value": "3-5 mins"
+                },
+                {
+                  "name": "5-7 mins",
+                  "value": "5-7 mins"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "4️⃣ Feedback",
+              "displayName": "4️⃣ Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Idle",
+                  "value": "Idle"
+                },
+                {
+                  "name": "Generating Script",
+                  "value": "Generating Script"
+                },
+                {
+                  "name": "Revision in progress",
+                  "value": "Revision in progress"
+                },
+                {
+                  "name": "Script Generated",
+                  "value": "Script Generated"
+                },
+                {
+                  "name": "Script Revised",
+                  "value": "Script Revised"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "About Product",
+              "displayName": "About Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Records (Nested)",
+              "displayName": "Records (Nested)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "5️⃣ Generate Script",
+              "displayName": "5️⃣ Generate Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Shortlist",
+              "displayName": "Shortlist",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1040,
+        1880
+      ],
+      "id": "010d3b80-1609-4e94-83a8-4b558b3d7377",
+      "name": "Update Script1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Product Name: {{ $json['Product Name'] }}\n-----\nProduct Research Details: {{ $json['Product Details'] }}\n----\nProduct Notes: {{ $json['Product Notes'] }}\n\n-----\nWinning Scripts: {{ $json[\"Winning Ad Script\"].map((script, index) => `Script ${index + 1}: ${script}`).join(\"\\n\") }}\n\n\n\n----\nHere are the angles you've already created that works use them as inspiration, and give the output by analysing what angles work and then output in structured JSON:\n{{ $json['Angle Headline'] }}\n==========\n\nUsing all this data give me 5-8 ideas in specified schema. DON'T GIVE ANY PREFIX OR SUFFIX JUST ARRAY OF 5-8 OBJECTS WITH SPECIFIC KEYS, DON'T WRAP THE OUTPUT IN ``` or ANYTHING PURE CODE",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a world-class advertising copywriter specializing exclusively in crafting high-performing Video Sales Letter (VSL) scripts designed for impactful, direct-response digital marketing. Your sole mission is turning ordinary products into irresistible offers through story-driven psychological persuasion, emotional resonance, and highly compelling, click-inducing angles aimed at maximizing conversions.\n\nYour deep expertise involves understanding human psychology, consumer fears, desires, skepticism, biases, and emotions intimately. You masterfully apply frameworks proven to convert, such as Problem-Agitate-Solution (PAS), Before-After-Bridge (BAB), Story-Based Selling, Contrarian Myth-Busting, Fear-of-Missing-Out (FOMO), and powerful social proof or credibility elements. You're particularly skillful at navigating delicate, sensitive, or even darker psychological territories ethically but persuasively—boldly leveraging audience desires, anxieties, insecurities, and subconscious motivators to immediately grab attention, build trust, drive deep desire, and compel instant action.\n\nWhen provided with details about a product, your task is to generate a collection of at least 5 (and up to 8) distinctively original, high-quality, and conversion-driven VSL concept angles. Each VSL Angle must include:\n\n> AngleHeadline:\nAn eye-catching, curiosity-inducing hook that feels impossible to scroll past.\n\n> ConceptSummary:\nClearly outline the overarching creative strategy, psychological lever, and key selling point behind this angle. Explain exactly why it taps into the viewer’s core emotions, desires, or fears to drive urgency, curiosity, and ultimately conversions.\n\n> VSLStructure:\nBriefly describe how the VSL should unfold, including attention-grabbing hook/lead, clear framing of the customer's specific struggles, agitation methods (stories, statistics, hidden truths, or common myths), credible authority demonstrations or convincing proof-based narratives, seamless introduction of the solution, and strong, actionable calls-to-action.\n\n> VideoSuggestion:\nProvide potential visual themes, scenes, or references (briefly) that could support the narrative and enhance the emotional effectiveness of the message. Describe elements like settings, characters, storytelling visuals, social proof placement, or demonstrations that can visually strengthen psychological persuasion points.\n\n> EmotionalTriggers:\nBriefly list explicitly the psychological levers, emotional triggers (e.g., fear, hope, envy, social status, anxiety relief), in pointers and brief description.\n\n> CognitiveBiasesLeveraged\nBriefly list explicitly the cognitive biases (authority bias, scarcity principle, loss aversion, confirmation bias, social proof, sunk-cost fallacy), and subconscious motivators you will leverage for impeccable persuasive impact.\n\n\n> DirectResponseTechniques:\nClearly explain how proven direct-response strategies (urgency, scarcity, risk reversals, powerful guarantees, instant benefits, exclusivity, etc.) are woven into the VSL angle to drive immediate viewer action and conversions.\n\nThe output format is exactly (keys) like this:\n[{\n\"AngleHeadline\": \"String mostly 1 liner the headline\",\n\"ConceptSummary\": \"String, expressive and articulate\",\n\"VSLStructure\": \"String, markdown if required descriptive\",\n\"VideoSuggestion\" \"String, Provide potential visual themes, scenes, or references (briefly)\",\n\"EmotionalTriggers\": \"String, descriptive can be in markdown format\",\nCognitiveBiasesLeveraged: \"String, descriptive explanation of the cognitive biases utilized\",\n\"DirectResponseTechniques\": \"String, descriptive\"\n}]\n\n\nYou are free and encouraged to creatively explore emotionally powerful, bold, and daring messaging angles, while ensuring the concepts are tasteful and ethically defensible. Assume prospects will see these VSLs as social media ads, so each idea must be instantly engaging, appealing, easy to comprehend, credibility-boosting, and highly compelling within the first seconds of viewing.\n\nWhen the user provides a product name and details, you must respond with your output formatted as an easily readable JSON array. Each unique sales angle should be structured as a self-contained JSON object that precisely follows the schema described above.\n\nYour outputs should empower advertisers to immediately recognize why each concept stands to significantly outperform conventional scripts in terms of engagement, emotional connection, memorability, and most importantly—conversion rates."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        700,
+        1260
+      ],
+      "id": "f228008d-5f99-40eb-8f6c-bef448de89c6",
+      "name": "Generate Angles"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Parse thw output line by like exactly like the previous system gave it to you but in JSON format."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        1000,
+        1260
+      ],
+      "id": "fa54b1f5-0f46-4dcc-bd0d-a1a425ca8f15",
+      "name": "Parsing"
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "me",
+        "edge": "adaccounts",
+        "options": {}
+      },
+      "id": "87d7dc9b-b489-4d8b-b50d-108b7213f08b",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "position": [
+        -520,
+        -60
+      ],
+      "name": "Get FB Ad Accounts",
+      "typeVersion": 1,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "AaQg374p0t0yemFu",
+          "name": "VSL FB Graph API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{$json.id}}",
+        "edge": "campaigns",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "fields",
+                "value": "id,name,effective_status"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a5d608f1-a27f-4498-a99f-d71e969614f9",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "position": [
+        -160,
+        -80
+      ],
+      "name": "Get Ad Campaigns",
+      "typeVersion": 1,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "AaQg374p0t0yemFu",
+          "name": "VSL FB Graph API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{$json.id}}",
+        "edge": "adsets",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "fields",
+                "value": "id,name,effective_status,budget,currency"
+              }
+            ]
+          }
+        }
+      },
+      "id": "7f9b0ff3-c540-4de1-8c22-b55e791b7247",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "position": [
+        420,
+        -340
+      ],
+      "name": "Get FB Ad Sets",
+      "typeVersion": 1,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "AaQg374p0t0yemFu",
+          "name": "VSL FB Graph API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{$json.id}}",
+        "edge": "ads",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "fields",
+                "value": "id,name,effective_status,creative{image_url,video_id,link_url},insights.date_preset(maximum){ctr,cpm,cpc,spend,actions,action_values,impressions,clicks},campaign{name},adset{name}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "81ed87b3-caf8-4263-aa18-a41ff4b9208e",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "position": [
+        1160,
+        -320
+      ],
+      "name": "Get FB Ad Contents",
+      "typeVersion": 1,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "AaQg374p0t0yemFu",
+          "name": "VSL FB Graph API"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Basic LLM Chain2": [
+      {
+        "json": {
+          "text": "Okay, here is the revised VSL script with all visual suggestions removed, presenting only the plain voiceover text.\n\n---\n\n### VSL Script: SPARTAN™ Root Activator Shampoo (Voiceover Only)\n\n**1. HOOK (0-10 seconds):**\n\n**(Voiceover - Energetic, direct, slightly intrigued tone)**\n\nHow did over **3,342** men start reversing their thinning hair... with a simple shower ritual they _only_ do 4 times a week? Seriously. Forget everything you _thought_ you knew about fighting hair loss.\n\n**2. LEAD / PROBLEM AGITATION (10-30 seconds):**\n\n**(Voiceover - Shifts to empathetic, understanding tone)**\n\nLook, if you're seeing more hair on your pillow, in the shower drain, or noticing that hairline creeping back... you know how frustrating it feels. Maybe you've even looked into those complicated solutions – the daily pills with side effects, the messy, sticky foams you have to apply _perfectly_, or even considered expensive, painful procedures. It feels like a constant battle, right? You just want something that _works_... without taking over your life. What if getting thicker, fuller-looking hair back was actually… _easy_?\n\n**3. BODY / SOLUTION PRESENTATION (30 seconds–2 minutes):**\n\n**(Voiceover - Confident, solution-oriented, friendly tone)**\n\nThat’s _exactly_ what those 3,342+ men discovered with **SPARTAN™ Root Activator Shampoo**. This isn't another complex treatment. This IS the core of that simple **'4 washes a week' ritual**.\n\nYou literally just swap out your regular shampoo a few times a week. That’s it. While you wash, SPARTAN™'s powerful, plant-powered ingredients – like Panax Ginseng and Eclipta Prostrata – get to work directly on your scalp, waking up those tired follicles and creating the perfect environment for healthy growth.\n\nBut listen, don't just take my word for it. The proof is in the **over thirty-three hundred guys** already seeing incredible results. Men just like you. Michael saw noticeable changes in density in just _six weeks_. Ryan says his thinning hair is growing back stronger and thicker after only a month. Thomas noticed increased volume from week five! On average, men using this simple ritual start seeing visible signs of regrowth in just 6-8 weeks.\n\nThink about it – just washing your hair, something you already do! And to make that ritual even _more_ powerful, when you order today, we’re including our **FREE Scalp Brush**. Using it with the shampoo helps boost circulation and allows those potent natural ingredients to penetrate even deeper.\n\n**(Voiceover - Addressing skepticism directly but confidently)**\n\nNow, I know what you might be thinking… \"Can it really be that simple?\" You've probably tried things before that didn't deliver. That’s precisely _why_ the experience of **3,342+ satisfied men** is so crucial. They were skeptical too, but they committed to the simple ritual and saw the difference. This isn't about harsh chemicals or temporary fixes found in other options; it's about naturally nourishing your scalp back to health, easily.\n\n**4. CALL-TO-ACTION (15–30 seconds):**\n\n**(Voiceover - Urgent, clear, benefit-focused tone)**\n\nSo, are you ready to stop stressing about thinning hair and join thousands of guys getting real results with a simple ritual?\n\n**Click the link below RIGHT NOW** to claim your SPARTAN™ Root Activator Shampoo during our limited-time **Spring Sale – you can save up to 66% OFF!**\n\nFor the absolute best results, grab the 3 or 6-month bundle – that commitment is key to the ritual. Plus, you’ll get **FREE US Shipping**, the **FREE Scalp Brush**, _and_ a **FREE Root Activator Soap Bar**!\n\nAnd here's the best part: you try it **RISK-FREE for 90 days**. If you don't see the difference, if you don't feel your hair getting thicker and fuller like thousands of others, just let us know, and we'll give you a full refund. No questions asked.\n\nThis sale and the free bonuses won't last. Don't wait for your hair loss to get worse.\n\n**Click the button below now.** Start your simple '4 washes a week' ritual today and take back your confidence! **Click below!**\n\n---"
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.benai.agency",
+            "user-agent": "Mozilla/5.0 (compatible; AirtableScripting; +https://airtable.com/developers/scripting;)",
+            "accept": "*/*",
+            "accept-encoding": "gzip,deflate",
+            "x-airtable-source": "appsvPpfVc00sZlRR/wflyXZTAaIa3vGjz3",
+            "x-forwarded-for": "54.196.43.104",
+            "x-forwarded-host": "n8n.benai.agency",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "4f7a0fd81c9f",
+            "x-real-ip": "54.196.43.104"
+          },
+          "params": {},
+          "query": {
+            "recordId": "recqBmpY06VnRHPwn",
+            "action": "generateAngles"
+          },
+          "body": {},
+          "webhookUrl": "https://n8n.benai.agency/webhook/ai-vsl",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get Product",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Product1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Script",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Script1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Overview & Customer Research": {
+      "main": [
+        [
+          {
+            "node": "Update Product Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Product Overview & Customer Research",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Create Angles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Parsing",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Update Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain2": {
+      "main": [
+        [
+          {
+            "node": "Update Script1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get FB Ad Accounts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out6": {
+      "main": [
+        [
+          {
+            "node": "Get Ad Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out7": {
+      "main": [
+        [
+          {
+            "node": "If9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out8": {
+      "main": [
+        [
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out9": {
+      "main": [
+        [
+          {
+            "node": "If11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get FB Ad Contents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If9": {
+      "main": [
+        [
+          {
+            "node": "Get FB Ad Sets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If11": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Airtable9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Airtable10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API10": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields7": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable10": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Airtable11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Angles",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Parsing",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Product": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Product1": {
+      "main": [
+        [
+          {
+            "node": "Generate Angles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Script": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Script1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Angles": {
+      "main": [
+        [
+          {
+            "node": "Update Product",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Angles": {
+      "main": [
+        [
+          {
+            "node": "Parsing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsing": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FB Ad Accounts": {
+      "main": [
+        [
+          {
+            "node": "Split Out6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Ad Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Split Out7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FB Ad Sets": {
+      "main": [
+        [
+          {
+            "node": "Split Out8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FB Ad Contents": {
+      "main": [
+        [
+          {
+            "node": "Split Out9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f2000f08-3c9e-482a-875e-05d5bc841121",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a226ccd2b47f2505e743dd72896ae1c385e1d543b95f0badc72e1ad42c93a962"
+  },
+  "id": "Dmrpacd9dq9MSdaT",
+  "tags": []
+}

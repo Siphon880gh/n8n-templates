@@ -1,0 +1,144 @@
+{
+  "name": "🛠️Trigger Demo",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0e3abd81-b5b9-40f5-ae7d-7cb57fa38d6e",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        640,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "c20yHkSbKSVp5EFJ",
+          "mode": "list",
+          "cachedResultName": "🛠️Scrape Demo"
+        },
+        "options": {}
+      },
+      "id": "d8d202b7-8688-44c6-ae5f-7d7d24a414ab",
+      "name": "Execute Workflow",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        860,
+        380
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "0bfcc7c0-6555-4dfa-9bbd-4ce3d148d634",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1080,
+        380
+      ],
+      "webhookId": "df85adf6-6c79-495e-9a80-b13b0d4df2c8"
+    },
+    {
+      "parameters": {},
+      "id": "1c42d8f3-af15-47de-998e-ccb0ea4777ff",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        420,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## I actually don't think the Wait node is necessary\n",
+        "height": 355.2694215797759
+      },
+      "id": "1f9bb8fa-c97c-46bf-add3-798e5bf9e59c",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        180
+      ]
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Test workflow’": [
+      {
+        "json": {
+          "query": "insert list of queries here for google map search"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "559db202-5542-48a5-9c34-5ee703f85d9d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "D6cImN5T8IE4xiWy",
+  "tags": []
+}

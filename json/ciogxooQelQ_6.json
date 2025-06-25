@@ -1,0 +1,141 @@
+{
+  "name": "Summarise site",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "Query"
+            },
+            {
+              "name": "URL"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3b875314-2cd9-4ef0-aa18-41b8e36de73c",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.URL }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        0
+      ],
+      "id": "a434ddba-6ed9-48b4-b771-af61eb0e410b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        360,
+        0
+      ],
+      "id": "d5db303a-150e-4074-95a5-74a2f6a920a0",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI-2025-04-14"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to get key insights from scraped website data.\n\nYou are looking to find some key pieces of info based on scraped web data and output a summary of what you found\n\nKey info:  {{ $('When Executed by Another Workflow').item.json.Query }}\nData: {{ $json.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        540,
+        0
+      ],
+      "id": "d10b1a07-3bf4-4652-aa87-987cac11fd01",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "67594c2e-c7af-4c6c-96a5-56d4c7351349",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8711ef6aba5ff6781b8ed3c0d9d8ad1fb3b9e4be41f1c9a056c02209236d4a91"
+  },
+  "id": "QpkQ2fmmB1Y7a3fT",
+  "tags": [
+    {
+      "createdAt": "2025-05-05T18:28:14.726Z",
+      "updatedAt": "2025-05-05T18:28:14.726Z",
+      "id": "5l1iny0IJjZ0zdzn",
+      "name": "Research agent"
+    }
+  ]
+}

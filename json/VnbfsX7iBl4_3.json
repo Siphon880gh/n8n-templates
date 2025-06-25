@@ -1,0 +1,359 @@
+{
+  "name": "Sub-Agent - Calendar",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "b8388a87-ba0e-4d05-a01d-64803a129c1d",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ab380a2-a8d3-421c-ab4e-748ea8fb7904",
+              "name": "response",
+              "value": "Unable to perform task. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4efc9f01-8119-4e0e-b262-967f69ffbff0",
+      "name": "Try Again",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        20,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39c2f302-03be-4464-a17a-d7cc481d6d44",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3186a681-b95d-475f-b5e3-c18a8370a970",
+      "name": "Success",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        20,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# Calendar Assistant System\n\n## Core Profile\nYou are a calendar assistant managing events through creation, retrieval, and modifications. All events default to one hour duration if unspecified.\n\nCurrent Time Context: {{ $now }}\n\n## Tools & Operations\n\n### Creation Tools\n- \"Create Event with Attendee\"\n  → Use for events with participants\n  → Requires: eventStart, eventEnd, eventTitle, eventAttendeeEmail\n\n- \"Create Event\"\n  → Use for solo events\n  → Requires: eventStart, eventEnd, eventTitle\n\n### Management Tools\n- \"Get Events\"\n  → Required before any modification/deletion\n  → Parameters: dayBefore, dayAfter\n\n- \"Update Event\"\n  → Modify existing events (requires Get Events first)\n  → Parameters: eventID, startTime, endTime\n\n- \"Delete Event\"\n  → Remove events (requires Get Events first)\n  → Parameters: eventID\n\n## Key Rules\n- Always retrieve events before updating or deleting\n- Verify event details before modifications\n- Default to one-hour duration when unspecified\n\n\n\n"
+        }
+      },
+      "id": "1dd40fc4-6567-43a2-bcf5-e794b960a3e5",
+      "name": "Calendar Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -400,
+        160
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "keith@benai.co",
+          "mode": "list",
+          "cachedResultName": "keith@benai.co"
+        },
+        "start": "={{ $fromAI(\"eventStart\") }}",
+        "end": "={{ $fromAI(\"eventEnd\") }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $fromAI(\"eventAttendeeEmail\") }}"
+          ],
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        280,
+        420
+      ],
+      "id": "9c5c4738-c5cb-45f3-a90c-f25304dacdb1",
+      "name": "Create Event with Attendee",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6oIHRzR9mDDI8OKu",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "keith@benai.co",
+          "mode": "list",
+          "cachedResultName": "keith@benai.co"
+        },
+        "start": "={{ $fromAI(\"eventStart\") }}",
+        "end": "={{ $fromAI(\"eventEnd\") }}",
+        "additionalFields": {
+          "attendees": [],
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        140,
+        420
+      ],
+      "id": "0ea3e571-496e-4dc3-8785-202cd6e2e672",
+      "name": "Create Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6oIHRzR9mDDI8OKu",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "keith@benai.co",
+          "mode": "list",
+          "cachedResultName": "keith@benai.co"
+        },
+        "timeMin": "={{ $fromAI(\"dayBefore\",\"the day before the date the user requested\") }}",
+        "timeMax": "={{ $fromAI(\"dayAfter\",\"the day after the date the user requested\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -100,
+        420
+      ],
+      "id": "993b2830-cddf-4491-86fd-191aa517216b",
+      "name": "Get Events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6oIHRzR9mDDI8OKu",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "keith@benai.co",
+          "mode": "list",
+          "cachedResultName": "keith@benai.co"
+        },
+        "eventId": "={{ $fromAI(\"eventID\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -200,
+        420
+      ],
+      "id": "7136f135-59a4-477b-adda-7029421ad6ec",
+      "name": "Delete Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6oIHRzR9mDDI8OKu",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "keith@benai.co",
+          "mode": "list",
+          "cachedResultName": "keith@benai.co"
+        },
+        "eventId": "={{ $fromAI(\"eventID\") }}",
+        "updateFields": {
+          "end": "={{ $fromAI(\"endTime\") }}",
+          "start": "={{ $fromAI(\"startTime\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        20,
+        420
+      ],
+      "id": "2da14320-7e68-4ffc-9424-b989c1da9836",
+      "name": "Update Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6oIHRzR9mDDI8OKu",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"query\": \"string\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -640,
+        160
+      ],
+      "id": "566dd29f-d0ef-4aca-a58b-b99d7991fed0",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event with Attendee": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0562a6fb-e5fe-4aaa-8dd9-ff13985e6963",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a226ccd2b47f2505e743dd72896ae1c385e1d543b95f0badc72e1ad42c93a962"
+  },
+  "id": "55ZLP6Uau1DRjJHX",
+  "tags": []
+}

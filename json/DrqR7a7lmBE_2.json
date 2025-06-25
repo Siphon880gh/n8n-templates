@@ -1,0 +1,310 @@
+{
+  "name": "Gradient Image (AI Graphic Designer)",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "imagePrompt"
+            },
+            {
+              "name": "resolution"
+            },
+            {
+              "name": "imageType"
+            },
+            {
+              "name": "fileName"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        680,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image[]",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "=Using this image as inspiration, create: {{ $('When Executed by Another Workflow').item.json.imagePrompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        500
+      ],
+      "id": "17f2b300-8658-47b9-a9a7-c6f0b577d737",
+      "name": "Generate Image Using GPT Image 1",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1gitoFs9-KqsuNjZt9plv9rvnWUWPJUJb",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        900,
+        500
+      ],
+      "id": "954da1d7-7a3f-4b18-9044-33113c6f7bed",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {
+          "mimeType": "image/png"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1340,
+        500
+      ],
+      "id": "76fd7499-028d-4188-82ca-884020bf56ef",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('When Executed by Another Workflow').item.json.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1560,
+        500
+      ],
+      "id": "e897349a-22e0-4a32-804c-74a95ddc2226",
+      "name": "Google Drive2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1780,
+        500
+      ],
+      "id": "afe6adf9-8e2b-4ca1-828d-cfc98d13d150",
+      "name": "Google Drive3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc5839f6-8d08-405e-bf8e-fc038e1bb121",
+              "name": "webViewLink",
+              "value": "={{ $('Google Drive2').item.json.webViewLink }}",
+              "type": "string"
+            },
+            {
+              "id": "0808c18a-075d-4d90-bbec-55a505512d30",
+              "name": "initialPrompt",
+              "value": "={{ $('When Executed by Another Workflow').item.json.imagePrompt }}",
+              "type": "string"
+            },
+            {
+              "id": "26209b1c-9d62-48a3-a4a6-290802b2e0c5",
+              "name": "fileName",
+              "value": "={{ $('When Executed by Another Workflow').item.json.fileName }}",
+              "type": "string"
+            },
+            {
+              "id": "2d72a62f-1871-43a4-9c8f-687d0006b31d",
+              "name": "imageType",
+              "value": "={{ $('When Executed by Another Workflow').item.json.imageType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2000,
+        500
+      ],
+      "id": "ab609c53-5537-4d57-83b6-1c754232d873",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "imagePrompt": "Simple gradient background for LeftClick, a dark, moody brand that prefers dark, pastel tones.",
+          "resolution": "1536x1024",
+          "imageType": "style guide",
+          "fileName": "C_logo"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Using GPT Image 1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Generate Image Using GPT Image 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "Google Drive3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ce5f543c-842d-4173-95f8-a9c4fb91d93c",
+  "meta": {
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "kZ2VRoLIX2txywbe",
+  "tags": []
+}

@@ -1,0 +1,812 @@
+{
+  "name": "Email Inbox Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "UNREAD"
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "39dfda74-59b6-41b9-ad53-cbe18a946135",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Internal",
+              "description": "=Emails from the parent domain (prvndigital.com) from employees. Keywords: request, inquiry, support, question, follow-up, feedback\n"
+            },
+            {
+              "category": "Customer Support",
+              "description": "=Emails related to ongoing communication with current clients or customers, including service requests, feedback, support tickets, and inquiries. Keywords: request, inquiry, support, question, follow-up, feedback\n"
+            },
+            {
+              "category": "Promotions",
+              "description": "=Emails related to marketing campaigns, promotional offers, newsletters, or business updates from partners. Typically these emails contain content aimed at engaging an audience or updating them on promotions. Keywords: newsletter, promotion, offer, sale, campaign, marketing, launch\n"
+            },
+            {
+              "category": "Admin/Finance",
+              "description": "=Emails related to admin or financial matters, such as invoices, billing statements, payment reminders, or expense reports. Anything involving transactions or accounting should fall under this label.  Keywords: invoice, payment, billing, receipt, financial, expense, account\n"
+            },
+            {
+              "category": "Sales Opportunity",
+              "description": "=Emails related to sales. These could include service inquiries, pricing requests, referrals etc. \n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "be50bb17-f125-4128-9ec4-6f9cfd38cb24",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        200
+      ],
+      "id": "265aa7a2-de38-467e-9ed7-bf520ff4d48e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_8969355853208698253"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        -340
+      ],
+      "id": "8d78b0f4-cd41-45bc-8977-150a3a15b193",
+      "name": "Add Label: Internal",
+      "webhookId": "ec980e5c-b831-4eb1-a773-99b35db978ea",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_8588236852564376051"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        -180
+      ],
+      "id": "170f59f2-9f5b-4b68-83d2-ce15b4ab9495",
+      "name": "Add Label: Customer Support",
+      "webhookId": "ec980e5c-b831-4eb1-a773-99b35db978ea",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_9065302967928029579"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        0
+      ],
+      "id": "f5d61af3-c20d-4387-8f1d-7803081d775b",
+      "name": "Add Label: Promotions",
+      "webhookId": "ec980e5c-b831-4eb1-a773-99b35db978ea",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_2440308621653628953"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        180
+      ],
+      "id": "df548576-5ac2-496d-bf31-ff8a60e11958",
+      "name": "Add Label: Admin/Finance",
+      "webhookId": "ec980e5c-b831-4eb1-a773-99b35db978ea",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_1612494256450790369"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        360
+      ],
+      "id": "047d6a96-1f49-4f54-b277-9f755ee61389",
+      "name": "Add Label: Sales Opportunities",
+      "webhookId": "ec980e5c-b831-4eb1-a773-99b35db978ea",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Text Classifier').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1560,
+        0
+      ],
+      "id": "61c52cb6-468d-4fb1-885a-bf9f2308c5ba",
+      "name": "Gmail",
+      "webhookId": "90818322-568d-456f-ae71-56081403788f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are the Promotions Analyst in an AI email management system.\n Your role is to review incoming promotional emails, summarize the offer, and decide whether it’s worth pursuing further.\nInput:\n {{ $('Gmail Trigger').item.json.text }}\nOutput:\n • Summary – What is being offered?\n • Recommendation – Is this worth exploring further? (Yes/No + brief reason)"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        920,
+        0
+      ],
+      "id": "1463682e-aa48-41d4-b424-9bf4b521bbf5",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "09fa1957-4900-45c1-81d2-6fef3162ecf7",
+              "leftValue": "={{ $json.message.content.recommendation }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1260,
+        0
+      ],
+      "id": "372abbbd-a1ba-4f80-9d66-c34be6ca6d2a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an executive assistant handling internal emails from my team.\n Respond to high-priority emails with clarity and accuracy.\nInput:\n {{ $('Gmail Trigger').item.json.text }}\nOutput:\n • Subject\n • Message"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        940,
+        -340
+      ],
+      "id": "c5eb4df5-068f-4ef0-9534-b8ec67282615",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a customer service representative.\n Respond to customer inquiries clearly and accurately.\n If the request is outside your scope, direct the user to: support@prvndigital.com\nInput:\n {{ $('Gmail Trigger').item.json.text }}\nOutput:\n • Subject\n • Message"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        920,
+        -180
+      ],
+      "id": "a6fab3a7-2e7a-478d-a874-581c66917f2f",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a Finance & Billing Assistant.\n Review incoming emails related to payments, invoices, or account charges. Summarize the key details clearly and concisely.\nInput:\n {{ $('Gmail Trigger').item.json.text }}\nOutput:\n • Subject\n • Summary"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        940,
+        180
+      ],
+      "id": "0f30b31f-31aa-486e-83df-889d8bca8f3e",
+      "name": "OpenAI3",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to read incoming emails related to the sale of our products or services and draft a concise, professional response. Include relevant details such as the contact’s name, email, phone number, and any specific questions or requests they mentioned.\n\nInput:\n{{ $('Gmail Trigger').item.json.text }}\n\nOutput:\n• Subject – Appropriate subject line for your reply\n• Message – Drafted email response including relevant details\n- Notification - create a concise notification to be sent to a slack channel with the first line as \"New Sales Opportunity\" along with any relevant details\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        920,
+        360
+      ],
+      "id": "ddd386fb-3e1c-4718-858d-a2891e4b2dab",
+      "name": "OpenAI4",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.message.content.Subject }}",
+        "message": "={{ $json.message.content.Message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1300,
+        -340
+      ],
+      "id": "c56e7ea8-e49c-4a07-93b8-8403b8e5a10f",
+      "name": "Gmail1",
+      "webhookId": "8ce3b709-9213-48af-9813-3e76a69dcec5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08KU6HK28H",
+          "mode": "list",
+          "cachedResultName": "playground"
+        },
+        "text": "Internal: New Draft Created ",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1520,
+        -340
+      ],
+      "id": "c2804232-8398-484c-a784-049bb8ae73cf",
+      "name": "Slack",
+      "webhookId": "ec7b1337-9db1-475f-b353-79dbbeb56587",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "Smq9xtzPXOo0SlrT",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.message.content.Subject }}",
+        "message": "={{ $json.message.content.Message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        -180
+      ],
+      "id": "d0a6ea93-8140-4dbe-bc53-36649a78dc16",
+      "name": "Gmail2",
+      "webhookId": "8ce3b709-9213-48af-9813-3e76a69dcec5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.message.content.Subject }}",
+        "message": "={{ $json.message.content.Message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        180
+      ],
+      "id": "2784bf1d-7216-4565-bf2e-996aae9e884e",
+      "name": "Gmail3",
+      "webhookId": "8ce3b709-9213-48af-9813-3e76a69dcec5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.message.content.Subject }}",
+        "message": "={{ $json.message.content.Message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        360
+      ],
+      "id": "fa0ba41b-29f0-4bd3-9fc4-2832d4068e5c",
+      "name": "Gmail4",
+      "webhookId": "8ce3b709-9213-48af-9813-3e76a69dcec5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "37U4RHwRA9vvyop7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08KU6HK28H",
+          "mode": "list",
+          "cachedResultName": "playground"
+        },
+        "text": "={{ $('OpenAI4').item.json.message.content.Notification }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1500,
+        360
+      ],
+      "id": "078332a8-61b8-4f09-a183-a01f6973fa8b",
+      "name": "Slack1",
+      "webhookId": "3e098b85-9de9-44ae-80ce-7a0adeece2c6",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "Smq9xtzPXOo0SlrT",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Add Label: Internal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add Label: Customer Support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add Label: Promotions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add Label: Admin/Finance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add Label: Sales Opportunities",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Label: Promotions": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Label: Sales Opportunities": {
+      "main": [
+        [
+          {
+            "node": "OpenAI4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Label: Admin/Finance": {
+      "main": [
+        [
+          {
+            "node": "OpenAI3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Label: Customer Support": {
+      "main": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Label: Internal": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI4": {
+      "main": [
+        [
+          {
+            "node": "Gmail4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI3": {
+      "main": [
+        [
+          {
+            "node": "Gmail3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail4": {
+      "main": [
+        [
+          {
+            "node": "Slack1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cb839946-8c4a-47e1-81a5-bcd0e029c4c3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9da288905fbe9354dea4b543fd7e960ac33b487ac1b02440ad591d7c90022103"
+  },
+  "id": "n9cLi7WDQDzVMFcu",
+  "tags": []
+}

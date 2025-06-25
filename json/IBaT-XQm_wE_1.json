@@ -1,0 +1,309 @@
+{
+  "name": "o3 mini Travel Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        0
+      ],
+      "id": "cb2577a7-878d-47b5-955b-ff38386bd38f",
+      "name": "When chat message received",
+      "webhookId": "96c75db9-94b9-4cdb-9fbc-df8276dda073"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "activities",
+        "toolDescription": "Call this tool to retrieve information for traveling about activites",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "sample",
+          "mode": "list",
+          "cachedResultName": "sample"
+        },
+        "options": {
+          "pineconeNamespace": "activities"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        800,
+        240
+      ],
+      "id": "9b1a5c2d-0a92-4c6f-b3b7-228c1d0f25ad",
+      "name": "Activities",
+      "credentials": {
+        "pineconeApi": {
+          "id": "kRQGVexSgzWhzJz2",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        460
+      ],
+      "id": "55d53508-c1d8-44b3-8517-c26bc3530773",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "flights",
+        "toolDescription": "Call this tool to retrieve information for traveling about flights",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "sample",
+          "mode": "list",
+          "cachedResultName": "sample"
+        },
+        "options": {
+          "pineconeNamespace": "flights"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        520,
+        240
+      ],
+      "id": "1d0b85e5-fba4-489e-8c68-269bc9606c78",
+      "name": "Flights",
+      "credentials": {
+        "pineconeApi": {
+          "id": "kRQGVexSgzWhzJz2",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "resorts",
+        "toolDescription": "Call this tool to retrieve information for traveling about resorts",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "sample",
+          "mode": "list",
+          "cachedResultName": "sample"
+        },
+        "options": {
+          "pineconeNamespace": "resorts"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        220,
+        240
+      ],
+      "id": "7e6b4fd6-76ec-4d8c-8b2f-1bab0292f9b7",
+      "name": "Resorts",
+      "credentials": {
+        "pineconeApi": {
+          "id": "kRQGVexSgzWhzJz2",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        240
+      ],
+      "id": "1a6c6c2f-bb26-4604-96ad-03c09477258f",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview  \nYou are an AI agent specializing in trip planning. Your primary task is to create a **detailed agenda** for travelers by gathering information about **resorts, flights, and activities** to ensure a well-organized and comfortable experience.  \n\n## Context  \n- You have access to **four tools**:  \n  1. **Resorts** – Retrieves information about available resorts.  \n  2. **Flights** – Retrieves flight details, including schedules and prices.  \n  3. **Activities** – Provides details about activities at the destination.  \n  4. **Send Itinerary** – Sends the final itinerary via email in a **human-readable HTML format**.  \n- Your goal is to **plan a full itinerary** that includes flights, accommodations, and activities while ensuring traveler comfort.  \n\n## Instructions  \n1. **Always call all three data retrieval tools before providing any response.**  \n   - Use the **resorts tool** to find available resorts.  \n   - Use the **flights tool** to find flight options.  \n   - Use the **activities tool** to gather activity details.  \n2. Based on the retrieved information, **create a detailed itinerary** that includes:  \n   - Recommended **resorts** with explanations of why they fit the traveler’s needs.  \n   - Available **flights** with the most suitable options highlighted.  \n   - A day-by-day breakdown of **activities** ensuring a balanced, enjoyable experience.  \n3. Ensure the itinerary is **logical, well-paced, and aligned with traveler preferences** (e.g., avoiding overly tight schedules, ensuring rest periods, and including diverse activities).  \n4. **Format the final itinerary in HTML** so that it is visually appealing and easy to read.  \n5. **Send the itinerary via the \"Send Itinerary\" tool** to the traveler's provided email.  \n\n## Tools  \n- **Resorts** – Retrieves resort options based on location and preferences.  \n- **Flights** – Provides available flights for the given dates and locations.  \n- **Activities** – Suggests activities based on traveler interests and destination.  \n- **Send Itinerary** – Sends the finalized itinerary via email in **formatted HTML**.  \n\n## Examples  \n- **Input:** \"Plan a 5-day trip to Hawaii for a family with two kids, leaving from New York.\"  \n- **AI Process:**  \n  1. Call **flights tool** to find flights from New York to Hawaii.  \n  2. Call **resorts tool** to find family-friendly resorts in Hawaii.  \n  3. Call **activities tool** to find family-friendly activities in Hawaii.  \n  4. Generate a **detailed itinerary in HTML format**.  \n  5. Call the **Send Itinerary tool** to email the final plan.  \n- **Output Example:**  \n  - **Day 1:** Arrival, check-in at Resort X, sunset dinner by the beach.  \n  - **Day 2:** Snorkeling tour in the morning, afternoon at the resort’s pool.  \n  - **Day 3:** Hiking excursion, luau experience in the evening.  \n  - **Day 4:** Relaxation day, spa and kids' adventure park.  \n  - **Day 5:** Departure, recommended time to leave for the airport.  \n- **Email Example (HTML Format):**  \n  ```html\n  <html>\n  <body>\n      <h2>Your 5-Day Hawaii Trip Itinerary</h2>\n      <p><strong>Day 1:</strong> Arrival, check-in at Resort X, sunset dinner by the beach.</p>\n      <p><strong>Day 2:</strong> Snorkeling tour in the morning, afternoon at the resort’s pool.</p>\n      <p><strong>Day 3:</strong> Hiking excursion, luau experience in the evening.</p>\n      <p><strong>Day 4:</strong> Relaxation day, spa and kids' adventure park.</p>\n      <p><strong>Day 5:</strong> Departure, recommended time to leave for the airport.</p>\n  </body>\n  </html>\n\n## SOP (Standard Operating Procedure)\n- Extract traveler details (destination, dates, group size, preferences).\n- Call all three data tools (Resorts, Flights, Activities).\n- Analyze the gathered information to create an optimized itinerary.\n- Format the itinerary in structured HTML for readability.\n- Call the \"Send Itinerary\" tool to email the final trip plan to the traveler.\n\n## Final Notes\n- The AI must call all tools before responding with an itinerary.\n- The itinerary must be formatted in HTML before sending.\n- Ensure the trip plan is realistic, well-paced, and traveler-friendly.\n- Prioritize traveler comfort, flexibility, and personalized experiences."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        400,
+        0
+      ],
+      "id": "f962b0dd-2cad-4ba9-a834-968daf025f8e",
+      "name": "o3 mini Travel Agent"
+    },
+    {
+      "parameters": {
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        240
+      ],
+      "id": "12d4d3c6-ac1e-49ea-8a4d-ef590e2177bd",
+      "name": "Send Itinerary",
+      "webhookId": "ef22b7ce-7da0-4a32-8e10-5050db2bed04",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MHutgNQIvAz7qMgP",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        240
+      ],
+      "id": "276fab33-e630-49d5-a2fc-f8906979a60d",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "1dQlOKKWiigrH9O9",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "o3 mini Travel Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Activities": {
+      "ai_tool": [
+        [
+          {
+            "node": "o3 mini Travel Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Activities",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Flights",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Resorts",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flights": {
+      "ai_tool": [
+        [
+          {
+            "node": "o3 mini Travel Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resorts": {
+      "ai_tool": [
+        [
+          {
+            "node": "o3 mini Travel Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "o3 mini Travel Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Itinerary": {
+      "ai_tool": [
+        [
+          {
+            "node": "o3 mini Travel Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "o3 mini Travel Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1cfd1d8a-2db0-46c4-9a44-9273d36770a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "3LgBzkEacjt9udCp",
+  "tags": []
+}

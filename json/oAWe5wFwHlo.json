@@ -1,0 +1,835 @@
+{
+  "name": "Deep Multiline Icebreaker System",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "964f3c9d-e8d7-4577-a421-00563e64d2a5",
+      "name": "Remove Duplicate URLs",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "position": [
+        2120,
+        -120
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        760,
+        -380
+      ],
+      "id": "4c066654-d950-44c1-89b7-2954a95aabd7",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "links",
+              "cssSelector": "a",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {
+          "trimValues": true,
+          "cleanUpText": true
+        }
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        -180
+      ],
+      "id": "f6568d7c-45ef-4f9e-8286-707fc00daaca",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "links",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        -160
+      ],
+      "id": "2d6b78a7-0a25-49de-a5a8-08fa6fcae7eb",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9a75bc22-f6b3-426e-96df-db5e319e5cd5",
+              "leftValue": "={{ $json.links }}",
+              "rightValue": "/",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        -120
+      ],
+      "id": "6746a7a9-79bd-4d52-ae5d-18e64dd9ad4c",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Loop Over Items').item.json.website_url }}{{ $json.links }}",
+        "options": {}
+      },
+      "id": "feae459e-debe-4091-956a-47bc9fa0b337",
+      "name": "Request web page for URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2500,
+        -80
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data ? $json.data : \"<div>empty</div>\" }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        -80
+      ],
+      "id": "a0181fab-30c3-4b8f-ab69-3e5a6922a098",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're a helpful, intelligent website scraping assistant.",
+              "role": "system"
+            },
+            {
+              "content": "You're provided a Markdown scrape of a website page. Your task is to provide a two-paragraph abstract of what this page is about.\n\nReturn in this JSON format:\n\n{\"abstract\":\"your abstract goes here\"}\n\nRules:\n- Your extract should be comprehensive—similar level of detail as an abstract to a published paper.\n- Use a straightforward, spartan tone of voice.\n- If it's empty, just say \"no content\"."
+            },
+            {
+              "content": "={{ $json.data }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        2880,
+        -80
+      ],
+      "id": "a5fafa64-5dc8-445f-856f-78e7f21a0261",
+      "name": "Summarize Website Page",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        -80
+      ],
+      "id": "a4bfd697-5143-4afc-a497-0d2f1eaccd46",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.organization.website_url }}",
+        "options": {
+          "allowUnauthorizedCerts": false,
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "815247c3-b09c-49b1-92e0-efdad3bae82a",
+      "name": "Scrape Home",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        760,
+        -180
+      ],
+      "executeOnce": false,
+      "typeVersion": 4.2,
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message.content.abstract"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3240,
+        -80
+      ],
+      "id": "33ceea97-e0ab-4769-afb2-3b09926cda7c",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're a helpful, intelligent sales assistant.",
+              "role": "system"
+            },
+            {
+              "content": "=We just scraped a series of web pages for a business called . Your task is to take their summaries and turn them into catchy, personalized openers for a cold email campaign to imply that the rest of the campaign is personalized.\n\nYou'll return your icebreakers in the following JSON format:\n\n{\"icebreaker\":\"Hey {name}. Love {thing}—also doing/like/a fan of {otherThing}. Wanted to run something by you.\\n\\nI hope you'll forgive me, but I creeped you/your site quite a bit, and know that {anotherThing} is important to you guys (or at least I'm assuming this given the focus on {fourthThing}). I put something together a few months ago that I think could help. To make a long story short, it's an outreach system that uses AI to find people hiring website devs. Then pitches them with templates (actually makes them a demo website). Costs just a few cents to run, very high converting, and I think it's in line with {someImpliedBeliefTheyHave}\"}\n\nRules:\n- Write in a spartan/laconic tone of voice.\n- Make sure to use the above format when constructing your icebreakers. We wrote it this way on purpose.\n- Shorten the company name wherever possible (say, \"XYZ\" instead of \"XYZ Agency\"). More examples: \"Love AMS\" instead of \"Love AMS Professional Services\", \"Love Mayo\" instead of \"Love Mayo Inc.\", etc.\n- Do the same with locations. \"San Fran\" instead of \"San Francisco\", \"BC\" instead of \"British Columbia\", etc.\n- For your variables, focus on small, non-obvious things to paraphrase. The idea is to make people think we *really* dove deep into their website, so don't use something obvious. Do not say cookie-cutter stuff like \"Love your website!\" or \"Love your take on marketing!\"."
+            },
+            {
+              "content": "=Profile: Aina Rakotoarinaly, CEO founder - Maki Agency / Ti'bouffe, Maki agency, outsourcing/offshoring, Antananarivo, Madagascar\n\nWebsite: \n\nThis webpage presents Maki Agency, a professional digital outsourcing company based in Madagascar that specializes in tailored web development, integration, design, SEO, content creation, community management, and more. The agency offers a range of white-label and dedicated resource solutions, targeting businesses that wish to outsource various digital projects. Maki Agency emphasizes its team's versatile technical expertise across major web technologies, including CSS, HTML, JQuery, WordPress, PHP, WooCommerce, Laravel, and Odoo. The company positions itself as an ideal partner for comprehensive digital support, ensuring that client's digital and branding needs are met through experienced personnel and rigorous project management.\\n\\nThe website details the specific services provided, such as graphic and web design (logos, banners, retouching), web integration (landing pages, newsletters, site layouts), development (showcase sites, e-commerce, intranets, bespoke applications, maintenance), content writing (SEO-optimized texts, articles, product sheets, social media posts), search engine optimization (audits, optimizations, submissions), and social media management. The agency highlights its strengths in quality of work, experience, and discretion, especially in white-label arrangements. Visitors are encouraged to contact Maki Agency for new or existing projects, and convenient contact options (phone, QR codes, social media, chat) are provided for initiating discussions.\n\nThis page presents Maki Agency, a Madagascar-based digital agency specializing in web outsourcing and subcontracting services. The agency emphasizes its experience and dedicated team capable of handling diverse digital tasks such as web development, design, SEO, content writing, integration, community management, and maintenance. Maki Agency offers both white-label and dedicated resource solutions for clients seeking to externalize parts of their workflow to a specialized offshore partner. The descriptions highlight the agency's proficiency in popular web technologies, frameworks, and CMS platforms (such as HTML, CSS, PHP, WordPress, Laravel, WooCommerce, and Odoo), as well as its ability to execute projects ranging from landing pages, e-commerce platforms, and intranets to detailed graphic design and content creation.\\n\\nThe site underscores Maki Agency's core values and competitive advantages, such as meticulous attention to detail, experienced professionals, creativity, discretion, and a client-focused approach. It provides detailed breakdowns of service offerings, ranging from graphic materials (logos, flyers, banners), technical integration, app and website development, staff outsourcing (developers, designers, writers), SEO strategies, community management, and digital content production. Contact details and multiple avenues for communication (phone, WhatsApp, Skype, QR codes) are prominently featured, along with encouragements for clients to reach out for consultations or ongoing projects requiring outsourcing. The agency also highlights its longevity and adaptability in the digital sector, supporting clients across various industries and digital competencies"
+            },
+            {
+              "content": "{\"icebreaker\":\"Hey Aina,\\n\\nLove what you're doing at Maki. Also doing some outsourcing right now, wanted to run something by you.\\n\\nSo I hope you'll forgive me, but I creeped you/Maki quite a bit. I know that discretion is important to you guys (or at least I'm assuming this given the part on your website about white-labelling your services) and I put something together a few months ago that I think could help. To make a long story short, it's an outreach system that uses AI to find people hiring website devs. Then pitches them with templates (actually makes them a white-labelled demo website). Costs just a few cents to run, very high converting, and I think it's in line with Maki's emphasis on scalability.\"}",
+              "role": "assistant"
+            },
+            {
+              "content": "=Profile: {{ $('Loop Over Items').item.json.first_name }} {{ $('Loop Over Items').item.json.last_name }} {{ $('Loop Over Items').item.json.headline }}\n\nWebsite: {{ $json.abstract.join(\"/n\") }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        3440,
+        -80
+      ],
+      "id": "06822ed3-79ed-4f69-aa25-583ee560a768",
+      "name": "Generate Multiline Icebreaker",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1907GiQ68xE_tzyhZ4cdIA6uFc7-9fDLr0SvA6kv18bk",
+          "mode": "list",
+          "cachedResultName": "Multiline Icebreaker Generator",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1907GiQ68xE_tzyhZ4cdIA6uFc7-9fDLr0SvA6kv18bk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1907GiQ68xE_tzyhZ4cdIA6uFc7-9fDLr0SvA6kv18bk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "location": "={{ $('Edit Fields').item.json.location }}",
+            "first_name": "={{ $('Edit Fields').item.json.first_name }}",
+            "last_name": "={{ $('Edit Fields').item.json.last_name }}",
+            "email": "={{ $('Edit Fields').item.json.email }}",
+            "website_url": "={{ $('Edit Fields').item.json.website_url }}",
+            "phone_number": "={{ $('Edit Fields').item.json.phone_number }}",
+            "multiline_icebreaker": "={{ $json.message.content.icebreaker }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "website_url",
+              "displayName": "website_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "headline",
+              "displayName": "headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone_number",
+              "displayName": "phone_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "multiline_icebreaker",
+              "displayName": "multiline_icebreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3800,
+        -80
+      ],
+      "id": "507e4414-2c9e-4a6a-878c-b8ef9854f45b",
+      "name": "Add Row",
+      "executeOnce": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "06fihJgQOwWsguVO",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/jljBwyyQakqrL1wae/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer apify_api_dU25BFJr2bBW36ZQRKMi8w26Rk8bKf2IwUkf"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"getPersonalEmails\": true,\n    \"getWorkEmails\": true,\n    \"totalRecords\": 500,\n    \"url\": \"{{ $json.URL }}\"\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1160,
+        -380
+      ],
+      "id": "5e6ad984-da66-4d0b-8414-ca83a2dd87f9",
+      "name": "Call Apify Scraper"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1907GiQ68xE_tzyhZ4cdIA6uFc7-9fDLr0SvA6kv18bk",
+          "mode": "list",
+          "cachedResultName": "Deep Icebreaker Generator",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1907GiQ68xE_tzyhZ4cdIA6uFc7-9fDLr0SvA6kv18bk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 631684632,
+          "mode": "list",
+          "cachedResultName": "Search URLs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1907GiQ68xE_tzyhZ4cdIA6uFc7-9fDLr0SvA6kv18bk/edit#gid=631684632"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        -380
+      ],
+      "id": "93497282-caa1-48d3-a670-170666d2a484",
+      "name": "Get Search URL",
+      "executeOnce": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "06fihJgQOwWsguVO",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e7737c7a-b5b6-44a1-9f0d-361f0ac7a459",
+              "name": "first_name",
+              "value": "={{ $('Only Websites & Emails').item.json.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "e867e03d-60e6-4dee-b1ac-12c517fd8d6c",
+              "name": "last_name",
+              "value": "={{ $('Only Websites & Emails').item.json.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "d522ec31-e21e-417e-ab78-f4a49019e544",
+              "name": "email",
+              "value": "={{ $('Only Websites & Emails').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "8f1ddf8d-7df8-433e-a687-c1a81cced4e1",
+              "name": "website_url",
+              "value": "={{ $('Only Websites & Emails').item.json.organization.website_url }}",
+              "type": "string"
+            },
+            {
+              "id": "9ccf7442-97cc-4840-aff0-7919e4119027",
+              "name": "headline",
+              "value": "={{ $('Only Websites & Emails').item.json.headline }}",
+              "type": "string"
+            },
+            {
+              "id": "d2eb1588-87d2-43b2-8356-7bfe754c7707",
+              "name": "location",
+              "value": "={{ $('Only Websites & Emails').item.json.city }} {{ $('Only Websites & Emails').item.json.country }}",
+              "type": "string"
+            },
+            {
+              "id": "b9ca5dad-9733-4b62-aeb8-c5675bc423d9",
+              "name": "phone_number",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "40fd7130-c65d-4826-a713-ecca24d23b07",
+              "name": "links",
+              "value": "={{ $json.links }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1160,
+        -180
+      ],
+      "id": "cc3cb547-9c0d-4ed3-85bf-d699bb56a091",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fc44a289-8c50-4682-8b50-c2e63cfc6514",
+              "leftValue": "={{ $json.organization.website_url }}",
+              "rightValue": "/",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "f8e675e8-99cc-4c30-92e3-e08a659cff9b",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        -380
+      ],
+      "id": "1255ef21-a542-4230-86ad-4187c76f88e6",
+      "name": "Only Websites & Emails"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1360,
+        -180
+      ],
+      "id": "776959a0-4cc7-4280-a94d-3fd0852e3a51",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst updatedItems = items.map((item) => {\n  const link = item?.json?.links;\n\n  if (typeof link === \"string\") {\n    // Case: starts with \"/\" → already relative\n    if (link.startsWith(\"/\")) {\n      item.json.links = link;\n    } \n    \n    // Case: absolute URL (http or https)\n    else if (link.startsWith(\"http://\") || link.startsWith(\"https://\")) {\n      try {\n        const url = new URL(link);\n        let path = url.pathname;\n\n        // Strip trailing slash unless root \"/\"\n        if (path !== \"/\" && path.endsWith(\"/\")) {\n          path = path.slice(0, -1);\n        }\n\n        item.json.links = path || \"/\";\n      } catch (e) {\n        // On parse error, keep original\n        item.json.links = link;\n      }\n    }\n\n    // Fallback: not relative or absolute, leave as-is\n    else {\n      item.json.links = link;\n    }\n  }\n\n  return item;\n});\n\nreturn updatedItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1940,
+        -80
+      ],
+      "id": "a78fbda6-a604-495a-a48e-d761de0f28ec",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Search URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request web page for URL": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicate URLs": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Summarize Website Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Website Page": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Request web page for URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Home": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Generate Multiline Icebreaker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Multiline Icebreaker": {
+      "main": [
+        [
+          {
+            "node": "Add Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Apify Scraper": {
+      "main": [
+        [
+          {
+            "node": "Only Websites & Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Search URL": {
+      "main": [
+        [
+          {
+            "node": "Call Apify Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only Websites & Emails": {
+      "main": [
+        [
+          {
+            "node": "Scrape Home",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicate URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0597ec9e-991e-4852-a9c5-71697be39f77",
+  "meta": {
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "6aJaqJGydNkeCbI2",
+  "tags": []
+}

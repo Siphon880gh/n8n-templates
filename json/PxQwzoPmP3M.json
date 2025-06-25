@@ -1,0 +1,775 @@
+{
+  "name": "Google Maps",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ]
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a6b11222-4319-452a-a777-74525f0caee3",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/2Mdma1N6Fd0y3QEjR/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"language\": \"en\",\n    \"locationQuery\": \"Toronto, Canada\",\n    \"maxCrawledPlacesPerSearch\": 5,\n    \"searchStringsArray\": [\n        \"landscapers\"\n    ],\n    \"skipClosedPlaces\": false\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "fb8bc8de-7ed7-4c7e-950b-427116a6ac0b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/9Sk4JJhEma9vBKqrg/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"considerChildFrames\": true,\n    \"maxDepth\": 1,\n    \"maxRequests\": 100,\n    \"maxRequestsPerStartUrl\": 20,\n    \"sameDomain\": true,\n    \"startUrls\": [\n        {\n            \"url\": \"{{ $('HTTP Request').item.json.website }}\",\n            \"method\": \"GET\"\n        }\n    ],\n    \"useBrowser\": false\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1000,
+        0
+      ],
+      "id": "36209152-9cf0-4d1c-a695-3beae2006845",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2108fb55-8508-4947-92dd-dfc9ac431d1f",
+              "leftValue": "={{ $json.website }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        0
+      ],
+      "id": "35f6618d-91da-47db-878c-1abe66d13e91",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        0
+      ],
+      "id": "c9a7e07d-17c5-44c4-9d13-4ee4e89cab37",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1uzCTNjOj5Vewg9lrwj6VnZ8S6kN2sJwj1zUK7tBdlTk",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uzCTNjOj5Vewg9lrwj6VnZ8S6kN2sJwj1zUK7tBdlTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uzCTNjOj5Vewg9lrwj6VnZ8S6kN2sJwj1zUK7tBdlTk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Business Name": "={{ $json.data[0].originalStartUrl }}",
+            "City": "={{ $('HTTP Request').item.json.neighborhood }}",
+            "Niche": "={{ $('HTTP Request').item.json.searchString }}",
+            "Email": "={{ $json.data[0].emails[0] }}",
+            "Phone": "={{ $json.data[0].phones[0] }}"
+          },
+          "matchingColumns": [
+            "Business Name"
+          ],
+          "schema": [
+            {
+              "id": "Business Name",
+              "displayName": "Business Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Niche",
+              "displayName": "Niche",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1460,
+        0
+      ],
+      "id": "5d43a96a-0095-46e5-aabb-535712e1825a",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        0
+      ],
+      "id": "8a7f6fa8-4ce2-4e39-943b-c5547db78087",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {
+    "HTTP Request": [
+      {
+        "json": {
+          "rank": 21,
+          "title": "4ever Green Landscaping Services Ltd",
+          "price": null,
+          "categoryName": "Landscaper",
+          "address": "5 Harding Ave Unit 311, North York, ON M6M 0A3, Canada",
+          "neighborhood": "North York",
+          "street": "5 Harding Ave Unit 311",
+          "city": "North York",
+          "postalCode": "M6M 0A3",
+          "state": "Ontario",
+          "countryCode": "CA",
+          "website": "http://www.4evergreenlandscaping.ca/",
+          "phone": "+1 416-844-6524",
+          "phoneUnformatted": "+14168446524",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 43.6993769,
+            "lng": -79.5024232
+          },
+          "totalScore": 4.9,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJ68yqsTMxK4gRXe8RavEu5zA",
+          "categories": [
+            "Landscaper",
+            "Concrete contractor",
+            "Deck builder",
+            "Fence contractor",
+            "Lawn sprinkler system contractor",
+            "Paving contractor",
+            "Railing contractor"
+          ],
+          "fid": "0x882b3133b1aacceb:0x30e72ef16a11ef5d",
+          "cid": "3523836847842258781",
+          "reviewsCount": 166,
+          "reviewsDistribution": {
+            "oneStar": 3,
+            "twoStar": 0,
+            "threeStar": 1,
+            "fourStar": 1,
+            "fiveStar": 161
+          },
+          "imagesCount": 128,
+          "imageCategories": [],
+          "scrapedAt": "2025-04-07T21:11:55.138Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "7 AM to 9 PM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "7 AM to 9 PM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "7 AM to 9 PM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "7 AM to 9 PM"
+            },
+            {
+              "day": "Friday",
+              "hours": "7 AM to 9 PM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "7 AM to 9 PM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "7 AM to 9 PM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Online estimates": true
+              },
+              {
+                "Onsite services": true
+              }
+            ],
+            "Crowd": [
+              {
+                "LGBTQ+ friendly": true
+              }
+            ],
+            "Planning": [
+              {
+                "Appointment required": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=4ever%20Green%20Landscaping%20Services%20Ltd&query_place_id=ChIJ68yqsTMxK4gRXe8RavEu5zA",
+          "searchPageUrl": "https://www.google.com/maps/search/landscapers/@43.70513316796028,-79.53020924025714,15z?hl=en",
+          "searchString": "landscapers",
+          "language": "en",
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipM6MYO_XdgPL2X2_4IpUMCTDK7a3LTEHOPhkTj6=w408-h408-k-no",
+          "kgmid": "/g/11byyrs0hn"
+        }
+      },
+      {
+        "json": {
+          "rank": 22,
+          "title": "Fine Touch Landscaping",
+          "price": null,
+          "categoryName": "Landscape designer",
+          "address": null,
+          "website": "http://finelandscaping.ca/",
+          "phone": "+1 647-906-8418",
+          "phoneUnformatted": "+16479068418",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 43.6975434,
+            "lng": -79.5028955
+          },
+          "totalScore": 4.6,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJPb4hcIoxK4gRyE_i4buV-F8",
+          "categories": [
+            "Landscape designer",
+            "Service establishment"
+          ],
+          "fid": "0x882b318a7021be3d:0x5ff895bbe1e24fc8",
+          "cid": "6915441862008524744",
+          "reviewsCount": 9,
+          "reviewsDistribution": {
+            "oneStar": 1,
+            "twoStar": 0,
+            "threeStar": 0,
+            "fourStar": 0,
+            "fiveStar": 8
+          },
+          "imagesCount": 16,
+          "imageCategories": [],
+          "scrapedAt": "2025-04-07T21:11:55.140Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "8 AM to 8 PM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "8 AM to 8 PM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "8 AM to 8 PM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "8 AM to 8 PM"
+            },
+            {
+              "day": "Friday",
+              "hours": "8 AM to 8 PM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "8 AM to 8 PM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "8 AM to 8 PM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Fine%20Touch%20Landscaping&query_place_id=ChIJPb4hcIoxK4gRyE_i4buV-F8",
+          "searchPageUrl": "https://www.google.com/maps/search/landscapers/@43.70513316796028,-79.53020924025714,15z?hl=en",
+          "searchString": "landscapers",
+          "language": "en",
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipPBtqDXpCIPL20O41MFCRzJRkhUdJ2_E231M9bN=w408-h544-k-no",
+          "kgmid": "/g/11r4t2w68q"
+        }
+      },
+      {
+        "json": {
+          "rank": 23,
+          "title": "Green Leaf Landscaping & Maintenance Ltd",
+          "price": null,
+          "categoryName": "Landscape architect",
+          "address": "2011 Lawrence Ave W, York, ON M9N 0A3, Canada",
+          "neighborhood": "York",
+          "street": "2011 Lawrence Ave W",
+          "city": "York",
+          "postalCode": "M9N 0A3",
+          "state": "Ontario",
+          "countryCode": "CA",
+          "website": "http://greenleaflimited.ca/",
+          "phone": "+1 416-717-2215",
+          "phoneUnformatted": "+14167172215",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 43.7000642,
+            "lng": -79.5115031
+          },
+          "totalScore": 5,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJN_kUYiYxK4gRZk06Oaoab3U",
+          "categories": [
+            "Landscape architect",
+            "Contractor"
+          ],
+          "fid": "0x882b31266214f937:0x756f1aaa393a4d66",
+          "cid": "8462011543259336038",
+          "reviewsCount": 4,
+          "reviewsDistribution": {
+            "oneStar": 0,
+            "twoStar": 0,
+            "threeStar": 0,
+            "fourStar": 0,
+            "fiveStar": 4
+          },
+          "imagesCount": 28,
+          "imageCategories": [],
+          "scrapedAt": "2025-04-07T21:11:55.140Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Green%20Leaf%20Landscaping%20%26%20Maintenance%20Ltd&query_place_id=ChIJN_kUYiYxK4gRZk06Oaoab3U",
+          "searchPageUrl": "https://www.google.com/maps/search/landscapers/@43.70513316796028,-79.53020924025714,15z?hl=en",
+          "searchString": "landscapers",
+          "language": "en",
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipNDrH7ko1F1gobu7tPAhdIn0mNUz4uQlEd-fGBC=w408-h351-k-no",
+          "kgmid": "/g/1tj80lyb"
+        }
+      },
+      {
+        "json": {
+          "rank": 24,
+          "title": "Hungarock Landscaping1",
+          "price": null,
+          "categoryName": "Landscaper",
+          "address": "263 Dixon Rd #601, Etobicoke, ON M9R 1R6, Canada",
+          "neighborhood": "Etobicoke",
+          "street": "263 Dixon Rd #601",
+          "city": "Etobicoke",
+          "postalCode": "M9R 1R6",
+          "state": "Ontario",
+          "countryCode": "CA",
+          "website": "http://www.hungarock.ca/",
+          "phone": "+1 905-783-5296",
+          "phoneUnformatted": "+19057835296",
+          "claimThisBusiness": true,
+          "location": {
+            "lat": 43.6957967,
+            "lng": -79.5485937
+          },
+          "totalScore": 5,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJQS6de7IwK4gRLm3Jl94aEOk",
+          "categories": [
+            "Landscaper"
+          ],
+          "fid": "0x882b30b27b9d2e41:0xe9101ade97c96d2e",
+          "cid": "16793952553796201774",
+          "reviewsCount": 5,
+          "reviewsDistribution": {
+            "oneStar": 0,
+            "twoStar": 0,
+            "threeStar": 0,
+            "fourStar": 0,
+            "fiveStar": 5
+          },
+          "imagesCount": null,
+          "imageCategories": [],
+          "scrapedAt": "2025-04-07T21:11:55.140Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "9 AM to 5 PM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "9 AM to 5 PM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "9 AM to 5 PM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "9 AM to 5 PM"
+            },
+            {
+              "day": "Friday",
+              "hours": "9 AM to 5 PM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "Closed"
+            },
+            {
+              "day": "Sunday",
+              "hours": "Closed"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Hungarock%20Landscaping1&query_place_id=ChIJQS6de7IwK4gRLm3Jl94aEOk",
+          "searchPageUrl": "https://www.google.com/maps/search/landscapers/@43.70513316796028,-79.53020924025714,15z?hl=en",
+          "searchString": "landscapers",
+          "language": "en",
+          "isAdvertisement": false,
+          "kgmid": "/g/1yg6nr483"
+        }
+      },
+      {
+        "json": {
+          "rank": 26,
+          "title": "Accent Green",
+          "price": null,
+          "categoryName": "Lawn care service",
+          "address": "36 Gordon Mackay Rd, North York, ON M9N 2V6, Canada",
+          "neighborhood": "North York",
+          "street": "36 Gordon Mackay Rd",
+          "city": null,
+          "postalCode": "M9N 2V6",
+          "state": "Ontario",
+          "countryCode": "CA",
+          "website": "http://www.accentgreen.com/",
+          "phone": "+1 416-242-9741",
+          "phoneUnformatted": "+14162429741",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 43.7155455,
+            "lng": -79.5104504
+          },
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJwyAuhekxK4gR-7j0i2-hqkY",
+          "categories": [
+            "Lawn care service",
+            "Snow removal service",
+            "Waste management service"
+          ],
+          "fid": "0x882b31e9852e20c3:0x46aaa16f8bf4b8fb",
+          "cid": "5092059829157279995",
+          "reviewsCount": 0,
+          "imagesCount": 1,
+          "imageCategories": [],
+          "scrapedAt": "2025-04-07T21:11:55.140Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "8 AM to 6 PM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "8 AM to 6 PM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "8 AM to 6 PM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "8 AM to 6 PM"
+            },
+            {
+              "day": "Friday",
+              "hours": "8 AM to 6 PM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "8 AM to 6 PM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "Open 24 hours"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Accent%20Green&query_place_id=ChIJwyAuhekxK4gR-7j0i2-hqkY",
+          "searchPageUrl": "https://www.google.com/maps/search/landscapers/@43.70513316796028,-79.53020924025714,15z?hl=en",
+          "searchString": "landscapers",
+          "language": "en",
+          "isAdvertisement": false,
+          "imageUrl": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=V92DS210hENASnEwQ5tLEw&cb_client=search.gws-prod.gps&w=408&h=240&yaw=239.9038&pitch=0&thumbfov=100",
+          "kgmid": "/g/11q4jy3q4g"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4ee783a9-7963-42e3-9853-bcdbb64d7dbc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "mrdGwfCgDGbsvMxK",
+  "tags": []
+}

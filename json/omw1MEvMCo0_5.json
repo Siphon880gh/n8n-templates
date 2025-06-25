@@ -1,0 +1,152 @@
+{
+  "name": "⚙️Set Calendar",
+  "nodes": [
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "nateherk88@gmail.com",
+          "mode": "list",
+          "cachedResultName": "nateherk88@gmail.com"
+        },
+        "start": "={{ $json.message.content['Start Time'] }}",
+        "end": "={{ $json.message.content['End Time'] }}",
+        "additionalFields": {
+          "summary": "={{ $json.message.content['Event Name'] }}"
+        }
+      },
+      "id": "e40d1da8-4940-49a0-a739-7d0b2a97889d",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        260
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "aKTyWSvWPROaIoVO",
+          "name": "Nate's Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to determine the following output fields based on the user query:\n\nEvent Name\nStart Time\nEnd Time\n\nUse {{$now}} as the current date\nIf an end time isn't specified, assume it will be 30 minutes after the start time.",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.query }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "03b65299-4dfb-48a8-9172-be77111e9fba",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        560,
+        260
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "bEw2RFKI3MP4M94t",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "afee1b3f-76f3-4b1d-984f-d2829a2e61f4",
+              "name": "response",
+              "value": "done",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7415e9db-4986-4a3b-9251-b7154a327268",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1140,
+        260
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6e6955cc-f115-4048-8e83-95ef05adeb54",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        380,
+        260
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "deeaeed5-bfa5-4c4d-a376-93d513c2631c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "vqt4dudohtbPZ3Wo",
+  "tags": []
+}

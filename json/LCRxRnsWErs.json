@@ -1,0 +1,1074 @@
+{
+  "name": "Order and Delivery Support",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "topP": 0.5
+        }
+      },
+      "id": "c95180ef-d375-45b1-aa85-939ef65baf58",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        200
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "9RivS2BmSh1DDBFm",
+          "name": "OpenAI Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "dd80ecec-a571-46af-a796-40c5bad1294d",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        900,
+        380
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "9RivS2BmSh1DDBFm",
+          "name": "OpenAI Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=file_id",
+                "value": "={{ $('Set File ID').item.json.file_id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "c5cd1ffd-1d81-4f4e-8af7-f2577a32a119",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        960,
+        1140
+      ]
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "f1601160-8864-4101-819a-7c9b20d1f48a",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        800,
+        1140
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "9RivS2BmSh1DDBFm",
+          "name": "OpenAI Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "documents",
+        "description": " Whenever customer asks questions about our services, you HAVE TO use the tool."
+      },
+      "id": "ff06bf18-49ca-4f26-ba6d-a3e6aa5896a0",
+      "name": "Retrieve Documents",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        680,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Tool to Add a Google Drive File to Vector DB",
+        "height": 758,
+        "width": 1471,
+        "color": 2
+      },
+      "id": "334b4e56-7093-4259-be73-767792fd45db",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Set File ID').item.json.file_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "e23624b6-a910-4879-9de1-fd32497fba8e",
+      "name": "Download File",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        440,
+        920
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "wpiZXesxk9S8fkVG",
+          "name": "Google Drive Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1TsAZucMy1ame6wNyYuIDK9da0e71mYhv",
+          "mode": "list",
+          "cachedResultName": "Order and Delivery Support",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1TsAZucMy1ame6wNyYuIDK9da0e71mYhv"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "8b215a9c-ffce-43bc-94c7-b7b6c293cd64",
+      "name": "File Created",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        820
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "wpiZXesxk9S8fkVG",
+          "name": "Google Drive Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1TsAZucMy1ame6wNyYuIDK9da0e71mYhv",
+          "mode": "list",
+          "cachedResultName": "Order and Delivery Support",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1TsAZucMy1ame6wNyYuIDK9da0e71mYhv"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "id": "ad7307d4-99b1-4036-8dc2-3a251459d2d9",
+      "name": "File Updated",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        1040
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "wpiZXesxk9S8fkVG",
+          "name": "Google Drive Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "1bfa6110-2248-4523-8bfa-4a8362f4acd8",
+      "name": "Extract Document Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        620,
+        920
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "021bfa6a-5f02-4b62-a958-b411b4fb4320",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        740,
+        500
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "9RivS2BmSh1DDBFm",
+          "name": "OpenAI Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "fa10c39e-b381-42a4-8915-e0a7336206c5",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        200
+      ],
+      "notesInFlow": false,
+      "credentials": {
+        "postgres": {
+          "id": "PBl2CHscg6mhqyLN",
+          "name": "Postgres Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 500,
+        "options": {}
+      },
+      "id": "10d03483-9d09-4787-aebc-bd5ed8057001",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        960,
+        1340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>file_id=like.*{{ $json.file_id }}*"
+      },
+      "id": "ff4d01c5-9710-4195-a834-f4a9d8845982",
+      "name": "Delete Old Doc Rows",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        260,
+        920
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ftUt2ZAXFNLfyosO",
+          "name": "Supabase Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+              "name": "file_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2ecf2ec5-c63e-4a32-bb82-2790b8c89713",
+      "name": "Set File ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        100,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "id": "cc02c431-b572-4c53-9236-b3647794acb6",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -20,
+        -120
+      ],
+      "webhookId": "5caca78f-1b6c-4b8b-9917-06fe7c17bc38"
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "9e8699b9-bc85-4d29-8b68-bd0d7eb71932",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        540,
+        360
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ftUt2ZAXFNLfyosO",
+          "name": "Supabase Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "2299dbdb-07e3-420a-a5ee-d4562c0408a9",
+      "name": "Insert into Supabase Vectorstore",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        840,
+        920
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ftUt2ZAXFNLfyosO",
+          "name": "Supabase Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Use tool when:\nClient faces a problem and needs help of support team.\n\nIMPORTANT:\nBefore using the \"Create Ticket\" use tool \"Search Order\" and make sure order exists in database. If not - don't use it.",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appaP2ScdRHohGtfZ",
+          "mode": "list",
+          "cachedResultName": "Delivery Service Management",
+          "cachedResultUrl": "https://airtable.com/appaP2ScdRHohGtfZ"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblRnjvjYvZVmS2cY",
+          "mode": "list",
+          "cachedResultName": "Inquiries",
+          "cachedResultUrl": "https://airtable.com/appaP2ScdRHohGtfZ/tblRnjvjYvZVmS2cY"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Inquiry Reason": "={{ $fromAI(\"inquiry_reason\",\"Inquiry Reason \",\"string\") }}",
+            "Inquiry Type": "={{ $fromAI(\"inquiry_type\",\"Inquiry Type. Must be either 'Issue' or 'Return' \",\"string\") }}",
+            "Status": "In Process",
+            "Details": "={{ $fromAI(\"inquiry_details\",\"Inquiry Details \",\"string\") }}",
+            "Order": "={{ [$fromAI(\"tracking_number\",\"tracking number. Must be provided by client \",\"string\") ]}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Inquiry Reason",
+              "displayName": "Inquiry Reason",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Inquiry Type",
+              "displayName": "Inquiry Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Return",
+                  "value": "Return"
+                },
+                {
+                  "name": "Issue",
+                  "value": "Issue"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Resolved",
+                  "value": "Resolved"
+                },
+                {
+                  "name": "In Process",
+                  "value": "In Process"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Details",
+              "displayName": "Details",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Order",
+              "displayName": "Order",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Client Feedback",
+              "displayName": "Client Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        200
+      ],
+      "id": "2646a66a-5769-412c-a0d9-26514a958679",
+      "name": "Create Ticket",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "XT7hvl1w201jtBhx",
+          "name": "Philipp Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Use tool when:\n1. Customer wants to create a ticket. In this case we need to make sure order exists.\n2. Customer wants to track his order.\n3. Customer wants to set a call with team. In this case we need to make sure order exists and confirm client email for the call. Email is in field \"Customer Email\"",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appaP2ScdRHohGtfZ",
+          "mode": "list",
+          "cachedResultName": "Delivery Service Management",
+          "cachedResultUrl": "https://airtable.com/appaP2ScdRHohGtfZ"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblj2ZymzvP7hQ5RK",
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://airtable.com/appaP2ScdRHohGtfZ/tblj2ZymzvP7hQ5RK"
+        },
+        "filterByFormula": "=AND({Tracking Number}='{{ [$fromAI(\"tracking_number\",\"tracking number. Must be provided by client \",\"string\") ]}}',{Status}!='Delivered')",
+        "returnAll": false,
+        "limit": 1,
+        "options": {
+          "fields": [
+            "Current Location",
+            "Status",
+            "Estimated Delivery Time",
+            "Customer",
+            "Customer Email"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        100,
+        200
+      ],
+      "id": "bf354344-416c-476b-86c9-beb7c30434e4",
+      "name": "Search Order",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "XT7hvl1w201jtBhx",
+          "name": "Philipp Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Get_Slots",
+        "description": "=Use tool to find out free meeting slots. \nCall it every time client ask to set a call with support team.\nBefore using the tool you need to use \"Search Order\" to make sure order exists.\nBefore using the tool client must provide you with desired date for the call.\n\nInput:\nchosen_date - \"2024-12-14\"\n\nOutput:\nList of dates\n{\"start\": \n\"17/12/2024, 08:00:00\",\n\"end\": \n\"17/12/2024, 14:00:00\"}",
+        "workflowId": {
+          "__rl": true,
+          "value": "KhCWJyXtfHZt2yJq",
+          "mode": "list",
+          "cachedResultName": "Order and Delivery Support"
+        }
+      },
+      "id": "26ea7674-f7a8-4778-bb7d-99d8043de91b",
+      "name": "Get Slots",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Create Google Calendar Event.\n\nInput Example:\nStart Date Time - \"17/12/2024, 08:00:00\"\nEnd Date - \"17/12/2024, 14:00:00\"\nemail - \"philippbekher@gmail.com\"\n\nIMPORTANT:\n- When you create event - don't send back event link.\n\nVERY IMPORTANT:\n- We need to use client's email to book a call. Before scheduling call we use airtable tool \"Search Order\" to make sure order exists. If order indeed exists, order record from airtable will contain field \"Customer Email\" which can be used for Attendee email. Anyway, it's important to confirm with client.\n\nVERY IMPORTANT: Always ask client to confirm an email for the meeting.",
+        "calendar": {
+          "__rl": true,
+          "value": "philipp@lowcoding.dev",
+          "mode": "list",
+          "cachedResultName": "philipp@lowcoding.dev"
+        },
+        "start": "={{ $fromAI(\"start_date_time\",\"Date and time of meeting start\",\"string\") }}",
+        "end": "={{ $fromAI(\"end_date_time\",\"Date and time of meeting end\",\"string\") }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $fromAI(\"email\",\"Client email. Usually goes in order airtable record, but it's better to confirm it with client \",\"string\") }}"
+          ],
+          "conferenceDataUi": {
+            "conferenceDataValues": {
+              "conferenceSolution": "hangoutsMeet"
+            }
+          },
+          "summary": "={{ $fromAI(\"meeting_name\",\"Meeting name\",\"string\") }}"
+        }
+      },
+      "id": "6c723156-b376-4873-975f-acee45f1ff7c",
+      "name": "Schedule Call",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        200
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "E5Ufn31vrZLKzh4n",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "agent": "openAiFunctionsAgent",
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are a personal assistant at delivery service company.\n1. You help answer questions about our services with knowledge base.\nIMPORTANT: \nWhen providing answer - ask customer if his problem was resolved and remind we can create support ticket or set up a call if it's urgent.\n\n2. You process customers' inquiries: you'll create support tickets in database, set up calls with support team and help track packages.\n\nToday is: {{ $now }}"
+        }
+      },
+      "id": "cfd5d342-b853-4a80-961b-a0707518ac96",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        160,
+        -120
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "2b7d85b5-efd4-485a-a226-cebfddf35d58",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        1660
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "philipp@lowcoding.dev",
+          "mode": "list",
+          "cachedResultName": "philipp@lowcoding.dev"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $json.StartOfDay }}",
+          "timeMax": "={{ $json.endOfDay }}",
+          "singleEvents": true
+        }
+      },
+      "id": "cd425405-fbe8-4d9c-a00d-9e1157336c58",
+      "name": "Google Calendar Events",
+      "type": "n8n-nodes-base.googleCalendar",
+      "position": [
+        280,
+        1660
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "E5Ufn31vrZLKzh4n",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Define dynamic start and end of the day\nconst startOfDay = new Date($(\"Set Start/End of Day\").first().json.StartOfDay)\nconst endOfDay = new Date($(\"Set Start/End of Day\").first().json.endOfDay)\n\n// Parse all input events\nconst events = $(\"Google Calendar Events\").all().map(item => ({\n  start: new Date(item.json.start.dateTime),\n  end: new Date(item.json.end.dateTime)\n}));\n\n// Sort events by start time\nevents.sort((a, b) => a.start - b.start);\n\n// Initialize free slots\nconst freeSlots = [];\nlet lastEnd = startOfDay;\n\n// Berlin time zone formatting options\nconst berlinOptions = { timeZone: 'Europe/Berlin', hour12: false };\n\n// Function to convert to Berlin time\nconst toBerlinTime = (date) => {\n  return new Date(date).toLocaleString('en-GB', berlinOptions);\n};\n\nfor (const event of events) {\n  const eventStart = new Date(event.start);\n  const eventEnd = new Date(event.end);\n\n  // If there's a gap between the last end time and this event's start time, add it as a free slot\n  if (eventStart > lastEnd) {\n    freeSlots.push({\n      start: toBerlinTime(lastEnd),  // Convert start time to Berlin time\n      end: toBerlinTime(eventStart)  // Convert end time to Berlin time\n    });\n  }\n\n  // Update the last end time to the later of the two\n  lastEnd = new Date(Math.max(lastEnd, eventEnd));\n}\n\n// Add the final free slot if there's free time after the last event until end of day\nif (lastEnd < endOfDay) {\n  freeSlots.push({\n    start: toBerlinTime(lastEnd),  // Convert start time to Berlin time\n    end: toBerlinTime(endOfDay)    // Convert end time to Berlin time\n  });\n}\n\n// Return the free slots array\nreturn freeSlots;\n"
+      },
+      "id": "ec5a7399-924a-4066-88bc-bd44011a9f78",
+      "name": "Get Free Slots",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        1660
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "47aff83f-5e93-42f1-93dd-7e021f2b97ab",
+              "name": "=StartOfDay",
+              "value": "={{ \n  DateTime.fromFormat($json.query, \"yyyy-MM-dd\")\n    .hasSame(DateTime.local(), 'day') \n    ? DateTime.local().plus({ hours: 1 }).toISO() \n    : DateTime.fromFormat($json.query, \"yyyy-MM-dd\").startOf('day').toISO() \n}}",
+              "type": "object"
+            },
+            {
+              "id": "788ea912-4b75-41ea-8941-168668275006",
+              "name": "endOfDay",
+              "value": "={{ \n  DateTime.fromFormat($json.query, \"yyyy-MM-dd\")\n    .plus({ days: 1 })\n    .startOf('day')\n    .toISO() \n}}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "id": "a08ceeba-9e25-4be9-ac27-acbcfd460eb4",
+      "name": "Set Start/End of Day",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        1660
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "concatenateItems",
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "response",
+        "include": "allFieldsExcept",
+        "options": {}
+      },
+      "id": "12a3b569-0c7e-4304-a4e2-f816fc5c8801",
+      "name": "Set Response",
+      "type": "n8n-nodes-base.itemLists",
+      "position": [
+        780,
+        1660
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "content": "## Calculate Free Slots\n",
+        "height": 298,
+        "width": 1251,
+        "color": 2
+      },
+      "id": "a409efb6-a0e4-4390-8ddb-efcacfd464c1",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        1580
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retrieve Documents",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Documents": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Extract Document Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Created": {
+      "main": [
+        [
+          {
+            "node": "Set File ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Document Text": {
+      "main": [
+        [
+          {
+            "node": "Insert into Supabase Vectorstore",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert into Supabase Vectorstore",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert into Supabase Vectorstore",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Old Doc Rows": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set File ID": {
+      "main": [
+        [
+          {
+            "node": "Delete Old Doc Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Updated": {
+      "main": [
+        [
+          {
+            "node": "Set File ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Retrieve Documents",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Ticket": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Order": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Slots": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Call": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Start/End of Day",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar Events": {
+      "main": [
+        [
+          {
+            "node": "Get Free Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Free Slots": {
+      "main": [
+        [
+          {
+            "node": "Set Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Start/End of Day": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "c5baf51a-4b0e-4692-a2e3-33d37fa0ae0f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a2a7715680b8313f7cb4676321c5baa46680adfb913072f089f2766f42e43bd"
+  },
+  "id": "KhCWJyXtfHZt2yJq",
+  "tags": [
+    {
+      "createdAt": "2024-12-19T11:10:02.121Z",
+      "updatedAt": "2024-12-19T11:10:02.121Z",
+      "id": "k7hyOENdPTg0Ehzg",
+      "name": "Philipp"
+    }
+  ]
+}

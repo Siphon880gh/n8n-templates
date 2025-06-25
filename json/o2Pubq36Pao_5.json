@@ -1,0 +1,396 @@
+{
+  "name": "🤖 Supervisor Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -20,
+        -160
+      ],
+      "id": "6c1f188a-3dba-4992-812d-994dbbf3ccbb",
+      "name": "When chat message received",
+      "webhookId": "a6d0e9e5-de83-4344-abe8-d1584813a7d4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# ROLE\nYou are an AI Agent called Max.\nYour job is to orchestrate the acitivities between different agents and then formulate a friendly response back to the user.\nYou should never write emails, create content, create summaries yourself. Your job is to call agents and tools in the correct sequence.\n\nThink carefully about the sequence of events. Some tools might require you to first call another tool in order to pass it the correct information.\n\n# ADDITIONAL INFORMATION\n- You are talking to Leon.\n- The current date and time is {{ $now.toString() }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        200,
+        -160
+      ],
+      "id": "c066a050-d776-432c-b93d-05e6edb14d1d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -140,
+        80
+      ],
+      "id": "36e98b41-87f3-4180-abf9-5330e258d460",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        40,
+        180
+      ],
+      "id": "5d551f3b-6f78-4dbd-8cc3-bfc84ea8cc76",
+      "name": "GoogleSearch",
+      "credentials": {
+        "serpApi": {
+          "id": "6VIfktxOdnWwrdVl",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        140,
+        180
+      ],
+      "id": "14e2422b-3c82-48c1-9ffb-38945ca002a1",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "name": "EmailAgent",
+        "description": "Use this tool for any email related activities.",
+        "workflowId": {
+          "__rl": true,
+          "value": "dTz60sOyMjxoI43Z",
+          "mode": "list",
+          "cachedResultName": "🤖 Email Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        240,
+        180
+      ],
+      "id": "eb410a22-8bc8-4622-8cc3-8704cc7335cd",
+      "name": "Email"
+    },
+    {
+      "parameters": {
+        "name": "ContactsAgent",
+        "description": "Use this agent for all contacts related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "bO06EcgZPKxpSx73",
+          "mode": "list",
+          "cachedResultName": "🤖 Contact Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        340,
+        180
+      ],
+      "id": "f2d10ebe-6908-4333-ac70-7641b0ecaf0b",
+      "name": "Contacts"
+    },
+    {
+      "parameters": {
+        "name": "CalendarAgent",
+        "description": "Use this tool for all calendar related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "MLn87xEu4fgL9LP7",
+          "mode": "list",
+          "cachedResultName": "🤖 Calendar Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        440,
+        180
+      ],
+      "id": "9795fe7c-df31-4e9f-8738-c2b04487622a",
+      "name": "Calendar"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        300
+      ],
+      "id": "4675694e-208c-46a6-86a1-2ad8acbeb91f",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "nrDrI8MUFREwh9aM",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "KnowledgeBase",
+        "toolDescription": "Use this tool for any queries related to our custom knowledge base.",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-tutorial",
+          "mode": "list",
+          "cachedResultName": "n8n-tutorial"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        640,
+        180
+      ],
+      "id": "ad71d3e5-18e6-4c6d-a581-a09f9af8ec3f",
+      "name": "KnowledgeBase",
+      "credentials": {
+        "pineconeApi": {
+          "id": "k4NoMJeIorHc6pt4",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -280,
+        80
+      ],
+      "id": "18f3a4db-7c3a-442a-8335-80bef562cfd3",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "nrDrI8MUFREwh9aM",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "ContentCreator",
+        "description": "Use this tool for any actions that require creative writing.",
+        "workflowId": {
+          "__rl": true,
+          "value": "iO6zfOcGN2f9u82x",
+          "mode": "list",
+          "cachedResultName": "🤖 Content Creator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        540,
+        180
+      ],
+      "id": "48334d96-e9d9-4a57-8717-f14143403746",
+      "name": "Writer"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GoogleSearch": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "KnowledgeBase",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KnowledgeBase": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writer": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e77d0e70-7e23-476c-b123-d633b2477624",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd8f3260f4f840103c2ad768fc0a1d92f91d8588e163407d3747cc2f7c516a5a"
+  },
+  "id": "KZ4kdZO52lOLW5u4",
+  "tags": []
+}

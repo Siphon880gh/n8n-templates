@@ -15,6 +15,17 @@ if (!fs.existsSync(jsonDir)) {
     fs.mkdirSync(jsonDir, { recursive: true });
 }
 
+// Function to check if any file with the given ID already exists (with or without suffix)
+function checkIfIdExists(videoId) {
+    if (!fs.existsSync(jsonDir)) return false;
+    
+    const files = fs.readdirSync(jsonDir);
+    // Check for exact match or files with suffix pattern (ID_1.json, ID_2.json, etc.)
+    const pattern = new RegExp(`^${videoId}(_\\d+)?\\.json$`);
+    
+    return files.some(file => pattern.test(file));
+}
+
 // Function to extract Google Drive file ID from various URL formats
 function extractGoogleDriveId(url) {
     if (!url || typeof url !== 'string') return null;
@@ -143,6 +154,12 @@ async function processCSV() {
             continue;
         }
         
+        // Check if any file with this ID already exists (ignoring suffix)
+        if (checkIfIdExists(videoId)) {
+            console.log(`Skipping ${videoId}: Files already exist (ignoring suffix)`);
+            continue;
+        }
+        
         // Handle multiple URLs (some entries have multiple space-separated URLs)
         const urls = resourceUrl.split(/\s+/).filter(url => url.trim());
         
@@ -159,14 +176,6 @@ async function processCSV() {
             const filename = urls.length > 1 
                 ? `${videoId}_${urlIndex + 1}.json`
                 : `${videoId}.json`;
-            
-            const filePath = path.join(jsonDir, filename);
-            
-            // Skip if file already exists
-            if (fs.existsSync(filePath)) {
-                console.log(`Skipping ${filename}: File already exists`);
-                continue;
-            }
             
             try {
                 await downloadFile(driveId, filename);

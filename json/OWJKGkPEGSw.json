@@ -1,0 +1,268 @@
+{
+  "name": "Analyze files with Gemini",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Upload file",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Upload file",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5432899c-333b-40ef-9236-68656d6bb4d2",
+      "name": "On form submission",
+      "webhookId": "30931630-2425-47c5-8504-265506b285a0"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/upload/v1beta/files",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Upload-Protocol",
+              "value": "resumable"
+            },
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "start"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Length",
+              "value": "={{ $json['Upload file'][0].size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Type",
+              "value": "={{ $json['Upload file'][0].mimetype }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"file\":{\n    \"display_name\":\" {{ $json['Upload file'][0].filename }}\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "117b4500-5487-45eb-9aed-d87c0cfe777b",
+      "name": "initiateUpload"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('initiateUpload').item.json.headers['x-goog-upload-url'] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Length",
+              "value": "={{ $('On form submission').item.json['Upload file'][0].size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Offset",
+              "value": "0"
+            },
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "upload, finalize"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "Upload_file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "184b8aa8-e99f-4ea4-a6b1-6b5352c001a2",
+      "name": "Upload"
+    },
+    {
+      "parameters": {
+        "jsCode": "return{\n  json: {},\n  binary: $('On form submission').item.binary\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "025f0dbe-6aeb-4f49-8f78-117e5a93eeaf",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"contents\": [\n        {\n            \"role\": \"user\",\n            \"parts\": [\n                {\n                    \"fileData\": {\n                        \"mimeType\": \"{{ $json.file.mimeType }}\",\n                        \"fileUri\": \"{{ $json.file.uri }}\"\n                    }\n                },\n                {\n                    \"text\": \"Describe\"\n                }\n            ]\n        }\n    ],\n   \"generationConfig\": {\n      \"responseMimeType\": \"application/json\",\n      \"responseSchema\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"videoFormat\": {\n              \"type\": \"string\"\n            },\n            \"Topic\": {\n              \"type\": \"string\"\n            }\n          },\n          \"required\": [\n            \"videoFormat\",\n            \"Topic\"\n          ]\n        }\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "d9514d86-99ae-4601-b552-aa830d671028",
+      "name": "Analyze",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "Ypfy3Asx26sCYFCy",
+          "name": "Query Auth account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "d8b287b2-6f70-4142-b750-cbf5e685e195",
+      "name": "Wait",
+      "webhookId": "f332191a-a4cf-4c4e-9290-38fcbcfb779a"
+    },
+    {
+      "parameters": {
+        "sendTo": "andrey@magicops.io",
+        "subject": "TEST",
+        "message": "=Heya! \n<br>\nTopic: \n{{ $json.candidates[0].content.parts[0].text.parseJson().Topic }}\n<br>\nVideo: {{ $json.candidates[0].content.parts[0].text.parseJson().videoFormat }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "ea24220a-7540-4fb6-a1ef-ae7c08a1287e",
+      "name": "Gmail",
+      "webhookId": "1a5f6f9e-176f-4b4b-a63a-ae33e80f1ee4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2YygaOvzG2bBJJDJ",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "initiateUpload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "initiateUpload": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e3d6cb6e-941f-41bd-8648-3f16d63feb28",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "605a683b81a6e587f4e29323845487f54ca9ffb48ef0a7180153d72d510ddc13"
+  },
+  "id": "O0QdcCwlrWoNaTLR",
+  "tags": []
+}

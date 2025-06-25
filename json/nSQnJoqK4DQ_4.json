@@ -1,0 +1,320 @@
+{
+  "name": "Evaluator-Optimizer",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Evaluator-Optimizer\n✅ Ensures High-Quality Outputs – AI doesn’t just generate code, it verifies and refines until all requirements are met.\n\n✅ Reduces Errors & Manual Review – Automates verification, minimizing the need for human debugging.\n\n✅ Flexible & Scalable – Can be adapted to content generation, structured data validation, and UI text refinement.\n\n✅ Optimized AI Performance – The iterative approach ensures continuous improvement of AI-generated responses.",
+        "height": 220,
+        "width": 820,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -340,
+        -260
+      ],
+      "typeVersion": 1,
+      "id": "3d161215-f3e5-49d4-9d59-ce39dfe644cd",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -440,
+        80
+      ],
+      "id": "2d4db132-7670-4c8d-862f-8e2e8e71a6be",
+      "name": "When chat message received",
+      "webhookId": "fab30ad7-8a5a-4477-be98-1aa43b92b052"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        420,
+        420
+      ],
+      "id": "6ba59646-83be-43f4-86ec-15721977bda2",
+      "name": "4o mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert biography writer. You will receive information about a person, and your job is to create an entire profile using the information they give you. You are allowed to be creative."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -220,
+        80
+      ],
+      "id": "ac27ea11-98e0-4cf6-9eb3-e06f38c5be35",
+      "name": "Biography Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the biography:\n{{ $json.bio }}",
+        "options": {
+          "systemMessage": "=## Overview\nYou are an expert biography evaluator. Your job is to provide feedback on the biography.\n\n## Criteria\n- Make sure the biography includes a quote from the person. This could be their favorite saying or a piece of advice. It is essential that every biography has a quote.\n- Make sure the biography is light and humorous.\n- Make sure the biography has NO emojis.\n\n## Output\nYou only need to output feedback. If the biography is finished and all the criteria are met, simply output \"Finished\"."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        360,
+        80
+      ],
+      "id": "5eeb213f-18fd-4939-94cb-a8cb00e49027",
+      "name": "Evaluator Agent"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8d931f3d-b391-4be9-a50a-cc4a73c31b71",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "Finished",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        80
+      ],
+      "id": "bb0bab1b-5164-4fbe-a9d4-cf01a66f08a0",
+      "name": "Evaluate"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Biography: {{ $('Set Bio').item.json.bio }}\n\nFeedback: {{ $('Evaluator Agent').item.json.output }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert biography revisor. Your job is to take the biography and optimize it based on the feedback."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1040,
+        160
+      ],
+      "id": "cbaecab5-9df0-4a0b-8ebc-e112bd285553",
+      "name": "Optimizer Agent"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Set Bio').item.json.bio }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        -60
+      ],
+      "id": "a0916666-bc04-45d5-85d6-fcfb88f21521",
+      "name": "Push to Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "pEX7GDr771yL1CT3",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "adf17d4d-a89e-4f97-9d31-5e74834428fc",
+              "name": "bio",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        140,
+        80
+      ],
+      "id": "c2273e63-b5af-4ea8-b379-70fecc68f341",
+      "name": "Set Bio"
+    },
+    {
+      "parameters": {
+        "model": "deepseek-reasoner",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        580,
+        420
+      ],
+      "id": "0c438af0-3eb6-4cf7-853f-981b1ff96e6b",
+      "name": "DeepSeek R1",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "UtrKBz6qKLtigWOT",
+          "name": "DeepSeek account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Biography Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Biography Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Evaluator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Optimizer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Biography Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Bio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluator Agent": {
+      "main": [
+        [
+          {
+            "node": "Evaluate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate": {
+      "main": [
+        [
+          {
+            "node": "Push to Docs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Optimizer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Optimizer Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Bio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Bio": {
+      "main": [
+        [
+          {
+            "node": "Evaluator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "86dd2525-d672-4b19-b830-ff3cf3d7b7cf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "ExCOMqfbb9kYyytQ",
+  "tags": []
+}

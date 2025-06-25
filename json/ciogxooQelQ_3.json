@@ -1,0 +1,236 @@
+{
+  "name": "Market research",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "Query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8b40ca1e-6c55-4dbf-9000-f591d67d5425",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Query }}",
+        "options": {
+          "systemMessage": "=##Role\nYou are an agent that can assist in market research using your tools.\n\n##Task\nBased on the users input you will have to use your tools to preform market research.\n\nAlways start with the general search tool, this will allow you to searhc google to find URLs that you can use for the other tools.\n\nYou may have to use all of the tools more than once to get the desired outcome.\n\n##Examples\nFor example if the input is \"i want to research the ai saas market and find some opportunities\" you may use the general search tool to find reddit forums, skool convos, articles etc and then use the scrape URL tool to get insights from those pages.\n\nBear in mind todays date it {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "f7f2a909-7d93-4967-a731-e55b446ac955",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        140,
+        220
+      ],
+      "id": "91e2e1e6-8dd5-4dbb-8b74-d62e2c4260c6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{placeholder}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        280
+      ],
+      "id": "4afab1aa-9641-4c0f-a51d-4ccbb679d4bc",
+      "name": "General search"
+    },
+    {
+      "parameters": {
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        280
+      ],
+      "id": "f6156158-2990-4099-888c-5a8fc5efecf6",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "name": "Scrape_URL",
+        "workflowId": {
+          "__rl": true,
+          "value": "QpkQ2fmmB1Y7a3fT",
+          "mode": "list",
+          "cachedResultName": "Summarise site"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+            "URL": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Query",
+              "displayName": "Query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        600,
+        240
+      ],
+      "id": "96e21e97-a4c4-4621-a647-2d7471c2cad2",
+      "name": "Scrape URL"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "General search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape URL": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1d1bd49d-b6ae-4c7f-a3f3-b69b90e23c57",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8711ef6aba5ff6781b8ed3c0d9d8ad1fb3b9e4be41f1c9a056c02209236d4a91"
+  },
+  "id": "5db4X5p5kcNHc6CM",
+  "tags": [
+    {
+      "createdAt": "2025-05-05T18:28:14.726Z",
+      "updatedAt": "2025-05-05T18:28:14.726Z",
+      "id": "5l1iny0IJjZ0zdzn",
+      "name": "Research agent"
+    }
+  ]
+}

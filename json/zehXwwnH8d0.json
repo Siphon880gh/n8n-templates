@@ -1,0 +1,641 @@
+{
+  "name": "Gemini - Video Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Google Drive Trigger').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        640,
+        0
+      ],
+      "id": "e6b8c1a7-ff39-4e5b-98a1-ca4c53e9c360",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "wpiZXesxk9S8fkVG",
+          "name": "Google Drive Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1MJ4Rb2buplfX2vAnuDKfyvTyKhOBm6m5",
+          "mode": "list",
+          "cachedResultName": "Ads Video Resumes",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1MJ4Rb2buplfX2vAnuDKfyvTyKhOBm6m5"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "39fdb0a1-cb9a-4035-8821-95e8718865ee",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "wpiZXesxk9S8fkVG",
+          "name": "Google Drive Philipp"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        400
+      ],
+      "id": "4bcb2434-b7b2-4eed-a47f-19c0a4483d70",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1180,
+        0
+      ],
+      "id": "8ee1daed-3ace-45f5-a5a8-0c990ddd1897",
+      "name": "Wait",
+      "webhookId": "66a0335a-3e05-4c4a-b0db-5a884e57e913"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a21fe2d1-533b-4f09-94aa-9312c3dd05b8",
+              "name": "prompt",
+              "value": "I'm an advertising agency, and I'm reviewing audition videos for a child actor to star in our chocolate campaign. Here's what I need to evaluate in each video:  1. The main actor is a child? 2. Does the child smile? 3. Looks emotional?  4. Your thougths whether the actor is good choice for the campaign? 5. Your rate from 1 to 10 about the actor for the campaign.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        400
+      ],
+      "id": "2a246361-2ace-4f1d-a95b-c6bf523de434",
+      "name": "Set Prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/upload/v1beta/files",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "<your_api_key>"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Upload-Protocol",
+              "value": "resumable"
+            },
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "start"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Length",
+              "value": "={{ $json.size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Type",
+              "value": "={{ $json.mimeType }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"file\": {\n\"display_name\": \"{{ $json.name }}\"\n}\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        0
+      ],
+      "id": "66a04fbb-f000-4f22-b0b8-97ce3443f571",
+      "name": "Gemini - Generate Upload URL"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Gemini - Generate Upload URL').item.json.headers['x-goog-upload-url'] }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "<your_api_key>"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Length",
+              "value": "={{ $('Google Drive Trigger').item.json.size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Offset",
+              "value": "0"
+            },
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "upload, finalize"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {
+          "response": {}
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        820,
+        0
+      ],
+      "id": "aa2cc53b-9f83-4f2b-a567-218eff1a82af",
+      "name": "Gemini - Upload File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "<your_api_key>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n   \"contents\": [\n      {\n         \"parts\": [\n            {\n               \"text\": \"{{ $json.prompt }}\"\n            },\n            {\n               \"file_data\": {\n                  \"mime_type\": \"{{ $('Execute Workflow Trigger').item.json.mimeType }}\",\n                  \"file_uri\": \"{{ $('Execute Workflow Trigger').item.json.gemini_file_url }}\"\n               }\n            }\n         ]\n      }\n   ],\n   \"generationConfig\": {\n      \"response_mime_type\": \"application/json\",\n      \"response_schema\": {\n         \"type\": \"ARRAY\",\n         \"items\": {\n            \"type\": \"OBJECT\",\n            \"properties\": {\n               \"child\": { \"type\": \"BOOLEAN\" },\n               \"smiles\": { \"type\": \"BOOLEAN\" },\n               \"looks_emotional\": { \"type\": \"BOOLEAN\" },\n               \"comments\": { \"type\": \"STRING\" },\n               \"rating\": { \"type\": \"INTEGER\" }\n            },\n            \"required\": [\"child\", \"smiles\", \"looks_emotional\", \"comments\", \"rating\"]\n         }\n      }\n   }\n}",
+        "options": {
+          "response": {}
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        400
+      ],
+      "id": "fffdfc3d-f41f-455f-9c24-2095fc2773dd",
+      "name": "Gemini - Ask Questions"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4fb7b732-17f9-41a2-986d-5d62b1331242",
+              "name": "gemini_file_url",
+              "value": "={{ $json.file.uri }}",
+              "type": "string"
+            },
+            {
+              "id": "5f3018b4-571f-433c-a07b-2fb86f63b9b6",
+              "name": "mimeType",
+              "value": "={{ $json.file.mimeType }}",
+              "type": "string"
+            },
+            {
+              "id": "c5532f11-ec31-49f8-aa26-7f42b7d24fa4",
+              "name": "google_drive_url",
+              "value": "={{ $('Google Drive Trigger').item.json.webViewLink }}",
+              "type": "string"
+            },
+            {
+              "id": "b064829e-0348-430f-854b-4d35c4dcc5b9",
+              "name": "name",
+              "value": "={{ $('Google Drive Trigger').item.json.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        0
+      ],
+      "id": "7b961e1b-337d-4435-b839-da9f468d5836",
+      "name": "Save Values"
+    },
+    {
+      "parameters": {
+        "content": "## Scenario 2 - move to separate workflow",
+        "height": 340,
+        "width": 1020
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        140,
+        260
+      ],
+      "typeVersion": 1,
+      "id": "175e2a0f-73d1-4ade-8d62-7b8a82f42e2a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Scenario 1",
+        "height": 380,
+        "width": 1480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        140,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "cb616cff-1090-43e5-9684-06906f25e5cc",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### Replace workflow ID",
+        "height": 80,
+        "width": 200,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1340,
+        -100
+      ],
+      "typeVersion": 1,
+      "id": "323c10d1-afaa-4937-97e3-77a5579d05ed",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VzphhIV6jnyKJ2zC",
+          "mode": "list",
+          "cachedResultName": "Gemini - Video Analysis"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        0
+      ],
+      "id": "92ff3b79-f0bd-46d1-bd5d-fba4d3ffd0a3",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "content": "### Choose your folder",
+        "height": 80,
+        "width": 200,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        180,
+        -100
+      ],
+      "typeVersion": 1,
+      "id": "89f92398-161b-400c-8da7-66771237509b",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "### Replace API key",
+        "height": 80,
+        "width": 200,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        780,
+        -100
+      ],
+      "typeVersion": 1,
+      "id": "14b71dcb-96ff-406e-b00c-d1651be70651",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "### Replace API key and schema",
+        "height": 80,
+        "width": 200,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        620,
+        300
+      ],
+      "typeVersion": 1,
+      "id": "e48ceb8a-b864-4f51-b7b4-7565b843d8c5",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appiUivnv3uGrh148",
+          "mode": "list",
+          "cachedResultName": "Test Base",
+          "cachedResultUrl": "https://airtable.com/appiUivnv3uGrh148"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl1dWEBwwucNPgLK",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appiUivnv3uGrh148/tbl1dWEBwwucNPgLK"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Child": "={{ JSON.parse($json.candidates[0].content.parts[0].text)[0].child }}",
+            "Emotional": "={{ JSON.parse($json.candidates[0].content.parts[0].text)[0].looks_emotional }}",
+            "Smiles": "={{ JSON.parse($json.candidates[0].content.parts[0].text)[0].smiles }}",
+            "Rating ": "={{ JSON.parse($json.candidates[0].content.parts[0].text)[0].rating }}",
+            "Name": "={{ $('Execute Workflow Trigger').item.json.name }}",
+            "Drive Link": "={{ $('Execute Workflow Trigger').item.json.google_drive_url }}",
+            "Comments from AI": "={{ JSON.parse($json.candidates[0].content.parts[0].text)[0].comments }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Drive Link",
+              "displayName": "Drive Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Child",
+              "displayName": "Child",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Emotional",
+              "displayName": "Emotional",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Smiles",
+              "displayName": "Smiles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Rating ",
+              "displayName": "Rating ",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Comments from AI",
+              "displayName": "Comments from AI",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        400
+      ],
+      "id": "60ef4d9a-0f64-4c74-b6df-80a6e3e1754d",
+      "name": "Create record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "XT7hvl1w201jtBhx",
+          "name": "Philipp Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Upload File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Generate Upload URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Prompt": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Ask Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Generate Upload URL": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Upload File": {
+      "main": [
+        [
+          {
+            "node": "Save Values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Ask Questions": {
+      "main": [
+        [
+          {
+            "node": "Create record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Values": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "64371ab0-caff-4836-90b0-66bd2f5b83e9",
+  "meta": {
+    "instanceId": "6a2a7715680b8313f7cb4676321c5baa46680adfb913072f089f2766f42e43bd"
+  },
+  "id": "VzphhIV6jnyKJ2zC",
+  "tags": [
+    {
+      "createdAt": "2024-12-19T11:10:02.121Z",
+      "updatedAt": "2024-12-19T11:10:02.121Z",
+      "id": "k7hyOENdPTg0Ehzg",
+      "name": "Philipp"
+    }
+  ]
+}

@@ -1,0 +1,881 @@
+{
+  "name": "Cold Email Live Build",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Generate Email List",
+        "formDescription": "Enter the Apollo personal email list to build your email list with customized email openers.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "URL",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -20
+      ],
+      "id": "fc48d43b-970b-4968-a010-4d432ff79657",
+      "name": "On form submission",
+      "webhookId": "81552498-ca13-40e8-9ca6-53b24a2a1033"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/jljBwyyQakqrL1wae/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "getPersonalEmails",
+              "value": "={{ true }}"
+            },
+            {
+              "name": "getWorkEmails",
+              "value": "={{ true }}"
+            },
+            {
+              "name": "totalRecords",
+              "value": "={{ 500 }}"
+            },
+            {
+              "name": "url",
+              "value": "={{ $json.URL }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        -20
+      ],
+      "id": "e38a0857-89c1-4660-b8f4-e3a8dc5c97e1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10SW_KhLp88uJUO6ftqTfxrkFrPmvXRb25zBTI6qRJwU",
+          "mode": "list",
+          "cachedResultName": "Cold Email List Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10SW_KhLp88uJUO6ftqTfxrkFrPmvXRb25zBTI6qRJwU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1179099666,
+          "mode": "list",
+          "cachedResultName": "SAAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10SW_KhLp88uJUO6ftqTfxrkFrPmvXRb25zBTI6qRJwU/edit#gid=1179099666"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "first_name": "={{ $json.first_name }}",
+            "last_name": "={{ $json.last_name }}",
+            "name": "={{ $json.name }}",
+            "email": "={{ $json.email }}",
+            "email_status": "={{ $json.email_status }}",
+            "linkedin_url": "={{ $json.linkedin_url }}",
+            "title": "={{ $json.title }}",
+            "headline": "={{ $json.headline }}",
+            "organization/website_url": "={{ $json.organization.website_url }}",
+            "city": "={{ $json.city }}",
+            "country": "={{ $json.country }}",
+            "state": "={{ $json.state }}",
+            "estimated_num_employees": "={{ $json.organization.estimated_num_employees }}",
+            "industry": "={{ $json.organization.industry }}",
+            "organization/name": "={{ $json.organization.name }}",
+            "organization/keywords/0": "={{ $json.organization.keywords[0] }}",
+            "organization/keywords/1": "={{ $json.organization.keywords[1] }}",
+            "organization/keywords/2": "={{ $json.organization.keywords[2] }}",
+            "Icebreaker": "FILL"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email_status",
+              "displayName": "email_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "headline",
+              "displayName": "headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/name",
+              "displayName": "organization/name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "industry",
+              "displayName": "industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/website_url",
+              "displayName": "organization/website_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estimated_num_employees",
+              "displayName": "estimated_num_employees",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/keywords/0",
+              "displayName": "organization/keywords/0",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/keywords/1",
+              "displayName": "organization/keywords/1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/keywords/2",
+              "displayName": "organization/keywords/2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Icebreaker",
+              "displayName": "Icebreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        -20
+      ],
+      "id": "29a9338d-d249-4997-a9af-c44df51e8c06",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nuIKS89ZnY7gxINP",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4537e215-2aef-453d-985c-a05cf8b0b46f",
+              "leftValue": "={{ $json.Icebreaker }}",
+              "rightValue": "FILL",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        -20
+      ],
+      "id": "ce17415c-c145-4a19-b985-75f7d73e97aa",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        880,
+        -20
+      ],
+      "id": "c90484c1-2f19-44b8-8fbd-085d89a16ec6",
+      "name": "Loop Over Items",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Input data fields:  \n  - first name  {{ $json.first_name }}\n  - last name  {{ $json.last_name }}\n  - city  {{ $json.city }}\n  - title  {{ $json.title }}\n  - organization name  {{ $json['organization/name'] }}\n  - Headline  {{ $json.headline }}\n  - Industry {{ $json.industry }}\n  - brand keyword 1 {{ $json['organization/keywords/0'] }}\n  - brand keyword 2 {{ $json['organization/keywords/1'] }}\n  - brand keyword 3 {{ $json['organization/keywords/2'] }}"
+            },
+            {
+              "content": "=You are an AI agent responsible for generating a short, friendly cold email icebreaker that leads into a pitch. Each icebreaker should feel personal, warm, and grounded in the recipient’s background, with optional references to shared context from the sender (user).\n\n## Context  \n- These icebreakers are used at the top of cold emails to set a friendly, non-salesy tone.  \n- The goal is to create instant rapport, not to pitch.  \n- The output must be labeled as `icebreaker`.  \n- Avoid generic phrasing like \"always great to connect with people in X\"—focus directly on the recipient.  \n- Long company names should be simplified to how they would be said in conversation.  \n\n## Instructions  \n1. Use the recipient’s first name to begin.  \n2. Reference a detail from their background (title, company, city, industry, or keywords).  \n3. Optionally, draw on the user’s background to highlight shared context (e.g. both based in Denver, both work in lead gen, etc.).  \n4. Follow with a soft prompt like “Was hoping to run something by you” or “Wanted to get your take on something.”  \n5. Format the icebreaker as:  \n   `\"Hey [first_name],\\n\\n[Sentence 1]. [Sentence 2]\"`  \n6. Output must be labeled as `icebreaker` exactly.  \n7. Message should not exceed 300 characters.  \n\n## Tools  \n- Input data fields (recipient):  \n  - first name  `{{ $json.first_name }}`  \n  - last name  `{{ $json.last_name }}`  \n  - city  `{{ $json.city }}`  \n  - title  `{{ $json.title }}`  \n  - organization name  `{{ $json['organization/name'] }}`  \n  - headline  `{{ $json.headline }}`  \n  - industry  `{{ $json.industry }}`  \n  - brand keyword 1  `{{ $json['organization/keywords/0'] }}`  \n  - brand keyword 2  `{{ $json['organization/keywords/1'] }}`  \n  - brand keyword 3  `{{ $json['organization/keywords/2'] }}`  \n\n- Optional user data (sender):  \n  - (See additional user prompt) \n\n## Examples  \n- Input:  \n  - first name: Aina  \n  - organization name: Maki International  \n- Output:  \n  - `icebreaker: \"Hey Aina,\\n\\nLove what you’ve built over at Maki. Was hoping to run something by you.\"`  \n\n- Input:  \n  - first name: Jake  \n  - city: Denver  \n- Output:  \n  - `icebreaker: \"Hey Jake,\\n\\nNoticed you're based in Denver—me too. Wanted to run something by you.\"`  \n\n- Input:  \n  - first name: Priya  \n  - title: Growth Marketer  \n  - industry: SaaS  \n- Output:  \n  - `icebreaker: \"Hey Priya,\\n\\nSaw you're leading growth in SaaS—really cool space. Was hoping to run something by you.\"`  \n\n- Input:  \n  - first name: Leo  \n  - brand keyword 1: lead gen  \n- Output:  \n  - `icebreaker: \"Hey Leo,\\n\\nNoticed you're deep in lead gen—that caught my eye. Wanted to run something by you.\"`  \n\n## SOP (Standard Operating Procedure)  \n1. Use the recipient’s first name to start.  \n2. Extract a specific, interesting detail from the input data.  \n3. If appropriate, reference the user’s shared context (e.g., mutual location, industry focus).  \n4. Write a two-line message that feels natural, not scripted.  \n5. Output must be prefixed with `icebreaker:` and follow the format:  \n   `\"Hey [first_name],\\n\\n[Sentence 1]. [Sentence 2]\"`  \n6. Keep the message under 300 characters total.  \n\n## Final Notes  \n- Do not include emojis, links, hashtags, or formalities.  \n- Avoid generic intros and focus on personalized, 1:1 tone.  \n- Think of the icebreaker like a quick, thoughtful DM that tees up a conversation.  \n---",
+              "role": "system"
+            },
+            {
+              "content": "\n"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1100,
+        -20
+      ],
+      "id": "df02e1dc-972d-49f8-ac4c-5637c469f011",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "10SW_KhLp88uJUO6ftqTfxrkFrPmvXRb25zBTI6qRJwU",
+          "mode": "list",
+          "cachedResultName": "Cold Email List Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10SW_KhLp88uJUO6ftqTfxrkFrPmvXRb25zBTI6qRJwU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1179099666,
+          "mode": "list",
+          "cachedResultName": "SAAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10SW_KhLp88uJUO6ftqTfxrkFrPmvXRb25zBTI6qRJwU/edit#gid=1179099666"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Loop Over Items').item.json.id }}",
+            "Icebreaker": "={{ $json.choices[0].message.content.icebreaker }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email_status",
+              "displayName": "email_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "headline",
+              "displayName": "headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/name",
+              "displayName": "organization/name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "industry",
+              "displayName": "industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/website_url",
+              "displayName": "organization/website_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estimated_num_employees",
+              "displayName": "estimated_num_employees",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/keywords/0",
+              "displayName": "organization/keywords/0",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/keywords/1",
+              "displayName": "organization/keywords/1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization/keywords/2",
+              "displayName": "organization/keywords/2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Icebreaker",
+              "displayName": "Icebreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1476,
+        55
+      ],
+      "id": "fd151e09-07a2-4881-9463-76e0f29345da",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nuIKS89ZnY7gxINP",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32160c50-aea9-4e40-8c1b-b0d73657cdf0",
+              "name": "Icebreaker",
+              "value": "={{ $json.Icebreaker }}",
+              "type": "string"
+            },
+            {
+              "id": "abf359bd-351e-438b-aa1d-51c866b7ef6f",
+              "name": "first_name",
+              "value": "={{ $('Google Sheets').item.json.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "f0fe00ce-9f4a-44f9-8824-334a5f7123ec",
+              "name": "last_name",
+              "value": "={{ $('Google Sheets').item.json.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "6d8dc883-41d2-4885-b128-fa3675e7934e",
+              "name": "email",
+              "value": "={{ $('Google Sheets').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "91383c7e-7843-4326-8c42-5910dbdbe0ae",
+              "name": "copany_name",
+              "value": "={{ $('Google Sheets').item.json['organization/name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "af18970e-9924-4a74-8df0-b4503310def2",
+              "name": "website",
+              "value": "={{ $('Google Sheets').item.json['organization/website_url'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1178,
+        -220
+      ],
+      "id": "3dd6c9ca-86e2-417f-82da-677999c4942c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/api/v2/leads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "personalization",
+              "value": "={{ $json.Icebreaker }}"
+            },
+            {
+              "name": "first_name",
+              "value": "={{ $json.first_name }}"
+            },
+            {
+              "name": "last_name",
+              "value": "={{ $json.last_name }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "company_name",
+              "value": "={{ $json.copany_name }}"
+            },
+            {
+              "name": "website",
+              "value": "={{ $json.website }}"
+            },
+            {
+              "name": "campaign",
+              "value": "7810b6cd-168d-4b0a-ac1a-240d85093fb2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1476,
+        -220
+      ],
+      "id": "3b955e10-05e4-4b20-af51-c1e857e81185",
+      "name": "HTTP Request1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bb2b8125-4be3-43de-a9ec-f8066512800a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9da288905fbe9354dea4b543fd7e960ac33b487ac1b02440ad591d7c90022103"
+  },
+  "id": "fXcevVgFSyScPSZJ",
+  "tags": []
+}

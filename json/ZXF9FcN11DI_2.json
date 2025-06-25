@@ -1,0 +1,307 @@
+{
+  "name": "Document Processing",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"message\": \"\",\n  \"id\": \"\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "42c6e9f0-f036-4390-9ac4-ddc2cc654156",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "7c4d7a51-63f5-4553-8d65-66b3f2476dfa",
+      "name": "Telegram",
+      "webhookId": "0b60a1de-a75c-4b2f-ae0f-aa63111441a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "01mV9LiKwL8ZJOqv",
+          "name": "Telegram account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        420,
+        0
+      ],
+      "id": "47470e3f-1ae9-4b7a-8dd3-434b26cf19f7",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You're an intelligent bot that is great at extracting data from text. Here is the information you need to extract:\n{{ $('When Executed by Another Workflow').item.json.message }}",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the document you need to extract the right information from:\n{{ $json.text }}"
+            },
+            {
+              "content": "Please output the following in JSON data as structured below:\n{\n  \"invoice_number\": \"INV-1001\",\n  \"invoice_date\": \"2025-03-26\",\n  \"due_date\": \"2025-04-02\",\n  \"sender\": {\n    \"company_name\": \"Your Company Name\",\n    \"address\": \"123 Business St, Suite 100\",\n    \"city\": \"Toronto\",\n    \"province\": \"ON\",\n    \"postal_code\": \"M1A 2B3\",\n    \"country\": \"Canada\",\n    \"email\": \"info@yourcompany.com\",\n    \"phone\": \"+1-123-456-7890\"\n  },\n  \"recipient\": {\n    \"company_name\": \"Client Company Inc.\",\n    \"contact_name\": \"Jane Doe\",\n    \"address\": \"456 Client Rd\",\n    \"city\": \"Vancouver\",\n    \"province\": \"BC\",\n    \"postal_code\": \"V5K 0A1\",\n    \"country\": \"Canada\",\n    \"email\": \"jane.doe@client.com\"\n  },\n  \"items\": [\n    {\n      \"description\": \"Website Design\",\n      \"quantity\": 1,\n      \"unit_price\": 2000.00,\n      \"total\": 2000.00\n    },\n    {\n      \"description\": \"Monthly Hosting (March)\",\n      \"quantity\": 1,\n      \"unit_price\": 100.00,\n      \"total\": 100.00\n    }\n  ],\n  \"subtotal\": 2100.00,\n  \"taxes\": [\n    {\n      \"type\": \"GST\",\n      \"rate\": 5,\n      \"amount\": 105.00\n    }\n  ],\n  \"total\": 2205.00,\n  \"currency\": \"CAD\",\n  \"notes\": \"Thank you for your business!\",\n  \"terms\": \"Payment due within 7 days.\"\n}\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        640,
+        0
+      ],
+      "id": "af278265-a2fc-4f49-93ee-579cbc8912d1",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "TO1vFDrcaE6Gx0cU",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "message.content.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        0
+      ],
+      "id": "5ebf380f-5146-4c4d-9a2c-17c47e73a738",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1i1ZPwD-lkKh5ByZrA6UDRWVgqAKHN0q3oazNR0BpEXM",
+          "mode": "list",
+          "cachedResultName": "n8n OCR Extraction",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i1ZPwD-lkKh5ByZrA6UDRWVgqAKHN0q3oazNR0BpEXM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i1ZPwD-lkKh5ByZrA6UDRWVgqAKHN0q3oazNR0BpEXM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.description }}",
+            "QTY": "={{ $json.quantity }}",
+            "Line Item": "={{ $json.description }}",
+            "Price": "={{ $json.total }}",
+            "Invoice Total": "={{ $('OpenAI').item.json.message.content.total }}",
+            "Invoice #": "={{ $('OpenAI').item.json.message.content.invoice_number }}",
+            "Date": "={{ $('OpenAI').item.json.message.content.invoice_date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Line Item",
+              "displayName": "Line Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Invoice #",
+              "displayName": "Invoice #",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "QTY",
+              "displayName": "QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Invoice Total",
+              "displayName": "Invoice Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1220,
+        0
+      ],
+      "id": "baae3703-86e9-464a-a016-2233100b1ba6",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "message": "Please pull out the tax, discount and line items",
+          "document": "BQACAgEAAxkBAAMSZ-RDbapsKK8rjiE6Hb1YMNtQNYQAAogEAAL7byFHwgV5FywtQnE2BA"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1f6ac130-2207-4c3a-8c6e-d99217e248c1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "9RBCF8EHFlsT3KJ6",
+  "tags": []
+}

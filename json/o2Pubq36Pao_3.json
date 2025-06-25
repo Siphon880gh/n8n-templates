@@ -1,0 +1,103 @@
+{
+  "name": "🤖 Content Creator",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -460,
+        0
+      ],
+      "id": "f4d231a6-407f-4611-8edf-2685c61f4ba6",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "You are an expert content creator.\nCreate SEO optimized content based on the user's query."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -240,
+        0
+      ],
+      "id": "3fc4ba7c-b798-465c-a374-90e63e8c9eb3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        180
+      ],
+      "id": "559c88c9-37c3-4119-9ad7-47cb21d9659d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "nrDrI8MUFREwh9aM",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "Create a twitter post promoting my new Youtube tutorial on creating n8n AI Agents"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "140d34e2-3224-4f68-a372-61f475e0a9c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd8f3260f4f840103c2ad768fc0a1d92f91d8588e163407d3747cc2f7c516a5a"
+  },
+  "id": "iO6zfOcGN2f9u82x",
+  "tags": []
+}

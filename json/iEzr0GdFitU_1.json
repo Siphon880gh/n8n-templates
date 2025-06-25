@@ -1,0 +1,857 @@
+{
+  "name": "Manager Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant\n\n## AI Tools\n1. Call the book_hair_appointment tool to book a hair appointment at the barbershop. Before calling this tool, please call the calendar tool to take a look at my calendar availability so that I don't book a conflicting event. Pass in my calendar appointments for the next two weeks. If the hair appointment is confirmed, please create a calendar event.\n2. Use the calendar_agent tool to search, create, update, and delete Google calendar events.\n3. Call the document_agent tool to process, upload, parse, and manage any documents (invoices, contracts, receipts, documents, etc) that the user sends with the one exception being audio files. Here is the document ID: {{ $('Telegram Trigger').item.json.message.document.file_id }}. For example, the mime_type could be application/pdf\n4. Call the airtable_tasks tool get, search, create, update or delete tasks in Airtable\n5. Call the social_media_agent to create X (twitter) posts, blog posts, and linkedin posts.\n6. Call the email_agent for everything related to emails. If the user asks to send an email now, make sure to send the email immediately. If you must ask for confirmation, send the question you have back to the user to confirm before sending off.\n\n## Rules\n1. NEVER call the book_hair_appointment tool more than one time.\n2. If you're calling both the calendar_agent and the email_agent at the same time, please complete any task in the calendar_agent first before sending off an email\n3. For the book_hair_appointment, please book the appointment on my calendar if confirmed\n4. If the user is asking to send an email, it means to send it immediately.\n\nThe current date is {{ $now }}\n\n\n##Responses\n3. document_agent: If successful, please let the user know that the document has been uploaded to Google Drive and all the line items from the document have been extracted and added into the Google Sheet."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "df66dfe7-bdf3-4f10-b53b-c480f08f8f18",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        220
+      ],
+      "id": "fc99a301-e8dc-43f5-9234-459b0023d4f2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ijZWPGwLXdAOVFfI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        60,
+        220
+      ],
+      "id": "0736c28d-7312-4e02-afb7-1edb360b35e3",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        160,
+        220
+      ],
+      "id": "5a0ddc6b-d4c5-4273-be7e-fcf272272fc1",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "name": "book_hair_appointment",
+        "description": "Call this tool to book a hair appointment",
+        "workflowId": {
+          "__rl": true,
+          "value": "9cJr921WzIdmQKop",
+          "mode": "list",
+          "cachedResultName": "Voice Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hair_dresser": "={{ $fromAI(\"hair_dresser\", \"the name of the hairdresser\") }}",
+            "end_time": "={{ $fromAI(\"endTime\", \"the end time range of the appointment the user is avilable for\") }}",
+            "start_time": "={{ $fromAI(\"startTime\", \"the start time range of the appointment the user is avilable for\") }}",
+            "date": "={{ $fromAI(\"date\", \"the day of the week the user is avilable for to book the appointment for\") }}",
+            "calendar_availability": "={{ $fromAI(\"availability\", \"this is my calendar availability for the enxt two weeks\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "start_time",
+              "displayName": "start_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "end_time",
+              "displayName": "end_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "hair_dresser",
+              "displayName": "hair_dresser",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "calendar_availability",
+              "displayName": "calendar_availability",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        280,
+        220
+      ],
+      "id": "cbac9ba9-c56f-4851-a3b2-1a89f03ab5a6",
+      "name": "Voice Assistant"
+    },
+    {
+      "parameters": {
+        "name": "calendar_agent",
+        "description": "Call this tool to deal with anything related to Google calendar",
+        "workflowId": {
+          "__rl": true,
+          "value": "bbzZ21ReC0DmrpDJ",
+          "mode": "list",
+          "cachedResultName": "Calendar Booking copy"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $fromAI(\"name\", \"this is the name of the attendee that I'm inviting. Leave this blank if there's no names\") }}",
+            "message": "={{ $fromAI(\"query\", \"what are you trying to do with Google calendar?\") }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        400,
+        220
+      ],
+      "id": "19ec7e31-23df-4c9d-9dc0-5e26b3733164",
+      "name": "Google Calendar"
+    },
+    {
+      "parameters": {
+        "name": "email_agent",
+        "description": "Call this tool to handle all things related to gmail",
+        "workflowId": {
+          "__rl": true,
+          "value": "pRE6PxjD4JtLNdD0",
+          "mode": "list",
+          "cachedResultName": "Gmail Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $fromAI(\"message\", \"The message is instructions on what our email AI agent should do (i.e. create draft, send email, search email, etc.)\") }}",
+            "name": "={{ $fromAI(\"name\", \"this is the name of the person that I'm trying to email\") }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        520,
+        220
+      ],
+      "id": "5b707d0c-d5b3-421b-bc7c-fc4cbbe2d985",
+      "name": "Gmail"
+    },
+    {
+      "parameters": {
+        "name": "social_media_agent",
+        "description": "Call this tool to post on social media or to create a blog post",
+        "workflowId": {
+          "__rl": true,
+          "value": "p6nGOhnZ2Ib03UQC",
+          "mode": "list",
+          "cachedResultName": "Social Media Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "social_media_platforms": "={{ $fromAI(\"socialMediaPlatform\", \"this is the social media platform the user wants you to post on. For example: 'twitter, linkedin, and blog'. Please always use twitter, linkedin, or blog as the response\") }}",
+            "message": "={{ $fromAI(\"message\", \"this is the social media post\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "social_media_platforms",
+              "displayName": "social_media_platforms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        660,
+        220
+      ],
+      "id": "0edd8582-5336-4194-b89b-8fe3f881e281",
+      "name": "Social Media Posting"
+    },
+    {
+      "parameters": {
+        "name": "airtable_tasks",
+        "description": "Call this tool to search, get create, update or delete tasks in Airtable",
+        "workflowId": {
+          "__rl": true,
+          "value": "ptTt0lNdiCQaxgos",
+          "mode": "list",
+          "cachedResultName": "Airtable Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $fromAI(\"message\", \"what is the message you're trying to send to airtable\") }}",
+            "memory": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [
+            "message"
+          ],
+          "schema": [
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "memory",
+              "displayName": "memory",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        820,
+        220
+      ],
+      "id": "f72b07ef-17f1-479d-a647-693626163588",
+      "name": "Airtable"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -620,
+        0
+      ],
+      "id": "4b5b0b67-d00f-4991-b41d-9d079ccd35f0",
+      "name": "Telegram Trigger",
+      "webhookId": "600c6d64-98f1-4597-9448-1397bd15b675",
+      "credentials": {
+        "telegramApi": {
+          "id": "JhhDodcWIfzrpm2J",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "document_agent",
+        "description": "Call this tool to manage documents, invoices, contracts, and receipts",
+        "workflowId": {
+          "__rl": true,
+          "value": "W4Z2oMtQxhDcPHa6",
+          "mode": "list",
+          "cachedResultName": "Document Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "file_id": "={{ $fromAI(\"file_id\", \"this is the file_id of the document from Telegram\") }}"
+          },
+          "matchingColumns": [
+            "file_id"
+          ],
+          "schema": [
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        980,
+        220
+      ],
+      "id": "814ce1af-8519-4ae6-b586-111364e6d406",
+      "name": "Documents"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        0
+      ],
+      "id": "3f367cba-410d-46c3-83ff-b598819a5b5b",
+      "name": "Telegram",
+      "webhookId": "3cd55a7d-9a5e-4747-b7bf-9a93079955f2",
+      "credentials": {
+        "telegramApi": {
+          "id": "OGKm4F9KSKep4HTN",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        0
+      ],
+      "id": "20b868e9-2966-405a-b843-f4ecdc1d23e9",
+      "name": "Telegram1",
+      "webhookId": "8b826288-7a45-4a12-bbf7-e07462532efb",
+      "credentials": {
+        "telegramApi": {
+          "id": "OGKm4F9KSKep4HTN",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -100,
+        0
+      ],
+      "id": "771f1b42-4c41-44b1-b569-d1458abb0010",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "ijZWPGwLXdAOVFfI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        60,
+        0
+      ],
+      "id": "dd2f1408-7f31-415a-b27e-e6b3c655ee73",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "26deff3f-4602-47c3-823b-8f2c45d332ad",
+              "name": "text",
+              "value": "={{ $('Telegram Trigger').item.json.message.caption }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -260,
+        -160
+      ],
+      "id": "a782477b-5f1b-4ab3-b342-c501ba067c63",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "31c62aff-11d6-4909-9803-9a4574da9fb3",
+              "name": "text",
+              "value": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -260,
+        160
+      ],
+      "id": "c0d6acf1-21be-4988-9198-6c576950c1c3",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.document }}",
+                    "rightValue": "b",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b59a106b-1951-414f-8a7d-28586d74750a",
+                    "leftValue": "={{ $json.message.voice }}",
+                    "rightValue": "d",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f45c3cc7-dc14-4a4a-bcf0-f8a112acb88c",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -460,
+        0
+      ],
+      "id": "1a6c164e-b792-4173-bbbc-5232db62465a",
+      "name": "Switch"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice Assistant": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Social Media Posting": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Documents": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "70b05bd9-faa8-44ce-b427-323e33aa4aa3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "zEzd2WqpLZhnifpu",
+  "tags": []
+}

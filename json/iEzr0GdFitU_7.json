@@ -1,0 +1,515 @@
+{
+  "name": "Social Media Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"message\": \"\",\n  \"social_media_platforms\": \"\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -260,
+        0
+      ],
+      "id": "679a7816-8edf-45df-ba0a-4fb0b54c6cc8",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an intelligent bot, specializing in creating X (twitter) posts.",
+              "role": "system"
+            },
+            {
+              "content": "=Please create an X post about this topic:\n{{ $('When Executed by Another Workflow').item.json.message }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        660,
+        -60
+      ],
+      "id": "9c0e292a-c687-454d-a66c-f0710803656e",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "ijZWPGwLXdAOVFfI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.social_media_platforms }}",
+                    "rightValue": "twitter",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f9467b34-2132-48d6-81cf-273ceef62829",
+                    "leftValue": "={{ $json.social_media_platforms }}",
+                    "rightValue": "linkedin",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5415b2af-615b-4da4-a629-48cdece46f86",
+                    "leftValue": "={{ $json.social_media_platforms }}",
+                    "rightValue": "blog",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        300,
+        0
+      ],
+      "id": "8208863d-667a-4a2a-8d49-ab107a647bf2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an intelligent bot, specializing in creating LinkedIn posts.",
+              "role": "system"
+            },
+            {
+              "content": "=Please create an LinkedIn post about this topic:\n{{ $('When Executed by Another Workflow').item.json.message }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        660,
+        120
+      ],
+      "id": "8d4c22b8-f151-453c-8e7c-26737af4638c",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ijZWPGwLXdAOVFfI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.message.content }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        -60
+      ],
+      "id": "59ac08ac-0bb0-4657-b8f4-4aca2d36f2f0",
+      "name": "X",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "E2JTjg3OF3R0z5xR",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "postAs": "organization",
+        "text": "={{ $json.message.content }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        120
+      ],
+      "id": "fe17ccdc-a202-440a-8c04-a0db0866a3c3",
+      "name": "LinkedIn",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "LMDUTnIpRBhj9VED",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "social_media_platforms",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        80,
+        0
+      ],
+      "id": "fef7f8b6-aabe-4b5d-a3c5-e37b3d506268",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an intelligent bot, specializing in creating blog posts.\nThe blog_title and blog_content section should just be a text field",
+              "role": "system"
+            },
+            {
+              "content": "=Please create an blog post about this topic:\n{{ $('When Executed by Another Workflow').item.json.message }}"
+            },
+            {
+              "content": "Please output the data in JSON format:\n\n{\n  \"blog_title\": \"\",\n  \"blog_content\": \"\"\n{",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        660,
+        300
+      ],
+      "id": "86809bc2-a132-4542-9f2b-27ff10e0632b",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "ijZWPGwLXdAOVFfI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39c2f302-03be-4464-a17a-d7cc481d6d44",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1e3caca3-323e-4ae5-a46f-e6e9d03481ad",
+      "name": "Success",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1280,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39c2f302-03be-4464-a17a-d7cc481d6d44",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f0aaa6c3-d048-486e-b82b-29ceb977ab27",
+      "name": "Success1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1280,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39c2f302-03be-4464-a17a-d7cc481d6d44",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2558b02-5cfa-47e0-9d39-580f2f40a49d",
+      "name": "Success2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1280,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "title": "={{ $json.message.content.blog_title }}",
+        "additionalFields": {
+          "content": "={{ $json.message.content.blog_content }}"
+        }
+      },
+      "type": "n8n-nodes-base.wordpress",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        300
+      ],
+      "id": "c8f99d27-dc7f-4e40-bb1f-481c624eb839",
+      "name": "Wordpress1",
+      "credentials": {
+        "wordpressApi": {
+          "id": "QWX2vYvnFHJqMT9s",
+          "name": "Wordpress account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "OpenAI": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "🚀 The rise of AI agents is transforming our world! From virtual assistants in our pockets to advanced bots enhancing customer service, these intelligent systems are reshaping industries and daily life. 🤖💡 What are your thoughts on their impact? #AI #Technology #Innovation #FutureOfWork",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ],
+    "OpenAI1": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "🌟 The Rise of AI Agents: Transforming the Future of Work 🌟\n\nAs we stand on the brink of a technological revolution, the emergence of AI agents is reshaping how we communicate, work, and innovate. 🤖✨ \n\nFrom automated customer support to sophisticated AI-powered assistants, these agents are not just tools but powerful partners that enhance productivity and creativity across industries. Here are a few thoughts on this exciting trend:\n\n1️⃣ **Efficiency and Productivity**: AI agents can streamline repetitive tasks, enabling teams to focus on what truly matters - innovation and strategy. Imagine a world where mundane activities are managed effortlessly, freeing up time for brainstorming and collaboration.\n\n2️⃣ **Personalization**: With advanced data analytics, AI agents create tailored experiences for users, ensuring that businesses can meet individual needs while fostering stronger connections. This leads to improved customer satisfaction and loyalty.\n\n3️⃣ **Collaboration and Creativity**: AI agents facilitate collaboration by providing instant insights and facilitating communication, allowing teams to work together seamlessly, regardless of location. They serve as catalysts for creativity, paving the way for new ideas and solutions.\n\n4️⃣ **Ethical Considerations**: As we embrace these advancements, we must also navigate the ethical implications of AI in our daily lives. Ensuring transparency and fairness in AI algorithms is essential to build trust and mitigate biases.\n\nThe future is bright, and the rise of AI agents promises to unlock unprecedented opportunities. 🚀 Let’s continue to explore, adapt, and evolve in this dynamic landscape! \n\nWhat are your thoughts on the impact of AI agents in your field? Let's discuss! 👇 #ArtificialIntelligence #AIagents #FutureOfWork #Innovation #Productivity #EthicsInAI",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ],
+    "OpenAI2": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "blog_title": "The Rise of AI Agents: Transforming Our Digital Landscape",
+              "blog_content": "In recent years, we have witnessed a remarkable surge in the development and adoption of AI agents across various sectors. These intelligent systems are not just tools; they are transforming how we interact with technology, providing personalized experiences, and streamlining our daily tasks. From virtual assistants like Siri and Alexa to more advanced systems that can conduct complex tasks, AI agents are becoming an integral part of our lives.\n\nOne of the main drivers behind the rise of AI agents is the rapid advancement in machine learning and natural language processing technologies. This has allowed AI to better understand human language, respond contextually, and even predict user needs. As companies invest more in AI, we can expect these agents to become even more sophisticated, able to undertake tasks previously thought to be the exclusive domain of humans.\n\nMoreover, the pandemic has accelerated the adoption of AI agents in business operations, customer service, and remote working solutions. These agents can provide support 24/7, handle multiple customer queries simultaneously, and free up human resources for more complex problem-solving tasks.\n\nHowever, with the rise of AI agents comes the necessity for discussions around ethics, privacy, and employment implications. As we integrate these technologies into our lives, it is crucial to ensure they are developed and utilized responsibly.\n\nIn summary, the rise of AI agents represents a significant shift in the digital landscape. Their ability to enhance efficiency and improve user experiences will undoubtedly shape the future of technology as we know it. As we continue to navigate this new era, staying informed and engaged in discussions about the implications of AI will be essential."
+            },
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [],
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        []
+      ]
+    },
+    "X": {
+      "main": [
+        [
+          {
+            "node": "Success2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Success1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success": {
+      "main": [
+        []
+      ]
+    },
+    "Wordpress1": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c18a9c89-1f1c-4ea4-b6db-d4b325fbb8ac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "p6nGOhnZ2Ib03UQC",
+  "tags": []
+}

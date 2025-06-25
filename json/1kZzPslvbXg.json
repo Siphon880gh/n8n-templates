@@ -1,0 +1,962 @@
+{
+  "name": "No shows",
+  "nodes": [
+    {
+      "parameters": {
+        "events": [
+          "BOOKING_CREATED"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.calTrigger",
+      "typeVersion": 2,
+      "position": [
+        520,
+        -260
+      ],
+      "id": "a5080497-96bd-4093-b00c-af1f862129f7",
+      "name": "Cal.com Trigger",
+      "webhookId": "9a2104e2-e54e-4db5-a97c-3b107d2c2069",
+      "credentials": {
+        "calApi": {
+          "id": "wAnBb557LykTzDdX",
+          "name": "Cal account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1180,
+        -120
+      ],
+      "id": "046cbf0f-d343-4ae6-936e-70a26f12c7e1",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Linkedin Summary: {{ $json.results[0].content }}\nWebsite content: {{ $('Markdown').item.json.data }}",
+        "options": {
+          "systemMessage": "You will receive a linkedIn summary and a full website in markdown for a lead.\n\nYour job is to look at both of pieces of data and create a summary of this lead and their company. Output just the summary please.\n\nKeep it at 100 words max"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1260,
+        -260
+      ],
+      "id": "54cd0041-0eeb-46fa-9580-c7a55140abd3",
+      "name": "Lead summary Agent"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        900,
+        -260
+      ],
+      "id": "153dbff3-a6df-47d1-abd2-20611000bdc1",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.responses['Website-url'].value }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -260
+      ],
+      "id": "971f9c42-67c6-46e2-b52e-89cb432d200e",
+      "name": "Scrape website URL"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "<api key>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $('Cal.com Trigger').item.json.attendees[0].name }}'s linkedin Profile URL'\",\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 3,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        -260
+      ],
+      "id": "e67294d0-19dc-4252-950e-c7508286675d",
+      "name": "Find Linkedin URL"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appBWdLFc1R5bpIkP",
+          "mode": "list",
+          "cachedResultName": "demo leads and clients",
+          "cachedResultUrl": "https://airtable.com/appBWdLFc1R5bpIkP"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblcxM2cpPdkwmd0F",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appBWdLFc1R5bpIkP/tblcxM2cpPdkwmd0F"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "New lead",
+            "Name": "={{ $('Cal.com Trigger').item.json.organizer.name }}",
+            "Email Address": "={{ $('Cal.com Trigger').item.json.organizer.email }}",
+            "Website URL": "={{ $('Cal.com Trigger').item.json.responses['Website-url'].value }}",
+            "Linkedin URL": "={{ $('Find Linkedin URL').item.json.results[0].url }}",
+            "Lead summary": "={{ $json.output }}",
+            "Notes": "="
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Website URL",
+              "displayName": "Website URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New lead",
+                  "value": "New lead"
+                },
+                {
+                  "name": "Meeting scheduled",
+                  "value": "Meeting scheduled"
+                },
+                {
+                  "name": "Discovery call done",
+                  "value": "Discovery call done"
+                },
+                {
+                  "name": "Proposal sent",
+                  "value": "Proposal sent"
+                },
+                {
+                  "name": "Lost",
+                  "value": "Lost"
+                },
+                {
+                  "name": "Won",
+                  "value": "Won"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Linkedin URL",
+              "displayName": "Linkedin URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Lead summary",
+              "displayName": "Lead summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1580,
+        -260
+      ],
+      "id": "0335c59d-1769-4354-89c6-6b519ca26899",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vFpkQCyaQrhDPzFz",
+          "name": "Leads/clients"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "={{$item(0).$node[\"Cal.com Trigger\"].json.attendees[0].email}}",
+        "subject": "Recent website Enquiry",
+        "message": "=Hey {{$item(0).$node[\"Cal.com Trigger\"].json.attendees[0].firstName}},\n\nThanks for reaching out — {{$item(0).$node[\"Enquiry summary\"].json.message.content}}.\n\nI've gone ahead and booked in our call, if you could just hit the \"i'll be there button\" so we can confirm you will be attending.\n\nOn the call, we’ll dig into what you're trying to achieve, walk through a few ideas, and see if it makes sense to collaborate.\n\nIf anything changes or you need to reschedule, no stress — there’s a reschedule link in the invite.\n\nSpeak soon!\n\n– Rory\nAutonomously\n",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "I'll be there!",
+            "disapproveLabel": "I'm busy"
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 2
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        760,
+        20
+      ],
+      "id": "c289055a-e44e-4a2f-96d2-99fba248852e",
+      "name": "Gmail",
+      "webhookId": "faea0189-7b65-46de-bcec-fbc18474caa8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LnrPa2bag9FoINre",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.data.approved }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "1e6507bb-bbf8-45f3-a55b-bcefc1f9924b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Accepted"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d2821f3c-6599-4c13-ab1b-902d3831a2d1",
+                    "leftValue": "={{ $json.data.approved }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Not Accepted"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        960,
+        20
+      ],
+      "id": "7d0a6a12-be42-4e8e-aa0d-dd52bc23ea37",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$item(0).$node[\"Cal.com Trigger\"].json.attendees[0].email}}",
+        "subject": "Upcoming meeting",
+        "emailType": "text",
+        "message": "=Hey {{ $('Cal.com Trigger').item.json.responses.name.value.firstName }},  \n\nJust wanted to say thanks again for confirming the invite — really looking forward to our chat.  \n\nFeel free to bring any questions, notes, or specific challenges you’d like to cover. I’ll make sure we keep things focused on what matters most to you.  \n\nSpeak soon! \n\n– Rory\nAutonomously",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        -60
+      ],
+      "id": "02884442-c92c-4b92-aa93-dbf0edc67f68",
+      "name": "Gmail1",
+      "webhookId": "a765cdb1-6f53-4bb1-b8eb-f383e8021d87",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LnrPa2bag9FoINre",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "<number>",
+        "to": "={{ $('Format phone number').item.json.message.content }}",
+        "message": "=Hey {{ $('Cal.com Trigger').item.json.responses.name.value.firstName }}, Rory Again.\n\nJust wanted to make sure you will be in the meeting. Only becuase its saying you havent accepted the invite.\n\nLet me know if anything has changed",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        100
+      ],
+      "id": "7a78b44f-a9ec-4778-8c13-7fe1adcd7522",
+      "name": "Twilio1",
+      "credentials": {
+        "twilioApi": {
+          "id": "ZDQp8uf0Tfd5K2V7",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "={{ $('Cal.com Trigger').item.json.responses.email.value }}",
+        "subject": "Upcoming meeting, will you be there?",
+        "message": "=Hey {{ $('Cal.com Trigger').item.json.attendees[0].firstName }},  \n\nJust wanted to give you a quick heads-up that our meeting is coming up soon.  \n\nIf you haven’t had a chance to see my previous email then hitting \"i'll be there\" on this email will just help us confirm that you will be there.  Looking forward to chatting either way, but let me know if anything’s changed or you need to reschedule.  \n\nBest, \n\n- Rory\nAutonomously",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "I'll be there!",
+            "disapproveLabel": "I'm busy"
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 2
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1480,
+        100
+      ],
+      "id": "0f5a7cc5-8597-49f9-94b0-165fc04e7fcd",
+      "name": "Gmail2",
+      "webhookId": "a765cdb1-6f53-4bb1-b8eb-f383e8021d87",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LnrPa2bag9FoINre",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini-2024-07-18",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI-2024-07-18"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=your job is to simply format this number into the format containing the Country code, so +...\n\noutput just the new number and nothing else\n\nNumber:  {{ $('Cal.com Trigger').item.json.responses['Phone-number'].value }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2040,
+        -260
+      ],
+      "id": "767e0fb0-f4eb-42c9-aceb-b559e78eb50e",
+      "name": "Format phone number",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to take an incoming enquiry and look at the summary of the lead then create a summary of what they want.\n\nYou will recive a summary of the lead and thne also the enquiry they made. your job is to make a little summary of their enquiry to go in a sentence like \"really looking forward to chatting with you about {howWeCanHelp}.\"\n\nYou will be writing the how we can help part so make sure it makes sense in the context of that sentence.\n\nLead summary: {{ $json.fields['Lead summary'] }}\n\nEnquiry: {{ $('Cal.com Trigger').item.json.responses.notes.value }}\n\n\nIt should fit right into that sentence i gave you just replacing the demo variable"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1740,
+        -260
+      ],
+      "id": "0f0327a8-8a06-4eaa-9852-4ad38a4bd7bd",
+      "name": "Enquiry summary",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.data.approved }}",
+                    "rightValue": "needs action",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "1e6507bb-bbf8-45f3-a55b-bcefc1f9924b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Accepted"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d2821f3c-6599-4c13-ab1b-902d3831a2d1",
+                    "leftValue": "={{ $json.data.approved }}",
+                    "rightValue": "needs action",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Not Accepted"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1660,
+        100
+      ],
+      "id": "9e56001f-9e93-40b0-9bc1-2c548779ab61",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "rory@autonomously-ai.com",
+          "mode": "list",
+          "cachedResultName": "rory@autonomously-ai.com"
+        },
+        "eventId": "={{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2100,
+        180
+      ],
+      "id": "a2044565-ebfa-45b5-bd9c-e299a6b764e5",
+      "name": "Google Calendar2",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "865r2pctYgIvca2b",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "<number>",
+        "to": "={{ $('Format phone number').item.json.message.content }}",
+        "message": "=Hey {{ $('Cal.com Trigger').item.json.attendees[0].firstName }}, it's Rory here.\n\nJust wanted to confirm out meeting for {{ $('Cal.com Trigger').item.json.startTime }}.\n\nMake sure to hit accept on the calendar invite when you recieve it if you havent already.\n\nSee you then!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        560,
+        20
+      ],
+      "id": "ff7b7789-584b-4968-84f1-7fe3bc7a88de",
+      "name": "Twilio2",
+      "credentials": {
+        "twilioApi": {
+          "id": "ZDQp8uf0Tfd5K2V7",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "<number>",
+        "to": "={{ $('Format phone number').item.json.message.content }}",
+        "message": "=Hey {{ $('Cal.com Trigger').item.json.responses.name.value.firstName }}, Rory Again.\n\nJust wanted to let you know that we have cancelled our upcoming meeting due to no response on your end.\n\nLet me know if you would like to reschedule.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        2260,
+        180
+      ],
+      "id": "48fa075c-e511-4925-aa41-17accbf77272",
+      "name": "Twilio",
+      "credentials": {
+        "twilioApi": {
+          "id": "ZDQp8uf0Tfd5K2V7",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$item(0).$node[\"Cal.com Trigger\"].json.attendees[0].email}}",
+        "subject": "Upcoming meeting cancelled",
+        "emailType": "text",
+        "message": "=Hey {{ $('Cal.com Trigger').item.json.responses.name.value.firstName }},  \n\nJust wanted to let you know that we have cancelled our upcoming meeting due to no response on your end.\n\nLet me know if you would like to reschedule.\n\n– Rory\nAutonomously",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2420,
+        180
+      ],
+      "id": "276ba082-33d0-40df-a7d0-7e2d4966e781",
+      "name": "Gmail3",
+      "webhookId": "a765cdb1-6f53-4bb1-b8eb-f383e8021d87",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LnrPa2bag9FoINre",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "rory@autonomously-ai.com",
+          "mode": "list",
+          "cachedResultName": "rory@autonomously-ai.com"
+        },
+        "timeMin": "={{ $('Cal.com Trigger').item.json.startTime }}",
+        "timeMax": "={{ $('Cal.com Trigger').item.json.endTime }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1940,
+        180
+      ],
+      "id": "db2ab904-6ca9-4144-83f4-555bd43156b2",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "865r2pctYgIvca2b",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Cal.com Trigger": {
+      "main": [
+        [
+          {
+            "node": "Scrape website URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead summary Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead summary Agent": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Find Linkedin URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape website URL": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Linkedin URL": {
+      "main": [
+        [
+          {
+            "node": "Lead summary Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Enquiry summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Twilio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        []
+      ]
+    },
+    "Gmail2": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format phone number": {
+      "main": [
+        [
+          {
+            "node": "Twilio2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enquiry summary": {
+      "main": [
+        [
+          {
+            "node": "Format phone number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Twilio1": {
+      "main": [
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Twilio2": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar2": {
+      "main": [
+        [
+          {
+            "node": "Twilio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Twilio": {
+      "main": [
+        [
+          {
+            "node": "Gmail3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "73a128b0-1232-41af-9cd0-0df8159559e5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8711ef6aba5ff6781b8ed3c0d9d8ad1fb3b9e4be41f1c9a056c02209236d4a91"
+  },
+  "id": "o7mReCSGC9qI6lKM",
+  "tags": []
+}

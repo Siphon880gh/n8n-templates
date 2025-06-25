@@ -1,0 +1,1231 @@
+{
+  "name": "Baby Pods",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/nPczCjzI2devNBz1zQrb",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"text\": \"{{ $json.message.content.podcast }}\"\n}\n",
+        "options": {}
+      },
+      "id": "5f094533-b819-44e6-88f5-e9459884aae8",
+      "name": "Text to Speech",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1100,
+        -560
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "60x6LD8NU9itWisy",
+          "name": "Custom Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "VA8SuhHC4XQCuSRa",
+          "name": "ElevenLabs"
+        },
+        "httpQueryAuth": {
+          "id": "OdWdpzlyOAUxjQ9D",
+          "name": "Query Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -900,
+        -240
+      ],
+      "id": "04d9c865-7095-410d-b9e1-f01e9ddbcf02",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hedra.com/web-app/public/assets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"name\": \"baby-podcaster-image\",\n  \"type\": \"image\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -640,
+        -260
+      ],
+      "id": "724c7a0c-9fab-46b8-aba0-293e9674f546",
+      "name": "Create Image Asset (Hedra)",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "60x6LD8NU9itWisy",
+          "name": "Custom Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "M82srjYKrMUPUehP",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hedra.com/web-app/public/assets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"name\": \"baby-podcaster-audio\",\n  \"type\": \"audio\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -880,
+        -580
+      ],
+      "id": "c4c2aa4e-3c4b-4783-b9f7-7ae475751b63",
+      "name": "Create Audio Asset (Hedra)",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "60x6LD8NU9itWisy",
+          "name": "Custom Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "M82srjYKrMUPUehP",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -660,
+        -540
+      ],
+      "id": "59d3118a-c770-4f16-8b3c-87961846625e",
+      "name": "Merge Audio Assets"
+    },
+    {
+      "parameters": {
+        "jsCode": "const binaryItem = items.find(i => i.binary && Object.keys(i.binary).length > 0);\nconst metadataItem = items.find(i => i.json && i.json.id && i.json.type);\n\nreturn [\n  {\n    json: {\n      id: metadataItem.json.id,\n      type: metadataItem.json.type,\n      name: metadataItem.json.name || 'uploaded-asset'\n    },\n    binary: {\n        data: binaryItem.binary.data\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -420,
+        -560
+      ],
+      "id": "b37ffeb2-5947-462b-a516-2129745409f2",
+      "name": "Split Audio Metadata"
+    },
+    {
+      "parameters": {
+        "jsCode": "const binaryItem = items.find(i => i.binary && Object.keys(i.binary).length > 0);\nconst metadataItem = items.find(i => i.json && i.json.id && i.json.type);\n\nreturn [\n  {\n    json: {\n      id: metadataItem.json.id,\n      type: metadataItem.json.type,\n      name: metadataItem.json.name || 'uploaded-asset'\n    },\n    binary: {\n        data: binaryItem.binary.data\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        -240
+      ],
+      "id": "2e32e253-7a06-44c0-9876-3272eb24b7d5",
+      "name": "Split Image Metadata"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.hedra.com/web-app/public/assets/{{ $json.id }}/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -220,
+        -560
+      ],
+      "id": "8bfb245a-3a7b-4112-997b-6657c65cc6b8",
+      "name": "Upload Audio (Hedra)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "M82srjYKrMUPUehP",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.hedra.com/web-app/public/assets/{{ $json.id }}/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -20,
+        -240
+      ],
+      "id": "01a58e86-160d-42f6-bbcb-cda9a9af0f32",
+      "name": "Upload Image (Hedra)",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "60x6LD8NU9itWisy",
+          "name": "Custom Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "M82srjYKrMUPUehP",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        -560
+      ],
+      "id": "e4aa75e9-ba73-4785-9c2b-6aa770e67e29",
+      "name": "Merge Assets"
+    },
+    {
+      "parameters": {
+        "jsCode": "let image_asset_id = null;\nlet audio_asset_id = null;\nlet image_url = null;\nlet audio_url = null;\n\nfor (const item of items) {\n  const { type, id, asset } = item.json;\n\n  if (type === 'image') {\n    image_asset_id = id;\n    image_url = asset?.url || null;\n  } else if (type === 'audio') {\n    audio_asset_id = id;\n    audio_url = asset?.url || null;\n  }\n}\n\nreturn [\n  {\n    json: {\n      image_asset_id,\n      audio_asset_id,\n      image_url,\n      audio_url\n    }\n  }\n];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        -560
+      ],
+      "id": "3ae2d87e-a5ff-48b7-bec5-1a5c1859e4da",
+      "name": "Split Image & Audio Assets IDs"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hedra.com/web-app/public/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"video\",\n  \"ai_model_id\": \"d1dd37a3-e39a-4854-a298-6510289f9cf2\",\n  \"start_keyframe_id\": \"{{ $json.image_asset_id }}\",\n  \"audio_id\": \"{{ $json.audio_asset_id }}\",\n  \"generated_video_inputs\": {\n    \"text_prompt\": \"A baby podcast host seated in front of a microphone, speaking with calm intensity and natural focus. Subtle facial expressions, minimal head movement, steady eye contact with the camera. Studio lighting with a professional podcast setup in the background.\",\n    \"resolution\": \"720p\",\n    \"aspect_ratio\": \"9:16\",\n    \"duration_ms\": 5000\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        -560
+      ],
+      "id": "66ff83eb-8ee5-40af-a839-10413e66f70d",
+      "name": "Create Video (Hedra)",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "60x6LD8NU9itWisy",
+          "name": "Custom Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "M82srjYKrMUPUehP",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        -560
+      ],
+      "id": "6a26331b-a2a8-4af2-b004-eb7b486b3ab8",
+      "name": "Wait 5 Mins",
+      "webhookId": "89c1e462-6331-4a5e-9af7-a1a336352d5c"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hedra.com/web-app/public/assets?type=video&ids={{ $json.asset_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        980,
+        -560
+      ],
+      "id": "98891cd3-0cf8-494c-917b-b792f08fc140",
+      "name": "Get BabyPod Video (Hedra)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "M82srjYKrMUPUehP",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1160,
+        -560
+      ],
+      "id": "d4ee895c-eeba-42df-89e0-c5b04fd1986d",
+      "name": "Wait 10 Secs",
+      "webhookId": "ce45396b-7b64-4422-ad8e-1b3e6408a297"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.asset.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        -240
+      ],
+      "id": "2d26f8e1-a7ab-4030-97eb-5289aae9c474",
+      "name": "Download BabyPod Video (Hedra)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "M82srjYKrMUPUehP",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Audio Prompt & Title').first().json.message.content.title}}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1WemU2r1nI0xnv-3z5a2LZk2kpt1bw5Pt",
+          "mode": "list",
+          "cachedResultName": "Baby Pods",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1WemU2r1nI0xnv-3z5a2LZk2kpt1bw5Pt"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        520,
+        -240
+      ],
+      "id": "5ecc5074-3918-46e5-859a-e888c6774126",
+      "name": "Upload Video",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8hVOKDMYZjWdZHGO",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        700,
+        -240
+      ],
+      "id": "dbd58ade-8ebf-4374-a8fe-80584b971def",
+      "name": "Download Video (YouTube)",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8hVOKDMYZjWdZHGO",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Cshlskgva9V8J0MbyPHt7fTZKVGq_U-x9uA9TgSAApU",
+          "mode": "list",
+          "cachedResultName": "Baby Pods",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Cshlskgva9V8J0MbyPHt7fTZKVGq_U-x9uA9TgSAApU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Cshlskgva9V8J0MbyPHt7fTZKVGq_U-x9uA9TgSAApU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "title": "={{ $('Audio Prompt & Title').first().json.message.content.title}}",
+            "status": "review",
+            "videoLink": "={{ $('Upload Video').item.json.webViewLink}}",
+            "youtubeLink": "= https://www.youtube.com/shorts/{{ $json.uploadId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "videoLink",
+              "displayName": "videoLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "youtubeLink",
+              "displayName": "youtubeLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1080,
+        -240
+      ],
+      "id": "d6c03775-a37c-4a89-90c7-6e98eed4653c",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YtyW9Ev4ho1zc05E",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate a detailed image of an extremely cute, chubby baby styled to resemble {{ $json.output.character }}, wearing large over-ear headphones and speaking into a professional podcast microphone. The baby should have an adorable yet intensely focused expression. Set the scene in a podcast studio with a dark, rich curtain backdrop and soft, warm lighting that gently accentuates the baby's cheeks and innocent face. Output the description as a single JSON object named Prompt."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1440,
+        -240
+      ],
+      "id": "1b2f8a06-3fbe-41c5-af34-782220fd4839",
+      "name": "Image Prompt",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.message.content.Prompt }}"
+            },
+            {
+              "name": "size",
+              "value": "1024x1536"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1100,
+        -240
+      ],
+      "id": "67d51f4e-c6c4-4765-b808-6ac066c57034",
+      "name": "Create The Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "6x7IrPveBq7Vegst",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -420,
+        -240
+      ],
+      "id": "492799f8-044f-495a-8447-87204ad6ae9d",
+      "name": "Merge 2"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate a Joe Rogan-esque podcast monologue diving into {{ $json.output.topic }}, keeping a casual yet intense and mildly conspiratorial vibe. Weave in tangents, quirky analogies, and philosophical reflections typical of Rogan’s deep dives. Output must be continuous text without line breaks or special characters to preserve valid JSON structure. Provide as a single JSON object named with two fields: \"podcast\" (with monologue) and \"title\" (with title for the video). Podcast should be strictly limited to 500 characters. Example title style: Babies Discussing Motorcycles And Road Crashes 💀"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1440,
+        -560
+      ],
+      "id": "797210e4-b626-4792-a082-060148efa343",
+      "name": "Audio Prompt & Title",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Generate an Audio",
+        "height": 320,
+        "width": 1660,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1520,
+        -680
+      ],
+      "typeVersion": 1,
+      "id": "4d00a54d-43f9-4570-8d77-4f6d14e11b4e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Generate an Image",
+        "height": 320,
+        "width": 1660,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1520,
+        -340
+      ],
+      "typeVersion": 1,
+      "id": "a19959e3-6c78-401b-9845-514ff60840a4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Generate a Video",
+        "height": 320,
+        "width": 1240,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        -680
+      ],
+      "typeVersion": 1,
+      "id": "cdc598c4-9c39-42c5-9b37-eae7d349df9b",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Save & Upload To YouTube",
+        "height": 320,
+        "width": 1240,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        -340
+      ],
+      "typeVersion": 1,
+      "id": "081e4659-5b75-48e3-9975-a2fcbe930601",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Audio Prompt & Title').first().json.message.content.title}}",
+        "regionCode": "US",
+        "categoryId": "24",
+        "options": {
+          "privacyStatus": "unlisted"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -240
+      ],
+      "id": "829a3c4a-570a-4658-bd9f-fb2c6678aae2",
+      "name": "Upload BabyPod Video to YouTube",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "c44QBKsABTQqjHBK",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Generate a New Video Idea",
+        "height": 500,
+        "width": 980
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2520,
+        -580
+      ],
+      "typeVersion": 1,
+      "id": "bcdc2d47-39e3-4105-8248-023a9b5ca241",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2460,
+        -300
+      ],
+      "id": "fe8047bf-2c35-45f2-a540-61258e1819a8",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 17
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2460,
+        -480
+      ],
+      "id": "1b81f2d4-ecec-45d0-863f-342957a5ab4f",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all incoming items\nconst items = $input.all();\n\n// Extract the text field from each item\nconst texts = items.map(item => item.json.title);\n\n// Concatenate them (adjust the separator as needed)\nconst concatenated = texts.join(\", \");\n\n// Return a single item with the concatenated text\nreturn [{ json: { mergedText: concatenated } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2120,
+        -420
+      ],
+      "id": "194907a6-ff3a-4ad2-a973-3d2ec9de7295",
+      "name": "Sheet Process"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2000,
+        -240
+      ],
+      "id": "56001205-aaad-42dd-87df-aad7d0c2f5b3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a topic for a new video to produce.\n\nHere are the topics that we've already used: {{ $json.mergedText }}\n\nGive me one new, super viral topic, present it as 5-7 words. Return output as JSON with 2 fields: Topic, and Character (Elon Musk or someone else)",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You're an expert in viral content creation with 5 years of experience.\n\nYou've created viral short videos that have gotten 10 billion views in total.\n\nYou specilize in short AI-generated videos with baby podcasts, talking about something interesting / viral / contraversial. The babies are similar to famous people. You use this characters: Elon Musk, Kanye West, Donald Trump, Jason Statham, Justin Bieber.\n\nExamples of videos that you did:\n- Baby Jason Statham talks about winning your woman\n- Baby Elon Musk talks about why Tesla is so much better than Mercedes\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1960,
+        -420
+      ],
+      "id": "637dc5ec-8e11-4fcc-9991-2ed6018e42d3",
+      "name": "Idea Generator"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Cshlskgva9V8J0MbyPHt7fTZKVGq_U-x9uA9TgSAApU",
+          "mode": "list",
+          "cachedResultName": "Baby Pods",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Cshlskgva9V8J0MbyPHt7fTZKVGq_U-x9uA9TgSAApU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Cshlskgva9V8J0MbyPHt7fTZKVGq_U-x9uA9TgSAApU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -2280,
+        -420
+      ],
+      "id": "5815a62c-24c7-4f9d-b86b-68a406d976a1",
+      "name": "Get Existing Ideas",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YtyW9Ev4ho1zc05E",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"character\": \"Elon Musk\",\n\t\"topic\": \"topic\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -1800,
+        -240
+      ],
+      "id": "6b3354ef-daa2-4778-9a3c-44d024fca92c",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Text to Speech": {
+      "main": [
+        [
+          {
+            "node": "Create Audio Asset (Hedra)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Audio Assets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Create Image Asset (Hedra)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge 2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Create Image Asset (Hedra)": {
+      "main": [
+        [
+          {
+            "node": "Merge 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Audio Asset (Hedra)": {
+      "main": [
+        [
+          {
+            "node": "Merge Audio Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Audio Assets": {
+      "main": [
+        [
+          {
+            "node": "Split Audio Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Audio Metadata": {
+      "main": [
+        [
+          {
+            "node": "Upload Audio (Hedra)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Image Metadata": {
+      "main": [
+        [
+          {
+            "node": "Upload Image (Hedra)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Audio (Hedra)": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image (Hedra)": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Assets": {
+      "main": [
+        [
+          {
+            "node": "Split Image & Audio Assets IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Image & Audio Assets IDs": {
+      "main": [
+        [
+          {
+            "node": "Create Video (Hedra)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Video (Hedra)": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 Mins",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 Mins": {
+      "main": [
+        [
+          {
+            "node": "Get BabyPod Video (Hedra)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get BabyPod Video (Hedra)": {
+      "main": [
+        [
+          {
+            "node": "Wait 10 Secs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10 Secs": {
+      "main": [
+        [
+          {
+            "node": "Download BabyPod Video (Hedra)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download BabyPod Video (Hedra)": {
+      "main": [
+        [
+          {
+            "node": "Upload Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video": {
+      "main": [
+        [
+          {
+            "node": "Download Video (YouTube)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video (YouTube)": {
+      "main": [
+        [
+          {
+            "node": "Upload BabyPod Video to YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Create The Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create The Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge 2": {
+      "main": [
+        [
+          {
+            "node": "Split Image Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio Prompt & Title": {
+      "main": [
+        [
+          {
+            "node": "Text to Speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload BabyPod Video to YouTube": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Existing Ideas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get Existing Ideas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Process": {
+      "main": [
+        [
+          {
+            "node": "Idea Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Idea Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existing Ideas": {
+      "main": [
+        [
+          {
+            "node": "Sheet Process",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Idea Generator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Idea Generator": {
+      "main": [
+        [
+          {
+            "node": "Audio Prompt & Title",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d0890ea3-b6a1-4106-91f8-bd2cf4fbc279",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69f54ab0f1afba7dd61c0a7a7609df8a8bd98642cf42d92572ea26f947c9a1d8"
+  },
+  "id": "gZ3rh9k9nvBT8pdw",
+  "tags": []
+}

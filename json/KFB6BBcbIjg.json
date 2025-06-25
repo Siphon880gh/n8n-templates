@@ -1,0 +1,1703 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -740,
+        760
+      ],
+      "id": "50eb83c7-bb7e-4e64-b9a7-b14b5b5d87c9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Product URL'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        200
+      ],
+      "id": "7bf7e172-c7f6-45fc-801f-9f34f8547635",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {
+          "ignore": "img"
+        }
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        440,
+        200
+      ],
+      "id": "6d3cab3c-69a7-4850-a0df-481d62d20f88",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Role & Objective:\n\nYou are a worldclass price exctractor, your job is to look at the scraped website and output the price of the product (only output the number), no explanation, no summary, no dollar sign. "
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        660,
+        200
+      ],
+      "id": "692232e2-0b73-40b4-8273-8a452c31fbee",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Price\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        420
+      ],
+      "id": "5a1d7eae-9a57-4bc8-8a2d-d07cac3f24bf",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        640,
+        420
+      ],
+      "id": "0264e05b-7145-48de-8d9e-28e96858bf73",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "v0LAWQcUnOqsEOY4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE",
+          "mode": "list",
+          "cachedResultName": "Nike Price Monitor Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 735379560,
+          "mode": "list",
+          "cachedResultName": "Nike",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit#gid=735379560"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product URL": "={{ $('Get Nike Products').item.json['Product URL'] }}",
+            "Product Name": "={{ $('Get Nike Products').item.json['Product Name'] }}",
+            "Product Price": "={{ $json.output.Price }}"
+          },
+          "matchingColumns": [
+            "Product Name"
+          ],
+          "schema": [
+            {
+              "id": "Product URL",
+              "displayName": "Product URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Price",
+              "displayName": "Product Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Discount",
+              "displayName": "Discount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1020,
+        200
+      ],
+      "id": "9bdb15a6-7330-44e6-b221-8693d105e524",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QgFgf1OVJydgbDV0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Role & Objective:\n\nYou are a worldclass price exctractor, your job is to look at the scraped website and output the price of the product (only output the number), dont output anything else, no explanation, no summary, no dollar sign. "
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        1640,
+        700
+      ],
+      "id": "5eae02be-dc3a-4eb6-9780-8a13be2fde5a",
+      "name": "Basic LLM Chain2"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Price\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1820,
+        900
+      ],
+      "id": "b339e95d-88a6-415a-96a4-9742736ea253",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        900
+      ],
+      "id": "650d0e7e-3f15-4602-aa07-1be33af2eefd",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "v0LAWQcUnOqsEOY4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE",
+          "mode": "list",
+          "cachedResultName": "Nike Price Monitor Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1281928277,
+          "mode": "list",
+          "cachedResultName": "Sporting Goods",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit#gid=1281928277"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product Name": "={{ $('Sporting goods').item.json['Product Name'] }}",
+            "Product URL": "={{ $('Sporting goods').item.json['Product URL'] }}",
+            "Product Price": "={{ $json.output.Price }}"
+          },
+          "matchingColumns": [
+            "Product Name"
+          ],
+          "schema": [
+            {
+              "id": "Product URL",
+              "displayName": "Product URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Price",
+              "displayName": "Product Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Discount",
+              "displayName": "Discount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2020,
+        700
+      ],
+      "id": "49f1c8cd-58b1-4233-824a-5f8eb48c7d2e",
+      "name": "Google Sheets5",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QgFgf1OVJydgbDV0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE",
+          "mode": "list",
+          "cachedResultName": "Nike Price Monitor Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 735379560,
+          "mode": "list",
+          "cachedResultName": "Nike",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit#gid=735379560"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -40,
+        200
+      ],
+      "id": "369a6cfa-518a-4029-b4f4-5c3eebf99a9d",
+      "name": "Get Nike Products",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QgFgf1OVJydgbDV0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        680
+      ],
+      "id": "fbd40c46-fe7b-4201-8b6c-443feb0aa318",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3540,
+        940
+      ],
+      "id": "28091120-b2b2-4d7d-a903-59533795c833",
+      "name": "Wait1",
+      "webhookId": "996bb585-bf08-4813-8782-d56903daed20"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "Product URL",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        340,
+        680
+      ],
+      "id": "4a35cc01-e844-4144-b13c-d58caf02d7e5",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "=# Role & Objective\n\nYou are an expert mathematician, you will analyze the 2 prices below and analyze if the price of our competitors product is lower or higher than our products price. \n- If the price of our competitors product is higher or equal to our price you will output ONLY: \"Higher\", nothing else, no summary , no explanation. \n- If the price of our competitors product is lower than our price you will output ONLY: \"Lower\", nothing else, no summary , no explanation. \n\n## Our Competitors product price:\n{{ $('Google Sheets5').item.json['Product Price'] }}\n\n## Our Price:\n{{ $('Google Sheets6').item.json['Product Price'] }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        2420,
+        700
+      ],
+      "id": "8aa75767-3099-4368-9606-16ffeaafbf6b",
+      "name": "Basic LLM Chain8"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE",
+          "mode": "list",
+          "cachedResultName": "Nike Price Monitor Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 735379560,
+          "mode": "list",
+          "cachedResultName": "Nike",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit#gid=735379560"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Product Name",
+              "lookupValue": "={{ $json['Product Name'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2220,
+        700
+      ],
+      "id": "0cf49ee1-a558-4df0-aca6-ae7344002f33",
+      "name": "Google Sheets6",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QgFgf1OVJydgbDV0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d2eeb45c-baa0-4d33-ad3a-f901382a4d92",
+              "leftValue": "={{ $json.output.Result }}",
+              "rightValue": "Lower",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2780,
+        700
+      ],
+      "id": "aac1d229-3925-4262-b071-770c11464cfc",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C07CCR60GBH",
+          "mode": "list",
+          "cachedResultName": "general"
+        },
+        "text": "=Lower price detected:\n\nProduct: {{ $('Google Sheets6').item.json['Product Name'] }}\n---\nCompetitor URL: {{ $('Google Sheets5').item.json['Product URL'] }}\n---\nCompetitor Price: {{ $('Google Sheets5').item.json['Product Price'] }}\n---\nOur Price: {{ $('Google Sheets6').item.json['Product Price'] }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        3060,
+        680
+      ],
+      "id": "be90d5e6-f266-4699-8795-c6ccec116deb",
+      "name": "Slack1",
+      "webhookId": "55615b99-d419-4b23-aaa9-79551482af9d",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "lJBfTdzxxxVaVayC",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2420,
+        880
+      ],
+      "id": "e9a83233-5a43-4082-9a94-0d40a6eadadd",
+      "name": "Google Gemini Chat Model7",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "v0LAWQcUnOqsEOY4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Result\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2580,
+        880
+      ],
+      "id": "b129a6d7-dc3b-407e-90b2-468c98daa6aa",
+      "name": "Structured Output Parser7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8afe198d-576f-4485-9eb3-be0834c217b1",
+              "name": "data",
+              "value": "={{ $json.result.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        700
+      ],
+      "id": "19bf45b6-151e-4705-a131-9e255b5da8b3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://api.scrapfly.io/scrape",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "asp",
+              "value": "true"
+            },
+            {
+              "name": "key",
+              "value": "scp-live-03ec7e1c5aa44dc4a8d3cb92e854680e"
+            },
+            {
+              "name": "render_js",
+              "value": "true"
+            },
+            {
+              "name": "url",
+              "value": "={{ $json['Product URL'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        980,
+        700
+      ],
+      "id": "3890b2fb-fc39-462e-ac42-8c010e557992",
+      "name": "HTTP Request2",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {
+          "ignore": "img,a"
+        }
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        700
+      ],
+      "id": "8f42889f-9236-4ec6-87e6-37dd67a2c23a",
+      "name": "Markdown3"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE",
+          "mode": "list",
+          "cachedResultName": "Nike Price Monitor Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1281928277,
+          "mode": "list",
+          "cachedResultName": "Sporting Goods",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit#gid=1281928277"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -40,
+        660
+      ],
+      "id": "587a5f7a-0e5a-4b37-882b-8ee04510618f",
+      "name": "Sporting goods",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QgFgf1OVJydgbDV0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE",
+          "mode": "list",
+          "cachedResultName": "Nike Price Monitor Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 546084773,
+          "mode": "list",
+          "cachedResultName": "Finish line",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit#gid=546084773"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -60,
+        1340
+      ],
+      "id": "dc15b145-5ad9-4a29-b0a8-f2d59ae1c4ef",
+      "name": "Finishline",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QgFgf1OVJydgbDV0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Role & Objective:\n\nYou are a worldclass price exctractor, your job is to look at the scraped website and output the price of the product (only output the number), dont output anything else, no explanation, no summary, no dollar sign. "
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        1560,
+        1360
+      ],
+      "id": "875b6d4d-a4c7-42aa-8157-7780e8d4825c",
+      "name": "Basic LLM Chain3"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Price\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1740,
+        1560
+      ],
+      "id": "cc5f67aa-7b40-4e44-9891-d3cec96deea4",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        1560
+      ],
+      "id": "a6f866b0-1d63-4d2d-b071-5030a58e3536",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "v0LAWQcUnOqsEOY4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE",
+          "mode": "list",
+          "cachedResultName": "Nike Price Monitor Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 546084773,
+          "mode": "list",
+          "cachedResultName": "Finish line",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit#gid=546084773"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product Name": "={{ $('Finishline').item.json['Product Name'] }}",
+            "Product URL": "={{ $('Finishline').item.json['Product URL'] }}",
+            "Product Price": "={{ $json.output.Price }}"
+          },
+          "matchingColumns": [
+            "Product Name"
+          ],
+          "schema": [
+            {
+              "id": "Product URL",
+              "displayName": "Product URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Price",
+              "displayName": "Product Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Discount",
+              "displayName": "Discount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1940,
+        1360
+      ],
+      "id": "22d8308d-c209-495b-9275-f2599007abf4",
+      "name": "Google Sheets",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QgFgf1OVJydgbDV0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        640,
+        1340
+      ],
+      "id": "6173211c-184d-4c56-9fa5-2819920be59b",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3460,
+        1600
+      ],
+      "id": "69d71394-f802-4102-9384-22ab2a7240d4",
+      "name": "Wait",
+      "webhookId": "996bb585-bf08-4813-8782-d56903daed20"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "Product URL",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        260,
+        1340
+      ],
+      "id": "5d6adb29-5479-4237-b6ec-ef17bc7d69c2",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "=# Role & Objective\n\nYou are an expert mathematician, you will analyze the 2 prices below and analyze if the price of our competitors product is lower or higher than our products price. \n- If the price of our competitors product is higher or equal to our price you will output ONLY: \"Higher\", nothing else, no summary , no explanation. \n- If the price of our competitors product is lower than our price you will output ONLY: \"Lower\", nothing else, no summary , no explanation. \n\n## Our Competitors product price:\n{{ $('Google Sheets').item.json['Product Price'] }}\n\n## Our Price:\n{{ $('Google Sheets7').item.json['Product Price'] }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        2340,
+        1360
+      ],
+      "id": "2f0a9450-d3af-42b0-abc2-10eac20ae7cb",
+      "name": "Basic LLM Chain9"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE",
+          "mode": "list",
+          "cachedResultName": "Nike Price Monitor Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 735379560,
+          "mode": "list",
+          "cachedResultName": "Nike",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TQBfuH9ZFmUmgH6QPtrEVZdkldBQRf9ABkLTOvPKsKE/edit#gid=735379560"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Product Name",
+              "lookupValue": "={{ $json['Product Name'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2140,
+        1360
+      ],
+      "id": "df91277c-7ad1-4164-adc6-d2d44ef94b48",
+      "name": "Google Sheets7",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QgFgf1OVJydgbDV0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d2eeb45c-baa0-4d33-ad3a-f901382a4d92",
+              "leftValue": "={{ $json.output.Result }}",
+              "rightValue": "Lower",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2700,
+        1360
+      ],
+      "id": "1da400ca-625c-45f6-b6d1-dedbd56797a9",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C07CCR60GBH",
+          "mode": "list",
+          "cachedResultName": "general"
+        },
+        "text": "=Lower price detected:\n\nProduct: {{ $('Google Sheets7').item.json['Product Name'] }}\n---\nCompetitor URL: {{ $('Google Sheets').item.json['Product URL'] }}\n---\nCompetitor Price: {{ $('Google Sheets').item.json['Product Price'] }}\n---\nOur Price: {{ $('Google Sheets7').item.json['Product Price'] }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2980,
+        1340
+      ],
+      "id": "8b2e884d-62a6-46f4-b11f-b2377299baaa",
+      "name": "Slack",
+      "webhookId": "55615b99-d419-4b23-aaa9-79551482af9d",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "lJBfTdzxxxVaVayC",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2360,
+        1540
+      ],
+      "id": "3cf72e1b-3340-421a-b010-b05650adf7f3",
+      "name": "Google Gemini Chat Model8",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "v0LAWQcUnOqsEOY4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Result\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2500,
+        1540
+      ],
+      "id": "8e21d5ea-9383-452a-9e70-06e96a08e23f",
+      "name": "Structured Output Parser8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8afe198d-576f-4485-9eb3-be0834c217b1",
+              "name": "data",
+              "value": "={{ $json.result.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        1360
+      ],
+      "id": "50d45003-0a1b-4cf0-83c2-cb238f84a0c5",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.scrapfly.io/scrape",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "asp",
+              "value": "true"
+            },
+            {
+              "name": "key",
+              "value": "scp-live-03ec7e1c5aa44dc4a8d3cb92e854680e"
+            },
+            {
+              "name": "render_js",
+              "value": "true"
+            },
+            {
+              "name": "url",
+              "value": "={{ $json['Product URL'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        1360
+      ],
+      "id": "47e839fd-98cb-478a-b34f-3b0224ed1042",
+      "name": "HTTP Request3",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {
+          "ignore": "img,a"
+        }
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        1360
+      ],
+      "id": "bdf7e962-7687-4a74-8621-3a2b9ae24cd0",
+      "name": "Markdown4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sporting goods",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Finishline",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Nike Products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain2": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        []
+      ]
+    },
+    "Google Sheets5": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Nike Products": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain8": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets6": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Slack1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model7": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain8",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser7": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain8",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Markdown3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown3": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sporting goods": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finishline": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain3": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain3",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain9": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets7": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model8": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain9",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser8": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain9",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Markdown4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown4": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "58b29a1c-6863-4bee-b24a-70970d74416e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "03835041121ad09c3972502d611e6c73e19b4b34a156fceea2e762c3b1d93e12"
+  },
+  "id": "W7IlBWXTpySmcTjO",
+  "tags": []
+}

@@ -1,0 +1,334 @@
+{
+  "name": "RAG #1",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        360,
+        0
+      ],
+      "id": "598751be-ea12-421a-a31b-b1d7afe9635e",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "J0pNCHBMxkXpWPXl",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n",
+          "mode": "list",
+          "cachedResultName": "n8n"
+        },
+        "options": {
+          "pineconeNamespace": "Test"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ],
+      "id": "94cb6779-f67d-4cc6-83cd-9abeea51d071",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "lKKUy23NMzAMGJhr",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        540,
+        220
+      ],
+      "id": "7288f079-5f03-4e01-9ce3-343f9652ce0a",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "LMhBWR4HHC3Gn64j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        800,
+        220
+      ],
+      "id": "2d24f352-8ec1-46a4-a4a9-d3110d9b2634",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        900,
+        440
+      ],
+      "id": "aa051f72-faf8-4875-a868-892125ada118",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "*/30 * * * *"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "12dVXMe-em5GnCBmOzP1w8ENx6TaCpWNo",
+          "mode": "list",
+          "cachedResultName": "Test Folder",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/12dVXMe-em5GnCBmOzP1w8ENx6TaCpWNo"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "36c11b09-c16c-4337-96eb-3fc8b81b2f0d",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "otwaejsbFDNmaogE",
+          "name": "Google Drive account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Google Drive Trigger": [
+      {
+        "json": {
+          "kind": "drive#file",
+          "fileExtension": "pdf",
+          "copyRequiresWriterPermission": false,
+          "md5Checksum": "49fba05ec710b430c56e216e2e9e57d9",
+          "writersCanShare": true,
+          "viewedByMe": true,
+          "mimeType": "application/pdf",
+          "parents": [
+            "12dVXMe-em5GnCBmOzP1w8ENx6TaCpWNo"
+          ],
+          "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/application/pdf",
+          "shared": true,
+          "lastModifyingUser": {
+            "displayName": "Jono Catliff",
+            "kind": "drive#user",
+            "me": true,
+            "permissionId": "02256737817753985539",
+            "emailAddress": "jonocatliff@gmail.com",
+            "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocKXEbY3abGXVtxb0ZA6zde1PTbCqbRuxYtA_JK7OUpOma1L3WBT=s64"
+          },
+          "owners": [
+            {
+              "displayName": "Jono Catliff",
+              "kind": "drive#user",
+              "me": true,
+              "permissionId": "02256737817753985539",
+              "emailAddress": "jonocatliff@gmail.com",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocKXEbY3abGXVtxb0ZA6zde1PTbCqbRuxYtA_JK7OUpOma1L3WBT=s64"
+            }
+          ],
+          "headRevisionId": "0B2FfE4jRlum6SExONWYxeTlYOUM2czV3dWVYOXlGSG55TEN3PQ",
+          "webViewLink": "https://drive.google.com/file/d/1riIMQ3mPxKupI_1nsKoJvChU6huu4o2l/view?usp=drivesdk",
+          "webContentLink": "https://drive.google.com/uc?id=1riIMQ3mPxKupI_1nsKoJvChU6huu4o2l&export=download",
+          "size": "8197597",
+          "viewersCanCopyContent": true,
+          "permissions": [
+            {
+              "id": "anyoneWithLink",
+              "type": "anyone",
+              "kind": "drive#permission",
+              "role": "reader",
+              "allowFileDiscovery": false
+            },
+            {
+              "id": "02256737817753985539",
+              "displayName": "Jono Catliff",
+              "type": "user",
+              "kind": "drive#permission",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocKXEbY3abGXVtxb0ZA6zde1PTbCqbRuxYtA_JK7OUpOma1L3WBT=s64",
+              "emailAddress": "jonocatliff@gmail.com",
+              "role": "owner",
+              "deleted": false,
+              "pendingOwner": false
+            }
+          ],
+          "hasThumbnail": false,
+          "spaces": [
+            "drive"
+          ],
+          "id": "1riIMQ3mPxKupI_1nsKoJvChU6huu4o2l",
+          "name": "Jono Catliff Agreement _ DJing.ca _ Invoice #7517-D _ jccatliff+6@gmail.com - yHhSe7USah7DG3Msfd9KAk.pdf",
+          "starred": false,
+          "trashed": false,
+          "explicitlyTrashed": false,
+          "createdTime": "2025-02-11T14:32:25.867Z",
+          "modifiedTime": "2025-02-11T14:32:15.000Z",
+          "modifiedByMeTime": "2025-02-11T14:32:15.000Z",
+          "viewedByMeTime": "2025-02-11T14:32:25.867Z",
+          "quotaBytesUsed": "8197597",
+          "version": "1",
+          "originalFilename": "Jono Catliff Agreement _ DJing.ca _ Invoice #7517-D _ jccatliff+6@gmail.com - yHhSe7USah7DG3Msfd9KAk.pdf",
+          "ownedByMe": true,
+          "fullFileExtension": "pdf",
+          "isAppAuthorized": false,
+          "capabilities": {
+            "canChangeViewersCanCopyContent": true,
+            "canEdit": true,
+            "canCopy": true,
+            "canComment": true,
+            "canAddChildren": false,
+            "canDelete": true,
+            "canDownload": true,
+            "canListChildren": false,
+            "canRemoveChildren": false,
+            "canRename": true,
+            "canTrash": true,
+            "canReadRevisions": true,
+            "canChangeCopyRequiresWriterPermission": true,
+            "canMoveItemIntoTeamDrive": true,
+            "canUntrash": true,
+            "canModifyContent": true,
+            "canMoveItemOutOfDrive": true,
+            "canAddMyDriveParent": false,
+            "canRemoveMyDriveParent": true,
+            "canMoveItemWithinDrive": true,
+            "canShare": true,
+            "canMoveChildrenWithinDrive": false,
+            "canModifyContentRestriction": true,
+            "canChangeSecurityUpdateEnabled": false,
+            "canAcceptOwnership": false,
+            "canReadLabels": false,
+            "canModifyLabels": false,
+            "canModifyEditorContentRestriction": true,
+            "canModifyOwnerContentRestriction": true,
+            "canRemoveContentRestriction": false
+          },
+          "thumbnailVersion": "0",
+          "modifiedByMe": true,
+          "permissionIds": [
+            "anyoneWithLink",
+            "02256737817753985539"
+          ],
+          "linkShareMetadata": {
+            "securityUpdateEligible": false,
+            "securityUpdateEnabled": true
+          },
+          "sha1Checksum": "c114d06f7b3e810b0f30209f931462f6950ca427",
+          "sha256Checksum": "70cb468ed0490ac1cf0d7e00368f416c56b4f1835ebba0f4640b3f342ad53152"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "750951c3-6a6e-43fd-bb1d-8cdd3e653a05",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "F2p0sSrrzK01SjIJ",
+  "tags": []
+}

@@ -1,0 +1,161 @@
+{
+  "name": "Parent Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ceb6fd4f-2548-4670-8d73-dd662acdec30",
+      "name": "When chat message received",
+      "webhookId": "da0e0c21-ff74-4b71-ae53-bd70b61bcec5"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        120,
+        220
+      ],
+      "id": "ab6e2b98-1ab7-402c-b77b-20a2f9776d3c",
+      "name": "Flash 2.0",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DW8owDXDeMHnr1rA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "storyAgent",
+        "description": "call this tool to create a story about a person",
+        "workflowId": {
+          "__rl": true,
+          "value": "z0CvIgZ57tA2Deqg",
+          "mode": "list",
+          "cachedResultName": "Story Agent #2"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "setting": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('setting', ``, 'string') }}",
+            "mainCharacter": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('mainCharacter', ``, 'string') }}",
+            "adventure": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('adventure', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "setting",
+              "displayName": "setting",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "mainCharacter",
+              "displayName": "mainCharacter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "adventure",
+              "displayName": "adventure",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        380,
+        220
+      ],
+      "id": "dd15fa0c-2cc5-4e9b-9897-7c9caa736e4f",
+      "name": "Story Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou assist users in creating stories. Your job is to send the incoming story details to the 'storyAgent' tool.\n\n## Tools\nstoryAgent - Use this tool to create a story. You must send this tool information about the story it needs to create.\n\n## Rules\nYou will send over the following parameters to the storyAgent\n- setting\n- mainCharacter\n- adventure\nIf a parameter wasn't given, just send over 'none provided' for that parameter\nOnly output the title of the story, and then the story."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "854e9a87-a6ac-4da0-8eb5-f697d753e454",
+      "name": "Parent Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Parent Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flash 2.0": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Parent Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Story Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Parent Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "aeef5a15-2981-4bc7-8685-0bb12fc0d388",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "UEsk1KkxAUKK48Qb",
+  "tags": []
+}

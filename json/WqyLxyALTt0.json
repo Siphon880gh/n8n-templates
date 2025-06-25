@@ -1,0 +1,959 @@
+{
+  "name": "Think Agents",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are a helpful assistant.\n\n## Tool\nThink - Use this tool to think deeply"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -160,
+        -280
+      ],
+      "id": "e81e5558-dbc8-4ae3-9918-8d10be8d726f",
+      "name": "Think Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -340,
+        -280
+      ],
+      "id": "85e43887-021c-4405-baab-0a37fb698f8e",
+      "name": "When chat message received",
+      "webhookId": "65eff381-f609-4af4-9d78-66f83745eb26"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        100,
+        60
+      ],
+      "id": "75a35571-844c-4460-83e8-ab95dc931694",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-3-5-sonnet-20241022",
+          "mode": "list",
+          "cachedResultName": "Claude 3.5 Sonnet (New)"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -200,
+        60
+      ],
+      "id": "e0bf7c2b-d4cc-49a6-8c30-a68f1e05e465",
+      "name": "Claude 3.5 Sonnet",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iEsH2oywXIJiWHnM",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Think",
+        "height": 240,
+        "width": 280,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -40
+      ],
+      "id": "074bd63b-587a-4b06-8a91-931422e12130",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Models\n",
+        "height": 240,
+        "width": 420,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        -40
+      ],
+      "id": "01a2cd99-d489-4c84-8233-ff877ec11014",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Agent\n",
+        "height": 320,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        -380
+      ],
+      "id": "726debc9-7901-4396-aad9-c4979ec0560c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        60
+      ],
+      "id": "a48afbea-028d-4370-9275-e3bc47189143",
+      "name": "GPT 4.1",
+      "credentials": {
+        "openAiApi": {
+          "id": "WnxUhaEPMn5hIsEp",
+          "name": "Demo 4/2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        -160
+      ],
+      "id": "f898ba75-bcca-4d1b-b9b1-021cfb8ab4fb",
+      "name": "GPT-4.1",
+      "credentials": {
+        "openAiApi": {
+          "id": "WnxUhaEPMn5hIsEp",
+          "name": "Demo 4/2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "knowledge_base",
+        "toolDescription": "Use this tool to access company policies and FAQs",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "sample",
+          "mode": "list",
+          "cachedResultName": "sample"
+        },
+        "options": {
+          "pineconeNamespace": "FAQ"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        -160
+      ],
+      "id": "7a95a23f-7bb2-4d14-95ef-cdde732a3378",
+      "name": "knowlege_base",
+      "credentials": {
+        "pineconeApi": {
+          "id": "87xHLzLON9BYVGHw",
+          "name": "Demo 4/2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        20
+      ],
+      "id": "7bbaa8c7-335b-4b1f-b9f2-33df2c45331b",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "WnxUhaEPMn5hIsEp",
+          "name": "Demo 4/2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `sign off emails as \"Nate\"`, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1420,
+        -160
+      ],
+      "id": "988f9d6c-d1e6-4707-bf03-db811aac45a1",
+      "name": "Send Email",
+      "webhookId": "6e193aab-cb4e-47ae-8da0-36fa747f3bdf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "KY7391f1ZHRL52Nu",
+          "name": "Demo 4/2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appK0rbtvf9e7vt6w",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://airtable.com/appK0rbtvf9e7vt6w"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl08JGCfUK1RhXsG",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://airtable.com/appK0rbtvf9e7vt6w/tbl08JGCfUK1RhXsG"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1560,
+        -160
+      ],
+      "id": "25117100-7ed3-4be0-9c68-dedba5295072",
+      "name": "Contacts",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "UlAGE0msyITVkoCN",
+          "name": "Nate Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the web",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"{searchTerm}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "searchTerm",
+              "description": "What the user is requesting to search the web for"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1720,
+        -160
+      ],
+      "id": "a386616a-026e-404c-9952-f5812f889634",
+      "name": "Web Search",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1Gs5ooRQh4ZYMIK6",
+          "name": "Tavily Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -160
+      ],
+      "id": "3b398e05-4ce2-4b5c-aafc-56ecc89ffadf",
+      "name": "2.0 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DW8owDXDeMHnr1rA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        980,
+        -160
+      ],
+      "id": "4c038ebb-14eb-4901-add8-c1acd5b07227",
+      "name": "Think1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are a helpful assistant.\n\n## Tools\nThink - Use this tool to think deeply when you run into an issue before asking the user \nContacts - Use this tool to lookup contact information like an email address.\nSend Email - Use this tool to send an email\nWeb Search - Use this to search the internet. \nknowledge_base - Use this tool to lookup internal policies of FAQs\n\n## Instructions\n1) Call the neccessary tools based on the user request\n2) Use the \"Think\" tool to verify you took the right steps\n\n## Important\n- Never make up an email address. If you can't find it, think about what you should do."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1000,
+        -380
+      ],
+      "id": "f7af93ef-cca7-46a5-80d7-1786f86f8b7b",
+      "name": "Think Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-3-5-sonnet-20241022",
+          "mode": "list",
+          "cachedResultName": "Claude 3.5 Sonnet (New)"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        820,
+        -160
+      ],
+      "id": "f10585a5-4f95-4077-882f-fc3b2c0d4bf5",
+      "name": "Claude 3.5 Sonnet1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iEsH2oywXIJiWHnM",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Example 2) Tool Calling",
+        "height": 680,
+        "width": 1620,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        340,
+        -480
+      ],
+      "id": "7c35e651-37ef-494a-b62f-ab3e1b9e4ff1",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Example 1) Riddles\n",
+        "height": 80,
+        "width": 720,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        -480
+      ],
+      "id": "3cfcc85c-63b0-4ba1-9434-7bbea3709dbd",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "name": "quoter",
+        "description": "Use this tool to get a quote. Send over the number of guests and the dates requested.",
+        "workflowId": {
+          "__rl": true,
+          "value": "QpmzSqqw8uCpUTF1",
+          "mode": "list",
+          "cachedResultName": "Quoter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        2700,
+        -40
+      ],
+      "id": "89a73e17-6231-4ab4-81e5-d0a6d623aa93",
+      "name": "quoter"
+    },
+    {
+      "parameters": {
+        "name": "availability",
+        "description": "Call this tool to get availability information. Only send over the dates the user requested.",
+        "workflowId": {
+          "__rl": true,
+          "value": "NxuKUt5jT8TDOtXs",
+          "mode": "list",
+          "cachedResultName": "Availability"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        2840,
+        -40
+      ],
+      "id": "d13b60f3-7501-44ff-9a8e-fea2e5d94ffe",
+      "name": "availability"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2420,
+        -60
+      ],
+      "id": "69041381-8c76-47c3-a7eb-de153d4642cf",
+      "name": "GPT-4.",
+      "credentials": {
+        "openAiApi": {
+          "id": "WnxUhaEPMn5hIsEp",
+          "name": "Demo 4/2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are a helpful assistant.\n\n## Instructions\n1) Send the requested dates to the availability tool\n2) Send the requested dates and number of guests to the quoter tool\n3) Use the think tool to verify everything has been done correctly. There should be a quote and an availability status\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        2180,
+        -300
+      ],
+      "id": "42fbb926-0a0f-4ef2-b643-b00842342f17",
+      "name": "Think Agent2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        -60
+      ],
+      "id": "f9007af5-a6df-4d92-94c9-8c93d6384ee3",
+      "name": "2.0 Flash1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DW8owDXDeMHnr1rA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-3-5-sonnet-20241022",
+          "mode": "list",
+          "cachedResultName": "Claude 3.5 Sonnet (New)"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        2280,
+        -60
+      ],
+      "id": "aabd014f-e372-49e1-8d34-f4825515b37d",
+      "name": "Claude 3.5 Sonnet2",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iEsH2oywXIJiWHnM",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        3080,
+        -40
+      ],
+      "id": "b8b9d564-d535-4a05-b4ee-459a98ef36f4",
+      "name": "Think2"
+    },
+    {
+      "parameters": {
+        "content": "# Tools\n",
+        "height": 220,
+        "width": 340,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        -120
+      ],
+      "id": "2b539dec-28ea-43f7-8f8a-19857bce6ba3",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "# Think",
+        "height": 220,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3000,
+        -120
+      ],
+      "id": "6aa4f533-64de-4c4a-b645-99188e7a1d31",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "# Models\n",
+        "height": 220,
+        "width": 600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        -120
+      ],
+      "id": "cf0dead8-2420-403f-bf4c-ee3faffd588f",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# Think Agent\n",
+        "height": 240,
+        "width": 600,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        -380
+      ],
+      "id": "a719f989-ec66-4a6a-bce3-69aab8e5735b",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "# Example 3) Sub-workflows\n",
+        "height": 80,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        -480
+      ],
+      "id": "d9a267c6-ccd9-4663-99de-073a6552595e",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        2080,
+        220
+      ],
+      "id": "526d585e-e851-4016-9521-6854ba1d11f7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-NANO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.query }}"
+            },
+            {
+              "content": "Based on the incoming information, please provide a quote.\n\nThe quote should be $500 per person, per day.",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2320,
+        220
+      ],
+      "id": "acaf7ac9-4055-4fd3-b795-0dab55d09cc7",
+      "name": "Quoter",
+      "credentials": {
+        "openAiApi": {
+          "id": "WnxUhaEPMn5hIsEp",
+          "name": "Demo 4/2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-NANO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.query }}"
+            },
+            {
+              "content": "Based on the incoming information, please provide availability.\n\nAssume that all dates are currently available.",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2340,
+        500
+      ],
+      "id": "afd5f719-149a-4596-a54d-55aa18a16503",
+      "name": "Availability",
+      "credentials": {
+        "openAiApi": {
+          "id": "WnxUhaEPMn5hIsEp",
+          "name": "Demo 4/2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Quoter",
+        "height": 280,
+        "width": 660,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        120
+      ],
+      "id": "0c4471fb-ce96-484c-be21-19a34b2bcf49",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## Availability",
+        "height": 280,
+        "width": 660,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        420
+      ],
+      "id": "57b4ff97-8be3-4752-ae1f-aee42ad8d0be",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "# 🛠️ Setup Guide  \n**Author:** [Nate Herk](https://www.youtube.com/@nateherk)\n\n1. **Connect the Chat Trigger**  \n   Plug the Chat Trigger into whichever agent you want to use.\n\n2. **Assign the Correct Model**  \n   Ensure you're using the correct chat model for the agent. Double-check which model is being passed into the agent node.\n\n3. **Add Credentials**  \n   Make sure all relevant credentials are configured:\n   - Your chat models (e.g. OpenAI, Claude, etc.)\n   - Any external tools or services used by the agent\n\n4. **Sub-Workflows Setup**  \n   For sub-workflows like **Quoter** and **Availability**:\n   - Each should be placed in its **own separate workflow**\n   - Each must begin with a **\"When Executed by Another Workflow\"** trigger node\n   - Use the same pattern shown in the template (e.g. how the Quoter is triggered)\n\n✅ Once everything is connected and credentialed properly, you’re good to go!\n",
+        "height": 520,
+        "width": 600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        -1040
+      ],
+      "id": "8dd7bce7-b656-4012-876c-fc6123c7e031",
+      "name": "Sticky Note12"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Think Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Think Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude 3.5 Sonnet": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "GPT 4.1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Think Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "knowlege_base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Think Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "knowlege_base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Think Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Think Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Think Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Think Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude 3.5 Sonnet1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Think Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "quoter": {
+      "ai_tool": [
+        [
+          {
+            "node": "Think Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "availability": {
+      "ai_tool": [
+        [
+          {
+            "node": "Think Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4.": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Think Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Think Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Quoter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "08118a04-b641-4612-a39d-2db7eeeac6c9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "uKbrAfdWLTpt5fhU",
+  "tags": []
+}

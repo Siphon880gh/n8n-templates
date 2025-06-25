@@ -1,0 +1,378 @@
+{
+  "name": "Parallelization",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Parallelization\n✅ Faster Analysis – Instead of sequential analysis, all aspects are evaluated in parallel.\n\n✅ Specialized AI Agents – Each LLM focuses on a single analytical area, improving accuracy.\n\n✅ Comprehensive Review – The final aggregation step ensures clarity and a well-structured report.\n\n✅ Scalability – Can be extended to analyze additional text properties (e.g., readability, factual accuracy).",
+        "height": 240,
+        "width": 760,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -340,
+        -420
+      ],
+      "typeVersion": 1,
+      "id": "c447c4b6-9b48-4f26-b7e0-bc7aa0cf3874",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Analyze the emotional tone of the incoming text. Categorize it as positive, negative, neutral, or mixed. Provide a brief explanation."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -20,
+        -100
+      ],
+      "id": "ad028941-89f0-405e-aad1-2db57e15b6e2",
+      "name": "Emotion Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Analyze the intent behind this text. Classify it as informational, persuasive, aggressive, or neutral. Provide reasoning."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -20,
+        140
+      ],
+      "id": "892fd03f-cb91-4e02-a526-4902f8116006",
+      "name": "Intent Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Analyze this text for potential biases. Identify if it exhibits political, gender, racial, or other biases. Suggest ways to make it more neutral."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -20,
+        400
+      ],
+      "id": "16245400-7a66-4c3f-ac8e-4a4b52d31a7a",
+      "name": "Bias Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -440,
+        140
+      ],
+      "id": "c8709e27-0891-4214-bc5e-4ac3a91a8ba7",
+      "name": "When chat message received",
+      "webhookId": "ac25dd9f-b310-4daa-9c49-db68a2433ef1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        520,
+        80
+      ],
+      "id": "e1f2c7e4-8118-4d18-adcc-c03a4c3c7293",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        740,
+        140
+      ],
+      "id": "7c24b351-2f69-4855-9fbd-ec507c73cd16",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        900,
+        140
+      ],
+      "id": "d32b199e-55d4-47d1-a1f8-580b7c58c9c8",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the analysis: \n\n{{ $json.output }}",
+        "options": {
+          "systemMessage": "Merge the incoming emotional tone, intent, and bias analysis into a structured report. Ensure it is clear, concise, and actionable."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1060,
+        140
+      ],
+      "id": "216fe706-75c7-4ab8-915f-4a66598370c8",
+      "name": "Final Agent"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1380,
+        140
+      ],
+      "id": "98e9f862-531c-4bb8-a67e-9308d0891cd8",
+      "name": "Write to Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "pEX7GDr771yL1CT3",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "deepseek-reasoner",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        580
+      ],
+      "id": "7e6e4d99-f061-48df-a281-51766df525fe",
+      "name": "DeepSeek R1",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "UtrKBz6qKLtigWOT",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -340,
+        480
+      ],
+      "id": "e50468a8-c9db-4798-80c7-b48f70d4f15a",
+      "name": "4o mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        380
+      ],
+      "id": "95eb583a-888b-4d70-bd8a-4d6308bfa1a6",
+      "name": "4o_mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Emotion Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Intent Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Bias Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Emotion Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intent Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Bias Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Final Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Agent": {
+      "main": [
+        [
+          {
+            "node": "Write to Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Intent Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Emotion Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Bias Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4o_mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Final Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "35d9e8a5-aaa2-460d-af46-b69d0fc3dd07",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "pm7Y0bAi3dTj8KuT",
+  "tags": []
+}

@@ -1,0 +1,214 @@
+{
+  "name": "Company research",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "Query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "aaef50ba-dc3f-47fa-8103-212fbafdc7a2",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Query }}",
+        "options": {
+          "systemMessage": "##Role\nYou are able to find a company website and company reviews\n\n##Task\nYou will receive and input containing a company name and what they want to do.\n\nYour job is to input that company name into the correct tool.\n\nFor example the input may be \"i want to find gymskarks reviews\" you would used the reviews scraper tool and input the word \"Gymshark\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "dcf117c6-2fb7-432d-a983-31d54a36c3db",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini-2025-04-14"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        200
+      ],
+      "id": "8c8aa4c8-06de-4d23-9017-ffc0a7a4abfe",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Website",
+        "workflowId": {
+          "__rl": true,
+          "value": "miQ06u10YvXCVyMC",
+          "mode": "list",
+          "cachedResultName": "Website scraper copy"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Company_name', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Company name"
+          ],
+          "schema": [
+            {
+              "id": "Company name",
+              "displayName": "Company name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        280
+      ],
+      "id": "93d11d81-f6ce-4783-9f0d-773032559d3c",
+      "name": "Website"
+    },
+    {
+      "parameters": {
+        "name": "Reviews",
+        "workflowId": {
+          "__rl": true,
+          "value": "J9lnqCNSOhNpmLDC",
+          "mode": "list",
+          "cachedResultName": "Review scraper copy"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Company_name', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Company name"
+          ],
+          "schema": [
+            {
+              "id": "Company name",
+              "displayName": "Company name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        580,
+        260
+      ],
+      "id": "34a56b35-b281-4924-b102-576feace518f",
+      "name": "Reviews"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Website": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reviews": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9dde0989-290d-400c-a087-3a514def4d14",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8711ef6aba5ff6781b8ed3c0d9d8ad1fb3b9e4be41f1c9a056c02209236d4a91"
+  },
+  "id": "x9SK568wNIpO3KcH",
+  "tags": [
+    {
+      "createdAt": "2025-05-05T18:28:14.726Z",
+      "updatedAt": "2025-05-05T18:28:14.726Z",
+      "id": "5l1iny0IJjZ0zdzn",
+      "name": "Research agent"
+    }
+  ]
+}

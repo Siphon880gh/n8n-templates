@@ -1,0 +1,302 @@
+{
+  "name": "3 N8N Examples",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 1. Manual trigger → send an email to someone\n\nWe'll start by learning how the manual trigger works. We'll also cover creating a brief \"connection\" and then using that to send a templated email, basically our \"hello world\".",
+        "height": 180,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        -260
+      ],
+      "typeVersion": 1,
+      "id": "376fc138-b290-4c00-8122-0d4f088068e0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 2. Form fill -> AI autoresponder\n\nNext, we'll use the \"form fill\" trigger & learn how to implement AI into an N8N flow. This is a real business use case and I'll show you how simple it is to have AI start responding to things for you.",
+        "height": 180,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        520
+      ],
+      "typeVersion": 1,
+      "id": "e2f8157c-db6d-459a-9d96-4fa9cf5e0153",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 3. Calendar booking -> reply -> update CRM\n\nLastly, we'll use an app trigger (Cal.com, my calendar booking software) to watch for new bookings, then send a \"personal\" email, and then finally update a CRM.\n",
+        "height": 180,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        1220
+      ],
+      "typeVersion": 1,
+      "id": "47f0f217-1b40-45fe-8f3e-6cce19d1ffed",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "sendTo": "nickolassaraev@gmail.com",
+        "subject": "Hello, Nick!",
+        "emailType": "text",
+        "message": "Hello Nick, it's nice to meet you.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -400,
+        0
+      ],
+      "id": "c18edfbb-4e95-4024-9e53-118c64ee7b3e",
+      "name": "Gmail",
+      "webhookId": "43dacf1f-9c49-47c3-b835-93b39c7cf894",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YqmvyP5s2u0IHOHB",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent email writing assistant.",
+              "role": "system"
+            },
+            {
+              "content": "=Your task is to customize an email template using the following data:\n\nFirst Name: {{ $json['First Name'] }}\nLast Name: {{ $json['Last Name'] }}\nEmail Address: {{ $json['Email Address'] }}\nPhone Number: {{ $json['Phone Number'] }}\nDesign Preference: {{ $json['Design Preference'] }}\nCompany Description: {{ $json['Company Description'] }}\nTimeline: {{ $json.Timeline }}\n\n--\n\nEmail Template:\n\nHey {First Name},\n\nHow are you? Thanks for submitting your onboarding form a moment ago.\n\nI loved reading {something unique about their company description}. I see here you're looking for a {design preference} sort of site, and you're looking to do it {timeline}. \n\nWould you mind confirming your number for me one last time? {Formatted Phone Number}, right?\n\nCould you let me know if I'm missing anything?\n\nThanks,\nNick\n\n--\n\nDon't include the subject line."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        -260,
+        780
+      ],
+      "id": "defcc6d3-0f3f-46c8-98c7-726ee6613b45",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "oLLACDYfGm4C4ouV",
+          "name": "YouTube "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "nickolassaraev@gmail.com",
+        "subject": "Re: your onboarding form",
+        "emailType": "text",
+        "message": "={{ $json.message.content }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        300,
+        780
+      ],
+      "id": "42d40c5b-543c-4150-a97d-6d90452870ed",
+      "name": "Gmail1",
+      "webhookId": "2ceb8d10-4cae-4773-844a-7122d80b5ce5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YqmvyP5s2u0IHOHB",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 120
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        100,
+        780
+      ],
+      "id": "904bdba5-06e8-4a42-a549-e67ff3480c3b",
+      "name": "Wait",
+      "webhookId": "eefc4f4d-43c5-496f-b4fc-4a84769f68f3"
+    },
+    {
+      "parameters": {
+        "events": [
+          "BOOKING_CREATED"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.calTrigger",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        1520
+      ],
+      "id": "a554a6e1-6e27-497c-b2b4-8cce16875827",
+      "name": "Cal.com Trigger",
+      "webhookId": "87a8495d-bc38-47c0-bf51-3ecc36d23da1",
+      "credentials": {
+        "calApi": {
+          "id": "bgDfaYj65B7WJ9Mx",
+          "name": "YouTube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.responses.email.value }}",
+        "subject": "=Re: meeting w {{ $json.responses.name.value.firstName }}",
+        "message": "=Hey Peter,\n<br><br>\nJust saw you booked a {{ $json.type }} call. Looking forward to learning more about you/the business. See you {{ $json.startTime.toDateTime().format('EEEE') }}.\n<br><br>\nThanks,\n<br>\nNick",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -280,
+        1520
+      ],
+      "id": "f273242d-3703-4a23-884d-e76849057f73",
+      "name": "Gmail2",
+      "webhookId": "6a3c24cf-7436-4786-afe8-ac4f3ceeb0f9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YqmvyP5s2u0IHOHB",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "9014503208",
+        "space": "90141978106",
+        "folder": "90143044337",
+        "list": "901405114127",
+        "name": "={{ $('Cal.com Trigger').item.json.responses.name.value.firstName }} {{ $('Cal.com Trigger').item.json.responses.name.value.lastName }}",
+        "additionalFields": {
+          "customFieldsJson": "=[ {\"id\": \"228aec96-112e-4d2b-86a2-a00dfdac8d81\", \"value\": \"{{ $('Cal.com Trigger').item.json.metadata.videoCallUrl }}\"} ]",
+          "status": "meeting booked"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        1520
+      ],
+      "id": "8c3d51f0-880d-479b-8b6e-5d6d33a82231",
+      "name": "ClickUp",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "X2svQ2YYCIP1DPXl",
+          "name": "YouTube"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        []
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cal.com Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail2": {
+      "main": [
+        [
+          {
+            "node": "ClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e6ec7825-7906-4ed2-805a-16c286c6dcb0",
+  "meta": {
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "vKA0oTQguKLJAj4x",
+  "tags": [
+    {
+      "createdAt": "2025-01-23T18:12:52.273Z",
+      "updatedAt": "2025-01-23T18:12:52.273Z",
+      "id": "l8MPK4ZirgwFWMno",
+      "name": "N8N Course"
+    }
+  ]
+}

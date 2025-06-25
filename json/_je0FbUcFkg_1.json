@@ -1,0 +1,2114 @@
+{
+  "name": "MCP Servers Template (Ben)",
+  "nodes": [
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Sends a message to the specific 'benai-content' Slack channel. Use for general updates or notifications intended for this channel only. Requires the 'Message_Text'.",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08K6MTHX97",
+          "mode": "list",
+          "cachedResultName": "benai-content"
+        },
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_Text', ``, 'string') }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        140,
+        200
+      ],
+      "id": "ac30728a-e8f0-4122-a913-a99188a62492",
+      "name": "Send Slack Benai-content",
+      "webhookId": "6da80812-bd20-4d74-8626-23d8f5f758cf",
+      "credentials": {
+        "slackApi": {
+          "id": "PastxyTZgJ4oTWLB",
+          "name": "Slack Bot Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "n8nMCP-Slack-template"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -20
+      ],
+      "id": "ae12e3f2-7253-4392-b471-ea67483416a9",
+      "name": "MCP Server - Slack",
+      "webhookId": "abeed990-170e-4af3-a397-7b947fa8dbef"
+    },
+    {
+      "parameters": {
+        "path": "n8nMCP-Gmail-template"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        1000
+      ],
+      "id": "993d6dfe-4ab5-42df-b45c-f5908a173ac4",
+      "name": "MCP Server Gmail",
+      "webhookId": "abeed990-170e-4af3-a397-7b947fa8dbef"
+    },
+    {
+      "parameters": {
+        "path": "n8nMCP-CRM-template"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -20
+      ],
+      "id": "b473da99-853c-4847-833c-d95ecc78a151",
+      "name": "MCP Server - Airtable CRM",
+      "webhookId": "abeed990-170e-4af3-a397-7b947fa8dbef"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Retrieves a specific record by its ID. Use when you know the exact record ID and need complete details about a single contact, company, deal, or task.",
+        "base": {
+          "__rl": true,
+          "value": "appnVclCBAu8JBs3W",
+          "mode": "list",
+          "cachedResultName": "MCP Server Super Assistant",
+          "cachedResultUrl": "https://airtable.com/appnVclCBAu8JBs3W"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Table', ``, 'string') }}",
+          "mode": "id"
+        },
+        "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Record_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1560,
+        200
+      ],
+      "id": "99028557-c9dc-4088-bae2-9e5c5fa7e79c",
+      "name": "Get Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Searches for records matching specific criteria using Airtable formulas. Use for finding contacts by name, email, status, or priority. Example: {Status} = 'Lead' AND {Priority} = 'High'",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appnVclCBAu8JBs3W",
+          "mode": "list",
+          "cachedResultName": "MCP Server Super Assistant",
+          "cachedResultUrl": "https://airtable.com/appnVclCBAu8JBs3W"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Table', ``, 'string') }}",
+          "mode": "id"
+        },
+        "filterByFormula": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Filter_By_Formula', ``, 'string') }}",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1680,
+        200
+      ],
+      "id": "ae4b0109-80a6-4795-bf15-b641ed593644",
+      "name": "Search Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Returns the structure of the Airtable base, including all tables, fields, and field types. Use when you need to understand the database structure or verify field names before creating records.",
+        "resource": "base",
+        "operation": "getSchema",
+        "base": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Base', ``, 'string') }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1800,
+        200
+      ],
+      "id": "5580bab2-efd4-491f-84a8-bf4069950f5f",
+      "name": "Get Schema",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "n8nMCP-calendar-template"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        480
+      ],
+      "id": "72de7039-4d00-45cf-b3ee-5319da6e9e6a",
+      "name": "MCP Calendar Server",
+      "webhookId": "4d1f06c9-cc33-4a66-8332-9db635b9e0e9"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Creates a new event on the primary Google Calendar. Requires 'Start' time, 'End' time. Optionally accepts 'Attendees' (email list) and 'Summary' (Meeting Title) and 'Description'.\n\nExpects 'Start' and 'End' times as ISO 8601 strings with timezone offsets (e.g., YYYY-MM-DDTHH:MM:SSZ or YYYY-MM-DDTHH:MM:SS+HH:MM).",
+        "calendar": {
+          "__rl": true,
+          "value": "ben@benai.co",
+          "mode": "list",
+          "cachedResultName": "ben@benai.co"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Attendees', ``, 'string') }}"
+          ],
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        120,
+        700
+      ],
+      "id": "01112650-b7bc-4db7-9ae0-135fd4402d6b",
+      "name": "CreateEvent",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jEcfxUu2HBoWJyUv",
+          "name": "Ben Calender"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Deletes a specific event from the Google Calendar. Requires the unique 'Event_ID' of the event to delete.",
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "ben@benai.co",
+          "mode": "list",
+          "cachedResultName": "ben@benai.co"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        700
+      ],
+      "id": "587cc703-af00-4088-a651-5181ed7cdeab",
+      "name": "DeleteEvent",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jEcfxUu2HBoWJyUv",
+          "name": "Ben Calender"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Retrieves details for a specific event from the Google Calendar. Requires the unique 'Event_ID'.",
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "value": "ben@benai.co",
+          "mode": "list",
+          "cachedResultName": "ben@benai.co"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        360,
+        700
+      ],
+      "id": "d194b9db-6e6a-4ea4-98d0-44782c4b8f1c",
+      "name": "GetEvent",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jEcfxUu2HBoWJyUv",
+          "name": "Ben Calender"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Updates an existing event on the Google Calendar. Requires the 'Event_ID' of the event to update, along with the new field values (e.g., 'Description', 'Location', times, attendees).",
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "ben@benai.co",
+          "mode": "list",
+          "cachedResultName": "ben@benai.co"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "updateFields": {
+          "attendeesUi": {
+            "values": {
+              "attendees": []
+            }
+          },
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        700
+      ],
+      "id": "146b81fa-5358-4120-b511-50304ef79710",
+      "name": "UpdateEvent",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jEcfxUu2HBoWJyUv",
+          "name": "Ben Calender"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Checks the free/busy status for the primary Google Calendar within a given time window. Requires 'Start_Time' and 'End_Time' to define the query range.",
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "ben@benai.co",
+          "mode": "list",
+          "cachedResultName": "ben@benai.co"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start_Time', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End_Time', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        620,
+        700
+      ],
+      "id": "e7ba5a96-7150-46a5-90f9-02f7f6fe628a",
+      "name": "getAvailability",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jEcfxUu2HBoWJyUv",
+          "name": "Ben Calender"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Google Calendar MCP Server (Ben)",
+        "height": 460,
+        "width": 1280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -160,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "806bf098-f59f-4d1c-8a81-2264417ab29b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Retrieves a list of events from the primary Google Calendar occurring within a specified time window. Requires 'Start_Time' (After) and 'End_Time' (Before). Can optionally 'Return_All' events in the range.",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "ben@benai.co",
+          "mode": "list",
+          "cachedResultName": "ben@benai.co"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        760,
+        700
+      ],
+      "id": "b9a36d85-1bf5-4112-a689-5c31be56059b",
+      "name": "getManyEvent",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jEcfxUu2HBoWJyUv",
+          "name": "Ben Calender"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## CRM MCP Server (AIRTABLE)",
+        "height": 460,
+        "width": 1280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1180,
+        -100
+      ],
+      "typeVersion": 1,
+      "id": "9a5ba428-f6d5-462f-8c39-41c2f98933eb",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Slack MCP Server (BenAI-content)",
+        "height": 460,
+        "width": 1280,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -160,
+        -100
+      ],
+      "typeVersion": 1,
+      "id": "a3910bf3-c5ff-4f2e-906b-61824b6810a6",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Email MCP Server (Ben)",
+        "height": 460,
+        "width": 1280,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -160,
+        900
+      ],
+      "typeVersion": 1,
+      "id": "7072f322-6c46-40e2-a8f8-d336a963f176",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Unipile Linkedin Server",
+        "height": 460,
+        "width": 1280,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1180,
+        900
+      ],
+      "typeVersion": 1,
+      "id": "a8697c1a-373f-417b-8cb5-114bcffad71c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Retrieve the profile of a user from a link or a slug that's given to you.",
+        "url": "https://api12.unipile.com:14291/api/v1/users/{profileID}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "account_id",
+              "valueProvider": "fieldValue",
+              "value": "m6Lvbz2MRH-gjU3KwuzzAg"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{profileID}",
+              "description": "=The provider’s public id of the requested user, it should be extracted from the profile url:\nIf the profile provided is: https://www.linkedin.com/in/benvansprundel/\nthe profileID is: benvansprundel",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1620,
+        1200
+      ],
+      "id": "e7c0f1aa-5f78-4e85-84b7-8de5c7bf72e4",
+      "name": "getLinkedinProfile",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Send an invitation to add someone to your contacts, you'll have to use the provider_id provided to you to send the request, also you'll have to draft a really amazing message from the data you have about the user and the message should be under 300 characters.",
+        "method": "POST",
+        "url": "https://api12.unipile.com:14291/api/v1/users/invite",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            },
+            {
+              "name": "content-type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "provider_id"
+            },
+            {
+              "name": "account_id",
+              "valueProvider": "fieldValue",
+              "value": "m6Lvbz2MRH-gjU3KwuzzAg"
+            },
+            {
+              "name": "message"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1780,
+        1200
+      ],
+      "id": "b20f5c2a-c32f-4aa2-8df4-64fabb8833fe",
+      "name": "sendInvitation",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Publish a post over linkedin, the post you create should be viral worthy targeting higher Executives, the content should address the pain-point.",
+        "method": "POST",
+        "url": "https://api12.unipile.com:14291/api/v1/posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            },
+            {
+              "name": "content-type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "account_id",
+              "valueProvider": "fieldValue",
+              "value": "m6Lvbz2MRH-gjU3KwuzzAg"
+            },
+            {
+              "name": "text"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1920,
+        1200
+      ],
+      "id": "76808644-b9e4-44a5-9c55-1f3f48a9d36a",
+      "name": "createPost",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Perform LinkedIn using search filters.IMPORTANT: For searching linkedin you ALWAYS have to use account_id: O-fsjbp9TXm63aLf94irWQ.\n\nFilter 1: Keywords [The keywords/name/company name to start the search from to be used inside the linkedin search]\n\nFilter 2: Category [Category can be posts, people or companies if you want to search for posts use posts, for people keep the category people, similarly when you're searching for companies keep it companies]\n\nAlong with the account_id as mandatory. You'll be in responsible to list all the chats based on the filters.\n",
+        "method": "POST",
+        "url": "https://api12.unipile.com:14291/api/v1/linkedin/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "account_id"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "api",
+              "valueProvider": "fieldValue",
+              "value": "classic"
+            },
+            {
+              "name": "category"
+            },
+            {
+              "name": "keywords"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        2080,
+        1200
+      ],
+      "id": "395dfe42-90e6-478e-836c-58ceed7de048",
+      "name": "performLinkedinSearch",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "unipile-linkedin-template"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        980
+      ],
+      "id": "85a2d633-b5ae-45b2-b014-c2e2dd260142",
+      "name": "MCP Unipile Linkedin Server",
+      "webhookId": "df81b2be-74fa-4cb0-8b52-59f77bd8af82"
+    },
+    {
+      "parameters": {
+        "path": "unipile-messaging-server-template"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        460
+      ],
+      "id": "6e4e856b-53d4-407c-b1e7-cef2a4150fa6",
+      "name": "MCP Unipile Messaging Server",
+      "webhookId": "df81b2be-74fa-4cb0-8b52-59f77bd8af82"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Start a new conversation with one or more attendee.",
+        "method": "POST",
+        "url": "https://api12.unipile.com:14291/api/v1/chats",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "account_id"
+            },
+            {
+              "name": "text"
+            },
+            {
+              "name": "attendees_ids"
+            },
+            {
+              "name": "subject",
+              "valueProvider": "modelOptional"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1640,
+        680
+      ],
+      "id": "77e0256e-d747-403f-9bd7-6a73c79b197c",
+      "name": "StartNewChat",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Retrieve the details of a chat.",
+        "url": "https://api12.unipile.com:14291/api/v1/chats/{chat_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "account_id"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{chat_id}",
+              "description": "The Unipile or provider ID of the chat.",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1800,
+        680
+      ],
+      "id": "5fad94c2-139d-42c4-bf12-5b39a4444c6d",
+      "name": "retrieveChat",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Returns a list of messages related to the given chat. Some parameters are available to filter the results.",
+        "url": "https://api12.unipile.com:14291/api/v1/chats/{chat_id}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "account_id"
+            },
+            {
+              "name": "before",
+              "valueProvider": "fieldValue",
+              "value": "{before}"
+            },
+            {
+              "name": "after",
+              "valueProvider": "fieldValue",
+              "value": "{after}"
+            },
+            {
+              "name": "limit",
+              "valueProvider": "fieldValue",
+              "value": "{limit}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{chat_id}",
+              "description": "The Unipile or provider ID of the chat.",
+              "type": "string"
+            },
+            {
+              "name": "{before}",
+              "description": "A filter to target items created before the datetime (exclusive). Must be an ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ).",
+              "type": "string"
+            },
+            {
+              "name": "{after}",
+              "description": "A filter to target items created after the datetime (exclusive). Must be an ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ).",
+              "type": "string"
+            },
+            {
+              "name": "{limit}",
+              "description": "A limit for the number of items returned in the response. The value can be set between 1 and 250.",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1960,
+        680
+      ],
+      "id": "4c75e1c1-e7a3-4d10-a382-66f87b0f938a",
+      "name": "ListAllMessages",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Send a message to the given chat, you will have a personality for the text message.\n\n",
+        "method": "POST",
+        "url": "https://api12.unipile.com:14291/api/v1/chats/{chat_id}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "account_id",
+              "valueProvider": "fieldValue",
+              "value": "{account_id}"
+            },
+            {
+              "name": "text"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{chat_id}",
+              "description": "The id of the chat where to send the message.",
+              "type": "string"
+            },
+            {
+              "name": "{account_id}",
+              "description": "An account_id can be specified to prevent the user from sending messages in chats not belonging to the account, this is distinct to each of the types of Account primarily Linkedin & Whatsapp",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        2120,
+        680
+      ],
+      "id": "b55ca629-5b82-43c1-bfb5-b20a6a7c3b7f",
+      "name": "SendMessage",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Returns a list of chats for the specific platform there are 2 platforms LINKEDIN & WHATSAPP, each of these have 2 distinct account IDs. For listing chats from linkedin you have to use account ID: O-fsjbp9TXm63aLf94irWQ. And for listing chats from Whatsapp you have to use account ID: zAPMfeHRS2aEoxU--XdA0Q. You'll be in responsible to list all the chats based on the filters.\n\nFilter 1: unread [boolean either true or false],\n\nFilter 2: before [string, A filter to target items created before the datetime (exclusive). Must be an ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ).]\n\nFilter 3: after [A filter to target items created after the datetime (exclusive). Must be an ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ).]\n\nFilter 4: account_type [WHATSAPP/LINKEDIN] each will have their distinct account_id\n\nFilter 5: account_id [A filter to target items related to a certain account. Can be a comma-separated list of ids.] string",
+        "url": "https://api12.unipile.com:14291/api/v1/chats",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "account_id"
+            },
+            {
+              "name": "unread",
+              "valueProvider": "modelOptional"
+            },
+            {
+              "name": "before",
+              "valueProvider": "modelOptional"
+            },
+            {
+              "name": "after",
+              "valueProvider": "modelOptional"
+            },
+            {
+              "name": "limit",
+              "valueProvider": "modelOptional"
+            },
+            {
+              "name": "account_type"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1500,
+        680
+      ],
+      "id": "970b1f00-8282-432a-898d-60ba5e298ae4",
+      "name": "listAllChats",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Returns a list of messaging attendees.",
+        "url": "https://api12.unipile.com:14291/api/v1/chats",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "account_id"
+            },
+            {
+              "name": "limit",
+              "valueProvider": "modelOptional"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        2280,
+        680
+      ],
+      "id": "be25c780-1ebb-4a0c-9799-71bd2f1b0861",
+      "name": "listAttendees",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4tgZXfVcN6JS2xS1",
+          "name": "UNIPILE BEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Unipile Message Management",
+        "height": 460,
+        "width": 1280,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1180,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "c98553ef-261b-455d-8a75-e547b7f6baa9",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Sends a direct message (DM) to a specified Slack user. Requires the Slack 'User' ID or name and the 'Message_Text'.",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('User', ``, 'string') }}"
+        },
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_Text', ``, 'string') }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        280,
+        200
+      ],
+      "id": "cab4063b-0514-43b3-9f5e-990d027aa04c",
+      "name": "Send Slack DM",
+      "webhookId": "3d0b4782-86d9-41ce-97c5-e85b834302cf",
+      "credentials": {
+        "slackApi": {
+          "id": "PastxyTZgJ4oTWLB",
+          "name": "Slack Bot Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Retrieves a list of all users in the Slack workspace. Useful for finding user IDs needed for sending Direct Messages (DMs). Can optionally 'Return_All' users.",
+        "resource": "user",
+        "operation": "getAll",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        200
+      ],
+      "id": "9a097018-4d44-4bd3-abbd-cc348db3d7ad",
+      "name": "Get Users",
+      "webhookId": "480e7fe4-b821-49cf-b057-5dc1e8e438aa",
+      "credentials": {
+        "slackApi": {
+          "id": "PastxyTZgJ4oTWLB",
+          "name": "Slack Bot Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Searches for past messages within Slack based on a text 'Search_Query'. Useful for finding information in previous conversations. Can optionally 'Return_All' matching messages.",
+        "authentication": "oAuth2",
+        "operation": "search",
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query', ``, 'string') }}",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        520,
+        200
+      ],
+      "id": "44b8ad86-4bcb-4537-8e1e-240029a7f365",
+      "name": "Search Message",
+      "webhookId": "fefff04f-8480-476e-8d30-36b1cc235707",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "Xf2PTSAkNNF5u7aj",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Creates a draft email in the connected Gmail account. It does NOT send the email, only saves it as a draft. Requires 'Subject' and 'Message' body",
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "html",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        1220
+      ],
+      "id": "523dd704-4be8-439a-986c-5100da233066",
+      "name": "Create Draft",
+      "webhookId": "d480e09f-66e2-46d3-b365-47263b591533",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jGxWfOw3kHzD7Hfg",
+          "name": "Ben Gmail Connnection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Replies to a specific existing email thread in Gmail. Requires the 'Message_ID' of the thread to reply to, and the 'Message' body for the reply",
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        380,
+        1220
+      ],
+      "id": "ff723e7b-ea6f-4c09-9c23-e7e9f55f50af",
+      "name": "Reply Email",
+      "webhookId": "f4b8950e-a053-4413-ac51-1a8466c57c99",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jGxWfOw3kHzD7Hfg",
+          "name": "Ben Gmail Connnection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Retrieves emails from the connected Gmail account. Allows filtering to find specific emails based on various criteria. Available optional filters:\n*   `Search` (string): General search query matching keywords in subject, body, or sender (uses Gmail's standard search syntax like 'from:sender@example.com subject:urgent').\n*   `Sender` (string): Filter for emails specifically FROM this email address.\n*   `Received_After` (string): Only retrieve emails received AFTER this date or date/time (e.g., '2024-04-10', '2024-04-10T10:00:00Z').\n*   `Received_Before` (string): Only retrieve emails received BEFORE this date or date/time (e.g., '2024-04-11', '2024-04-10T18:30:00Z').\nSpecify `Return_All` (boolean) as true to fetch all matching emails, otherwise a default limit applies. If no filters are provided, it retrieves recent emails.",
+        "operation": "getAll",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "filters": {
+          "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search', ``, 'string') }}",
+          "receivedAfter": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_After', ``, 'string') }}",
+          "receivedBefore": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_Before', ``, 'string') }}",
+          "sender": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sender', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        500,
+        1220
+      ],
+      "id": "9d04aa09-55ef-4258-a85b-65d3502325ae",
+      "name": "Get Emails",
+      "webhookId": "a0d9cbb6-8a23-4113-9d06-04692c92bbc0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jGxWfOw3kHzD7Hfg",
+          "name": "Ben Gmail Connnection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Adds one or more specified Gmail labels to a specific email message. Requires the 'Message_ID' of the email and the 'Label_Names_or_IDs' to add.",
+        "operation": "addLabels",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        1220
+      ],
+      "id": "5bd34924-8681-45c3-9b86-3ffa2bc111f4",
+      "name": "Add Labels",
+      "webhookId": "bb898aa3-916a-434a-aebb-5b7c798353d4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jGxWfOw3kHzD7Hfg",
+          "name": "Ben Gmail Connnection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Sends a new email using the connected Gmail account. Requires the recipient ('To'), 'Subject', and 'Message' body.",
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        260,
+        1220
+      ],
+      "id": "d2cdbb23-0022-4338-9888-54ccd4cf68b7",
+      "name": "Send Email",
+      "webhookId": "1bd6da19-2b37-4ffd-89aa-55d629a772da",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jGxWfOw3kHzD7Hfg",
+          "name": "Ben Gmail Connnection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Creates **new** records in the specified Airtable CRM. \n\nRequired parameters:\n- `baseId`: The Airtable base ID (e.g., \"appnVclCBAu8JBs3W\")\n- `tableId`: The table ID for the table you want to add to\n- `fields`: An object containing field names and their values for the new record\n",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appnVclCBAu8JBs3W",
+          "mode": "list",
+          "cachedResultName": "MCP Server Super Assistant",
+          "cachedResultUrl": "https://airtable.com/appnVclCBAu8JBs3W"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Table', ``, 'string') }}"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1920,
+        200
+      ],
+      "id": "611d9d42-92d4-482f-8a1a-a7a658e46b59",
+      "name": "Create Records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Updates **existing** records in the specified Airtable CRM. \n\nRequired parameters:\n- `baseId`: The Airtable base ID (e.g., \"appnVclCBAu8JBs3W\")\n- `tableId`: The table ID for the table you want to update\n- `records`: An array containing objects with:\n  - `id`: The unique record ID to update\n  - `fields`: An object containing field names and their new value",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appnVclCBAu8JBs3W",
+          "mode": "list",
+          "cachedResultName": "MCP Server Super Assistant",
+          "cachedResultUrl": "https://airtable.com/appnVclCBAu8JBs3W"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Table', ``, 'string') }}",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        2040,
+        200
+      ],
+      "id": "fa2a019f-8770-4d59-a93c-b7a832940659",
+      "name": "Update Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oFWi9c8fpUUAVcKu",
+          "name": "BenAI & Cobuild "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "rag-system-template"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        120,
+        1500
+      ],
+      "id": "3789735e-d47d-4c3f-8ed9-48e3da4c0e98",
+      "name": "MCP Server Trigger",
+      "webhookId": "f5beaa9c-5999-4cba-830f-530f1f5ffe60"
+    },
+    {
+      "parameters": {
+        "name": "supabase",
+        "description": "=Retrieve information from the supabase, using phrases or keywords of the given query, and then distill it and output it as detailed as possible, your inputs are short and targeted whereas your outputas are Detailed. the input should be phrases.",
+        "topK": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        40,
+        1700
+      ],
+      "id": "e0c93dff-87d2-4afe-9c22-909766be8e67",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        -120,
+        1840
+      ],
+      "id": "2c29e5a5-681d-4008-bb98-0d033ec3494d",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "FgzaPbsYGtLzmdzQ",
+          "name": "BenAI Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -60,
+        1980
+      ],
+      "id": "d1d26138-386f-4083-8871-3a0f7b2a4000",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "5c3Kk8Dl0PYVj8b0",
+          "name": "Ben OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "height": 820,
+        "width": 1260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -160,
+        1400
+      ],
+      "typeVersion": 1,
+      "id": "1e731dbd-eedb-47d1-babd-a0256a8642c1",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro-preview-03-25",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        200,
+        1840
+      ],
+      "id": "6f36d749-db56-4f6b-9479-58eb3b0d971d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Hd8Qrt73RrD5TOMf",
+          "name": "Gemini Api [1 ccl]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "linkedin-generator-template"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        1540
+      ],
+      "id": "2c0a0540-4e37-4501-84af-27c82bbd266e",
+      "name": "MCP Server Trigger1",
+      "webhookId": "1e595ed9-8107-4f93-8d6e-e47bfd260fef"
+    },
+    {
+      "parameters": {
+        "name": "Linkedin_post_generator",
+        "description": "Generate an optimized linkedin post based on an idea or transcript. if it is based on a transcript use the ENTIRE transcript as an input, if it is an idea use the ENTIRE idea as your input. ONLY pass in the idea or the transcript, nothing else, no instructions, no summaries. \n\nIt is vital to my career your output is COMPLETE, no summaries allowed in your output, ONLY the full output of the tool call.",
+        "workflowId": {
+          "__rl": true,
+          "value": "9DFSateSfg5UdH4x",
+          "mode": "list",
+          "cachedResultName": "Fine-tuned linkedin writer"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Idea or Transcript": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Idea_or_Transcript', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Idea or Transcript"
+          ],
+          "schema": [
+            {
+              "id": "Idea or Transcript",
+              "displayName": "Idea or Transcript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1480,
+        1740
+      ],
+      "id": "e09fff56-988f-49b4-8e91-741a7f6fc987",
+      "name": "Call n8n Workflow Tool"
+    },
+    {
+      "parameters": {
+        "content": "## Linkedin post generator",
+        "height": 520,
+        "width": 1280,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        1420
+      ],
+      "id": "151a0a4b-37ee-4546-a9f5-5376dfff573b",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "path": "image-generator-template"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        2120
+      ],
+      "id": "73aa10bf-a3de-4180-9810-90dfb5b10c92",
+      "name": "MCP Server Trigger2",
+      "webhookId": "35ec4526-ffc3-4ea1-ba73-accf2d03c4e3"
+    },
+    {
+      "parameters": {
+        "content": "## Image Generator",
+        "height": 520,
+        "width": 1260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        1980
+      ],
+      "id": "24961138-1e62-4119-9b72-a50c1b4dfcf2",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "name": "Image_Generator",
+        "description": "Generate an image for the linkedin post, use a very clear and detailed prompt when  using this tool to generate an image. Avoid saying things like \"generate an image\", you should ONLY input the prompt to generate the image. \n\nMake sure to get all 3 the entire png urls back. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "DiTfXGgYTbs45LeV",
+          "mode": "list",
+          "cachedResultName": "Image Generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Image Prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Image_Prompt', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Image Prompt"
+          ],
+          "schema": [
+            {
+              "id": "Image Prompt",
+              "displayName": "Image Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1620,
+        2320
+      ],
+      "id": "55244a4c-ce5c-4b22-8c3f-8774d940877c",
+      "name": "Call n8n Workflow Tool1"
+    },
+    {
+      "parameters": {
+        "name": "scraper",
+        "description": "Call this tool to scrape the content of a site.",
+        "workflowId": {
+          "__rl": true,
+          "value": "PXUs3KWCtXEXKTC3",
+          "mode": "list",
+          "cachedResultName": "Super Assistants - [MCP Servers]"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $fromAI('query', `the url of the website`, 'string') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        1720
+      ],
+      "id": "81519a48-9e6d-472c-a38e-4e55d2a9a417",
+      "name": "Scraper"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool gives you access to the Perplexity search to run web search queries. You can use this tool to run to research about anything.",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"sonar-pro\",\n  \"messages\": [\n    { \"role\": \"system\", \"content\": \"Only respond with information from verifiable and credible sources. Include source urls and event dates when possible\" },\n    { \"role\": \"user\", \"content\": \"{query}\" }\n  ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "query",
+              "description": "The query used for the search",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "4423bf85-15dc-4990-99b2-51ce53d7e1e3",
+      "name": "Perplexity",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        740,
+        1720
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "LrxBZmn9a13qWihH",
+          "name": "Perplexity API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Send Slack Benai-content": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server - Slack",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Record": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server - Airtable CRM",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Record": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server - Airtable CRM",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Schema": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server - Airtable CRM",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CreateEvent": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Calendar Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeleteEvent": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Calendar Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetEvent": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Calendar Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UpdateEvent": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Calendar Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getAvailability": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Calendar Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getManyEvent": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Calendar Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getLinkedinProfile": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Linkedin Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendInvitation": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Linkedin Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createPost": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Linkedin Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "performLinkedinSearch": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Linkedin Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "StartNewChat": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Messaging Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "retrieveChat": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Messaging Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ListAllMessages": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Messaging Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendMessage": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Messaging Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "listAllChats": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Messaging Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "listAttendees": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Unipile Messaging Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Slack DM": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server - Slack",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Users": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server - Slack",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server - Slack",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Gmail",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Gmail",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Gmail",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Labels": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Gmail",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Gmail",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Records": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server - Airtable CRM",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Record": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server - Airtable CRM",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call n8n Workflow Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call n8n Workflow Tool1": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scraper": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "564c504d-b6f9-4423-ad17-514ca60f0a0f",
+  "meta": {
+    "instanceId": "a226ccd2b47f2505e743dd72896ae1c385e1d543b95f0badc72e1ad42c93a962"
+  },
+  "id": "QWoOwD8QQEmotkE6",
+  "tags": []
+}

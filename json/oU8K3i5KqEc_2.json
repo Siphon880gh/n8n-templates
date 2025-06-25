@@ -1,0 +1,77 @@
+{
+  "name": "Phone Agent 3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "2eff07ab-57a4-4928-9479-3508668b3001",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "808926c2-3c06-4b2d-9e14-46b4e6a9ad15",
+      "name": "Webhook",
+      "webhookId": "2eff07ab-57a4-4928-9479-3508668b3001"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "c_d651ada466e0f9a22c1b0335ac92b65bcae53e53088daa5b00eff1a617cd0222@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Demo"
+        },
+        "start": "={{ $json.body.message.toolCalls[0].function.arguments.Start_time }}",
+        "end": "={{ $json.body.message.toolCalls[0].function.arguments.End_time }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $json.body.message.toolCalls[0].function.arguments.Attendees }}"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        0
+      ],
+      "id": "b02c3361-3011-4b87-9faf-d28dc1e70a77",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "865r2pctYgIvca2b",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f26b1595-5246-479a-908c-f292a8fb3813",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8711ef6aba5ff6781b8ed3c0d9d8ad1fb3b9e4be41f1c9a056c02209236d4a91"
+  },
+  "id": "2H6g88M7ODSRSbOZ",
+  "tags": []
+}

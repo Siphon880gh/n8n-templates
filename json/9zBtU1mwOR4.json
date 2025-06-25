@@ -1,0 +1,1168 @@
+{
+  "name": "Apify Scrape New Instagram Reels -> Transcribe -> Add to Sheet",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/xMc5Ga1oCONPmWJIa/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer yourapikeyhere"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"resultsLimit\": 5,\n  \"username\": [\n    \"nick_saraev\",\n    \"juliangoldieseo\",\n    \"brand.nat\",\n    \"realrileybrown\",\n    \"hamza_automates\",\n    \"100xengineers\",\n    \"mattfarmerai\",\n    \"nathanhodgson.ai\",\n    \"theaisurfer\",\n    \"shedoesai\",\n    \"aitrendz.xyz\",\n    \"thevarunmayya\",\n    \"rohak_arya\",\n    \"digitalsamaritan\"\n  ]\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "c55c87f0-868c-4d3a-a0ca-43cc7191cb32",
+      "name": "Run Actor Synchronously"
+    },
+    {
+      "parameters": {
+        "maxItems": 2,
+        "keep": "lastItems"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "df030281-6513-45a2-9c72-b1e59ee4c4b6",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent admin assistant.",
+              "role": "system"
+            },
+            {
+              "content": "I run an AI & automation Instagram channel. I'm looking through news archives to find mentions of tools that I can repurpose into content for my channel.\n\nYour task is to take as input a transcript of a news archive, and then determine if the transcription is about a tool, a technology, or AI.\n\nIf so, you'll identify the tools, then write a list of step-by-step instructions to use the tool easily (ideally for free or for low cost), and one suggestion on exactly how to make this content more palatable to an AI automation audience.\n\nReturn your output in JSON using this format:\n\n{\n  \"verdict\":\"true or false\",\n  \"tools\":[\"list\",\"of\",\"tools\",\"or\",\"resources\"],\n  \"stepByStep\":\"Detailed instructions on how to use the tool(s).\",\n  \"suggestion\":\"Comprehensive, in-depth suggestions on how to make this content more interesting and palatable to my audience (AI automation).\",\n  \"searchPrompt\":\"A short search prompt we'll use to look up the service. Write it like '{toolName}, the {typeOfTool}'\"\n}\n\nIf verdict is \"false\", leave the rest of the fields empty."
+            },
+            {
+              "content": "={\"transcript\":\"{{ $json.text }}\"}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1620,
+        0
+      ],
+      "id": "8a0ea140-f361-4208-be52-c1dcb91270a7",
+      "name": "Filter & Generate Suggestions",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1e1yIubmEXzzUrSCurXdXM2H6ioN2GEb1aOX5UBNNyik",
+          "mode": "list",
+          "cachedResultName": "Instagram Reel Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e1yIubmEXzzUrSCurXdXM2H6ioN2GEb1aOX5UBNNyik/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Reels",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e1yIubmEXzzUrSCurXdXM2H6ioN2GEb1aOX5UBNNyik/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "id",
+              "lookupValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        -160
+      ],
+      "id": "8dbcc1b2-2bc7-4d4f-bc38-8f2b6384abcf",
+      "name": "Search for Entries",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EOibXIc4U8wcXyRR",
+          "name": "YouTube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "id",
+        "joinMode": "keepNonMatches",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        820,
+        0
+      ],
+      "id": "e2b81a84-6724-4757-8991-a62610943ea0",
+      "name": "Drop Duplicates"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1e1yIubmEXzzUrSCurXdXM2H6ioN2GEb1aOX5UBNNyik",
+          "mode": "list",
+          "cachedResultName": "Instagram Reel Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e1yIubmEXzzUrSCurXdXM2H6ioN2GEb1aOX5UBNNyik/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Reels",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e1yIubmEXzzUrSCurXdXM2H6ioN2GEb1aOX5UBNNyik/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "timestamp": "={{ $json.timestamp }}",
+            "shortCode": "={{ $json.shortCode }}",
+            "caption": "={{ $json.caption }}",
+            "hashtags": "={{ $json.hashtags }}",
+            "url": "={{ $json.url }}",
+            "commentsCount": "={{ $json.commentsCount }}",
+            "firstComment": "={{ $json.firstComment }}",
+            "displayUrl": "={{ $json.displayUrl }}",
+            "videoUrl": "={{ $json.videoUrl }}",
+            "likesCount": "={{ $json.likesCount }}",
+            "videoViewCount": "={{ $json.videoViewCount }}",
+            "videoPlayCount": "={{ $json.videoPlayCount }}",
+            "username": "={{ $json.ownerUsername }}",
+            "videoDuration": "={{ $json.videoDuration }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "shortCode",
+              "displayName": "shortCode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hashtags",
+              "displayName": "hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "commentsCount",
+              "displayName": "commentsCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "firstComment",
+              "displayName": "firstComment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "displayUrl",
+              "displayName": "displayUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "videoUrl",
+              "displayName": "videoUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "likesCount",
+              "displayName": "likesCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "videoViewCount",
+              "displayName": "videoViewCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "videoPlayCount",
+              "displayName": "videoPlayCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "videoDuration",
+              "displayName": "videoDuration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "scrapedTranscript",
+              "displayName": "scrapedTranscript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "newTranscript",
+              "displayName": "newTranscript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "inputUrl",
+              "displayName": "inputUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "mentions",
+              "displayName": "mentions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "latestComments",
+              "displayName": "latestComments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "dimensionsHeight",
+              "displayName": "dimensionsHeight",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "dimensionsWidth",
+              "displayName": "dimensionsWidth",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "images",
+              "displayName": "images",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "alt",
+              "displayName": "alt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "childPosts",
+              "displayName": "childPosts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ownerFullName",
+              "displayName": "ownerFullName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ownerUsername",
+              "displayName": "ownerUsername",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ownerId",
+              "displayName": "ownerId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "productType",
+              "displayName": "productType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "isSponsored",
+              "displayName": "isSponsored",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "musicInfo",
+              "displayName": "musicInfo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1020,
+        0
+      ],
+      "id": "a2650df2-9375-40ec-9ede-115cd692c9ca",
+      "name": "Add Entries",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EOibXIc4U8wcXyRR",
+          "name": "YouTube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.videoUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1240,
+        0
+      ],
+      "id": "d5f3e37e-af9f-4eee-b184-67104708539b",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1440,
+        0
+      ],
+      "id": "be8bc4fc-de39-41e4-bdda-fa6988b4db71",
+      "name": "Transcribe Video",
+      "credentials": {
+        "openAiApi": {
+          "id": "oLLACDYfGm4C4ouV",
+          "name": "YouTube "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar-pro\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Be precise and concise.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Tell me three interesting (peculiar) things about {{ $json.message.content.searchPrompt }}\"\n    }\n  ]\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        0
+      ],
+      "id": "71217539-540a-447d-9890-76b2b6b32986",
+      "name": "Search Perplexity"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent writing assistant.",
+              "role": "system"
+            },
+            {
+              "content": "I run an AI & automation Instagram channel.\n\nMy editors would like to make a new video. They've found an interesting tool or technology, compiled a step-by-step guide on how to use it, done some searching on the Internet to find some interesting things about it, wrote a rough draft about it, and we also had our chief editor write concrete suggestions for how to make the content better.\n\nYour task is to take as input all of these things, and then write a new, high quality script for us to feature.\n\nReturn your output in JSON using this format:\n\n{\n  \"script\":\"Your script goes here (~100 words).\n}\n\nRules:\n- Use a casual, spartan tone of voice. No frills. Be straightforward, and don't use poetic language.\n- End the script with a call to action like \"Want {thing}? Just comment {keyword} and I'll send it straight to your DMs\",\n- Add newlines as \\n between sentences."
+            },
+            {
+              "content": "={\n  \"toolNames\":\"Speechma\",\n  \"roughDraftScript\":\"Hey there. So, I just wanted to let you know about a AI text-to-speech generator that has recently become available. It’s doesn’t cost anything at all.\\n\\nIt has a lot of voices! And the best part is you don’t need to sign up for an account in order to use it.\\n\\nThe process is really simple, too. You just go the site and type whatever you want converted into speech. There are lots of voices as well.\\n\\nIf this sounds interesting to you, I’d highly recommend giving it a try for yourself. Just leave a comment saying \"texttospeech,\" and I’ll make sure to send you the link so you can check it out firsthand.\",\n  \"perplexityOutput\": \"Here are three interesting things about Speechma, the AI text-to-speech tool:\\n\\n1. Speechma offers over 400 premium AI voices for text-to-speech conversion, allowing users to find the perfect voice for any project[1].\\n\\n2. The platform provides unlimited free usage with no restrictions on the number of conversions, which is unusual for a premium text-to-speech service[1].\\n\\n3. Speechma grants users commercial rights to use the generated audio for any purpose, including YouTube videos, TikTok content, and business presentations[1].\",\n  \"stepByStepGuide\":\"1. Visit the Speechma website.\\n2. Enter or paste your text into the provided text box.\\n3. Browse through the available 400+ voices and select one that fits your needs.\\n4. Choose the desired language from the 60 supported options.\\n5. Click the 'Generate' button to create your AI-generated speech.\\n6. Download or use your AI-generated speech as needed for projects like YouTube videos or TikToks.\",\n  \"suggestionsForImprovement\":\"Create a short tutorial video showing how to use Speechma, emphasizing its free nature and ease of use. Highlight its unlimited features and vast voice selection. Consider doing a voice comparison test using Speechma versus other popular tools. Discuss potential use cases such as content creation for social media, especially focusing on platforms like Instagram and TikTok, highlighting the benefit of rapid content creation using AI automation.\"\n}"
+            },
+            {
+              "content": "={\n  \"script\":\"Hey—there’s a completely new AI text to speech generator that’s just as good as ElevenLabs, but FREE.\\nIt allows you to choose from over 400 voices, it supports 60 languages, and it’s all completely unlimited with no signup required.\\nJust head over to this website\\nPaste your text\\nChoose one of the voices\\nAnd click generate\\nThat’s it! Your AI speech is now ready to use.\\nYou can use this voice for YouTube videos, TikToks, or whatever you like.\\nSo go try it yourself.\\nJust Comment \"speech\" and I’ll share the link with you.\"\n}",
+              "role": "assistant"
+            },
+            {
+              "content": "={\n  \"toolNames\":\"{{ $('Filter & Generate Suggestions').item.json.message.content.tools.join() }}\",\n  \"roughDraftScript\":\"{{ $('Transcribe Video').all().first().json.text }}\",\n  \"perplexityOutput\": \"{{ $json.choices[0].message.content }}\",\n  \"stepByStepGuide\":\"{{ $('Filter & Generate Suggestions').item.json.message.content.stepByStep }}\",\n  \"suggestionsForImprovement\":\"{{ $('Filter & Generate Suggestions').item.json.message.content.suggestion }}\"\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        2180,
+        0
+      ],
+      "id": "3c8706bb-6796-4b02-83a8-b8e39e6e91dd",
+      "name": "Write New Script",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        20,
+        0
+      ],
+      "id": "c2e95c8b-cd40-45fd-9b4a-3c7a3c2c35c0",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1e1yIubmEXzzUrSCurXdXM2H6ioN2GEb1aOX5UBNNyik",
+          "mode": "list",
+          "cachedResultName": "Instagram Reel Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e1yIubmEXzzUrSCurXdXM2H6ioN2GEb1aOX5UBNNyik/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Reels",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e1yIubmEXzzUrSCurXdXM2H6ioN2GEb1aOX5UBNNyik/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Add Entries').item.json.id }}",
+            "scrapedTranscript": "={{ $('Transcribe Video').item.json.text }}",
+            "newTranscript": "={{ $json.message.content.script }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "shortCode",
+              "displayName": "shortCode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "hashtags",
+              "displayName": "hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "commentsCount",
+              "displayName": "commentsCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "firstComment",
+              "displayName": "firstComment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "displayUrl",
+              "displayName": "displayUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "videoUrl",
+              "displayName": "videoUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "likesCount",
+              "displayName": "likesCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "videoViewCount",
+              "displayName": "videoViewCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "videoPlayCount",
+              "displayName": "videoPlayCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "videoDuration",
+              "displayName": "videoDuration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "scrapedTranscript",
+              "displayName": "scrapedTranscript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "newTranscript",
+              "displayName": "newTranscript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "inputUrl",
+              "displayName": "inputUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "mentions",
+              "displayName": "mentions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "latestComments",
+              "displayName": "latestComments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "dimensionsHeight",
+              "displayName": "dimensionsHeight",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "dimensionsWidth",
+              "displayName": "dimensionsWidth",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "images",
+              "displayName": "images",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "alt",
+              "displayName": "alt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "childPosts",
+              "displayName": "childPosts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ownerFullName",
+              "displayName": "ownerFullName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ownerUsername",
+              "displayName": "ownerUsername",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ownerId",
+              "displayName": "ownerId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "productType",
+              "displayName": "productType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "isSponsored",
+              "displayName": "isSponsored",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "musicInfo",
+              "displayName": "musicInfo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2540,
+        0
+      ],
+      "id": "c91557c0-1051-42bd-bdbb-484995bdda84",
+      "name": "Update Entries",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EOibXIc4U8wcXyRR",
+          "name": "YouTube"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run Actor Synchronously": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Search for Entries",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Drop Duplicates",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Search for Entries": {
+      "main": [
+        [
+          {
+            "node": "Drop Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drop Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Add Entries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Entries": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Video": {
+      "main": [
+        [
+          {
+            "node": "Filter & Generate Suggestions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter & Generate Suggestions": {
+      "main": [
+        [
+          {
+            "node": "Search Perplexity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Perplexity": {
+      "main": [
+        [
+          {
+            "node": "Write New Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write New Script": {
+      "main": [
+        [
+          {
+            "node": "Update Entries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Actor Synchronously",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e5bf6014-38f0-43a2-be34-025e4291f0b7",
+  "meta": {
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "fFfhgyxWDNWQCUtY",
+  "tags": [
+    {
+      "createdAt": "2025-01-23T18:12:52.273Z",
+      "updatedAt": "2025-01-23T18:12:52.273Z",
+      "id": "l8MPK4ZirgwFWMno",
+      "name": "N8N Course"
+    }
+  ]
+}

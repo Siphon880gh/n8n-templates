@@ -1,0 +1,1472 @@
+{
+  "name": "Faceless Shorts System V2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        -80
+      ],
+      "id": "461b97de-4792-4351-96e4-79afbc7401d9",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        20,
+        -160
+      ],
+      "id": "52898d87-db16-41f1-bfdd-af9c6c711a69",
+      "name": "Grab Idea",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wwE70mh6N2QEfZRL",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aefd1ab6-29fc-46a8-b817-cf86d62d5e4d",
+              "name": "animals",
+              "value": "=[\"{{ $json['animal 1'] }}\",\"{{ $json['animal 2'] }}\",\"{{ $json['animal 3'] }}\",\"{{ $json['animal 4'] }}\"]",
+              "type": "array"
+            },
+            {
+              "id": "16c0db54-c132-4719-87e6-9253a3fc6a54",
+              "name": "style",
+              "value": "={{ $json.style }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        -160
+      ],
+      "id": "56ef3191-635e-4c72-b570-73627089d66c",
+      "name": "Set Animals"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "animals",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        460,
+        -160
+      ],
+      "id": "15767609-ec11-4a14-b5e9-41520c061dac",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        0
+      ],
+      "id": "824ef653-9eff-4f9d-887f-8ac830c00c90",
+      "name": "GPT 4o",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Animal: {{ $json.animals }}\nStyle: {{ $('Set Animals').item.json.style }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a master image prompt generator specialized in crafting detailed, high-quality prompts for advanced image models like Flux. Your task is to generate vivid, well-structured prompts that accurately depict an animal dressed in a specified style, with a matching background that complements the theme.\n\n## Instructions:\n- Clearly describe the animal's appearance, including fur, feathers, or scales.\n- Specify the outfit and accessories that reflect the given style, ensuring they fit naturally.\n- Include details about the background that reinforce the style, creating a cohesive scene.\n- Use rich, descriptive language to enhance visual fidelity.\n- Avoid generic terms—opt for precise, imaginative descriptions that maximize prompt effectiveness.\n- Never output quotation marks (\"\") or newlines (\\n)\n\n## Example \n- Input:\nAnimal: Fox\nStyle: Cyberpunk\n\n- Output:\nA sleek red fox with vibrant fur and piercing blue cybernetic eyes, wearing a futuristic black leather jacket with neon blue accents and glowing circuitry patterns. A high-tech visor covers one eye, displaying holographic data. The fox stands confidently on a rain-slicked city street illuminated by neon signs in Japanese and English. Hovering drones and bustling pedestrians in cybernetic attire add depth to the scene, while distant flying cars streak through the dark, misty skyline.\n\n\n## IMPORTANT\n- All prompts must be family friendly, no sensitive words should be used.\n- No references to weapons (even toy guns).\n- No reference of “showdowns\" or violent events.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        680,
+        -160
+      ],
+      "id": "a5723f13-ce4f-4f9b-8f0e-40a02e7c3f4b",
+      "name": "Image Prompt Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "// N8N Code Node to remove all newline characters from previous node outputs\n\n// Process all items in the array\n// This will work regardless of whether we're running once for all items or once per item\nfor (let i = 0; i < items.length; i++) {\n  const currentItem = items[i];\n  \n  // Check if the item has an output property\n  if (currentItem.json && currentItem.json.output !== undefined) {\n    // Replace all newline characters with empty string\n    // Using a global regex to catch ALL instances of \\n\n    currentItem.json.output = currentItem.json.output.replace(/\\\\n/g, '');\n    \n    // Also replace actual newline characters if they exist\n    currentItem.json.output = currentItem.json.output.replace(/\\n/g, '');\n  }\n}\n\n// Return the processed items array\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        -160
+      ],
+      "id": "3f8a185f-4366-4a9f-848a-32174fa9ba56",
+      "name": "Remove \\n"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3f7846c8-2c7f-440f-8245-71bf158ea311",
+              "name": "prompts",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1240,
+        -160
+      ],
+      "id": "e28c11b3-8e6b-4f33-9620-f24e86dda6e5",
+      "name": "Set Prompts"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"model\": \"Qubico/flux1-dev\",\n    \"task_type\": \"txt2img\",\n    \"input\": {\n        \"prompt\": \"{{ $json.prompts }}\",\n        \"width\": 540, \n        \"height\": 960\n    } \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -220,
+        260
+      ],
+      "id": "b5a57719-1c2c-4241-9c45-dd811171850e",
+      "name": "Generate Image"
+    },
+    {
+      "parameters": {
+        "amount": 90
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -40,
+        260
+      ],
+      "id": "53f8e387-ad18-4d76-8ed9-bee9897ce754",
+      "name": "90 seconds",
+      "webhookId": "ffdc5132-c0fe-44f6-af2b-4b3bb8894153"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.piapi.ai/api/v1/task/{{ $json.data.task_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        140,
+        260
+      ],
+      "id": "7743ca4a-60e2-459f-a32c-9d8e2c9e88af",
+      "name": "Get Images"
+    },
+    {
+      "parameters": {
+        "amount": 8,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -60,
+        1040
+      ],
+      "id": "9d6cb270-2cab-4285-a9bd-4cd47c4f80e0",
+      "name": "8 Minutes",
+      "webhookId": "501d3896-713d-4546-bc42-7e9e7943d92f",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        560
+      ],
+      "id": "db855a1e-d63b-4e0b-ae79-3d9d29e84aef",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K-Btbc1KvhIK-ShsRhFpcPpxR604vHwNACz0Ohwf7Gk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Grab Idea').item.json.row_number }}",
+            "videoStatus": "Created"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "animal 1",
+              "displayName": "animal 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "animal 2",
+              "displayName": "animal 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "animal 3",
+              "displayName": "animal 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "animal 4",
+              "displayName": "animal 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "style",
+              "displayName": "style",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "videoStatus",
+              "displayName": "videoStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "publishStatus",
+              "displayName": "publishStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "videoLink",
+              "displayName": "videoLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -120,
+        560
+      ],
+      "id": "380110da-27bd-4349-8326-42d9fdf93bce",
+      "name": "Video Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wwE70mh6N2QEfZRL",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        20,
+        760
+      ],
+      "id": "7b8e303f-09b8-42c4-903a-59dbb28d55ed",
+      "name": "Flash 2.0",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DW8owDXDeMHnr1rA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Style: {{ $('Grab Idea').item.json.style }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a master sound prompt generator. Given a style, generate a vivid one-to-two sentence prompt that describes the ambiance, tone, and key sound elements to create an immersive audio scene. Use evocative language to capture the essence of the style.\n\n## Example\n- Style: Haunted Ghost Hunters\n- Output: Eerie whispers echo through a decaying mansion as floorboards creak under cautious footsteps. A distant, distorted radio crackles with ghostly voices, while a cold wind howls through shattered windows."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        40,
+        560
+      ],
+      "id": "5f5ccf7d-b7ec-4660-9112-38dd60c2fbe1",
+      "name": "Sound Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5bf4beb2-3a46-4825-9292-13de8ed56400",
+              "name": "audio",
+              "value": "={{ $json.output.trimEnd() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        360,
+        560
+      ],
+      "id": "c1822a00-991c-4e03-9527-543e339cc3ca",
+      "name": "Set Audio"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/sound-generation",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.audio }}"
+            },
+            {
+              "name": "duration_seconds",
+              "value": "20"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        560
+      ],
+      "id": "7c95120c-ddab-4834-8b78-df642a599c6b",
+      "name": "Generate Audio"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Grab Idea').item.json.style }}.mp3",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        640,
+        560
+      ],
+      "id": "ba04a4cd-7924-464c-acf7-6bc2c16cda5e",
+      "name": "Upload to Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "60zdCK3Sx2Shlbb4",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1060,
+        300
+      ],
+      "id": "2d799813-3039-4df7-bac0-a7ce61ecab00",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer API KEY HERE"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"template_id\": \"d02f8e71-6e1b-4ab9-9c5e-629c35a845b7\",\n  \"modifications\": {\n    \"Video-1.source\": \"{{ $json.urls[0].url }}\",\n    \"Video-2.source\": \"{{ $json.urls[1].url }}\",\n    \"Video-3.source\": \"{{ $json.urls[2].url }}\",\n    \"Video-4.source\": \"{{ $json.urls[3].url }}\",\n    \"Audio-Track.source\": \"{{ $('Upload to Drive').first().json.webContentLink }}\",\n    \"Text-1.text\": \"{{ $('Grab Idea').first().json['animal 1'] }}\",\n    \"Text-2.text\": \"{{ $('Grab Idea').first().json['animal 2'] }}\",\n    \"Text-3.text\": \"{{ $('Grab Idea').first().json['animal 3'] }}\",\n    \"Text-4.text\": \"{{ $('Grab Idea').first().json['animal 4'] }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        300
+      ],
+      "id": "5c631bce-ca56-421a-b175-e077db0677a8",
+      "name": "Render Video"
+    },
+    {
+      "parameters": {
+        "amount": 25
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1660,
+        300
+      ],
+      "id": "17c35549-dbb6-43bb-a39e-fff9007081df",
+      "name": "25 Seconds",
+      "webhookId": "d5cd29e8-d3f7-491c-a6b6-2d705aa47931"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1060,
+        520
+      ],
+      "id": "6155768f-7352-40fe-bf47-072fb776b587",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Grab Idea').first().json.title }}",
+        "regionCode": "US",
+        "categoryId": "1",
+        "options": {
+          "description": "={{ $('Grab Idea').first().json.caption }}",
+          "privacyStatus": "unlisted"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1260,
+        520
+      ],
+      "id": "a61ed997-9c27-4393-9935-3c99fa55e603",
+      "name": "Upload Video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "8L84tcidZ1zLMfss",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K-Btbc1KvhIK-ShsRhFpcPpxR604vHwNACz0Ohwf7Gk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Grab Idea').first().json.row_number }}",
+            "publishStatus": "Processed",
+            "videoLink": "={{ $('Download Video').item.json.url }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "animal 1",
+              "displayName": "animal 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "animal 2",
+              "displayName": "animal 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "animal 3",
+              "displayName": "animal 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "animal 4",
+              "displayName": "animal 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "style",
+              "displayName": "style",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "videoStatus",
+              "displayName": "videoStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "publishStatus",
+              "displayName": "publishStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "videoLink",
+              "displayName": "videoLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1460,
+        520
+      ],
+      "id": "3afea92d-848f-4316-91cd-cb6264b0073a",
+      "name": "Update Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wwE70mh6N2QEfZRL",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "subject": "=New Short Processed: {{ $('Grab Idea').first().json.title }}",
+        "emailType": "text",
+        "message": "=[Name],\n\nA new short has been created and is awaiting your approval.\n\nIt is called \"{{ $('Grab Idea').first().json.title }}\".\n\nYou can view it here: \n\nCheers!",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1660,
+        520
+      ],
+      "id": "1eefb240-30b4-4f0d-8545-fa160d72b025",
+      "name": "Notification",
+      "webhookId": "495213a9-3d81-40bf-a612-1240bf7498db",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MHutgNQIvAz7qMgP",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        -240
+      ],
+      "id": "0e7f130f-dba4-494e-a4db-dc19f65b9631",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Image Prompts",
+        "height": 460,
+        "width": 1840,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -300,
+        -340
+      ],
+      "typeVersion": 1,
+      "id": "bc2c4f9d-9116-43b5-971f-dd6d172ac78b",
+      "name": "Sticky Note3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "# Generate Images\n",
+        "height": 260,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -300,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "fe62abb5-bbbb-41d5-a016-abc0caf5c2d9",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Videos (Kling)\n",
+        "height": 260,
+        "width": 820,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -300,
+        940
+      ],
+      "typeVersion": 1,
+      "id": "04570711-4085-4255-b027-02ade7b01245",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Audio\n\n",
+        "height": 280,
+        "width": 1240,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -300,
+        460
+      ],
+      "typeVersion": 1,
+      "id": "4ca03457-46bf-48ac-852f-4135694533bb",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Render & Upload\n",
+        "height": 580,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        980,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "85c11e20-ba50-4222-9123-d63b407c5ac5",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.piapi.ai/api/v1/task/{{ $json.data.task_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        1040
+      ],
+      "id": "08996d71-b0ef-45d7-8002-e07afd9e076c",
+      "name": "Get Videos (Kling)",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://api.dev.runwayml.com/v1/tasks/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Runway-Version",
+              "value": "2024-11-06"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        260
+      ],
+      "id": "e06ec525-b048-465d-8a64-3ed9378f7176",
+      "name": "Get Videos"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"model\": \"kling\",\n    \"mode\": \"std\",\n    \"task_type\": \"video_generation\",\n    \"input\": {\n        \"prompt\": \"{{ $json.data.input.prompt }}\",\n        \"negative_prompt\": \"bad quality\",\n        \"cfg_scale\": 0.5,\n        \"duration\": 5,\n        \"image_url\": \"{{ $json.data.output.image_url }}\",\n        \"aspect_ratio\": \"9:16\",\n        \"camera_control\": {\n            \"type\": \"simple\",\n            \"config\": {\n                \"horizontal\": 0,\n                \"vertical\": 0,\n                \"pan\": 0,\n                \"tilt\": 0,\n                \"roll\": 0,\n                \"zoom\": 0\n            }\n        },\n        \"mode\": \"std\"\n    },\n    \"config\": {}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        1040
+      ],
+      "id": "f1485f67-f17c-4d04-af45-be40661c4bae",
+      "name": "Generate Videos (Kling)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "md5n1H9xDvznGBAK",
+          "name": "PIAPI"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dev.runwayml.com/v1/image_to_video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Runway-Version",
+              "value": "2024-11-06"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "promptImage",
+              "value": "={{ $json.data.output.image_url }}"
+            },
+            {
+              "name": "model",
+              "value": "gen3a_turbo"
+            },
+            {
+              "name": "ratio",
+              "value": "768:1280"
+            },
+            {
+              "name": "duration",
+              "value": "5"
+            },
+            {
+              "name": "promptText",
+              "value": "={{ $json.data.input.prompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        380,
+        260
+      ],
+      "id": "a65eff47-0107-468d-b2c5-5b744e34f0fc",
+      "name": "Generate Videos"
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        260
+      ],
+      "id": "b5089e94-137b-48dd-80c8-77b1e971b3ea",
+      "name": "2 minutes",
+      "webhookId": "3ce99001-8f5a-4c0a-9b25-e3e261fcc778"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Videos\n",
+        "height": 260,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        340,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "ee547643-60dd-45cd-9281-a62fa906f545",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code to extract video URLs from JSON data in n8n\n// This handles various possible input structures\n\n// Function to extract video info if the object has the expected structure\nfunction extractVideoInfo(obj, index) {\n  if (obj && obj.code === 200 && \n      obj.data && obj.data.output && obj.data.output.video_url) {\n    return {\n      index: index,\n      taskId: obj.data.task_id,\n      videoUrl: obj.data.output.video_url,\n      prompt: obj.data.input.prompt\n    };\n  }\n  return null;\n}\n\n// Initialize results array\nconst videoUrls = [];\nlet currentIndex = 1;\n\n// n8n specific: loop through all items\nfor (const item of items) {\n  // Case 1: item.json is our array\n  if (Array.isArray(item.json)) {\n    item.json.forEach(entry => {\n      const videoInfo = extractVideoInfo(entry, currentIndex);\n      if (videoInfo) {\n        videoUrls.push(videoInfo);\n        currentIndex++;\n      }\n    });\n  } \n  // Case 2: item.json is a single object with our data\n  else if (typeof item.json === 'object') {\n    const videoInfo = extractVideoInfo(item.json, currentIndex);\n    if (videoInfo) {\n      videoUrls.push(videoInfo);\n      currentIndex++;\n    }\n    \n    // Case 3: item.json has a data property that is our array\n    if (Array.isArray(item.json.data)) {\n      item.json.data.forEach(entry => {\n        const videoInfo = extractVideoInfo(entry, currentIndex);\n        if (videoInfo) {\n          videoUrls.push(videoInfo);\n          currentIndex++;\n        }\n      });\n    }\n  }\n  \n  // Log what we're working with to help with debugging\n  console.log('Processing item:', JSON.stringify(item.json).substring(0, 200) + '...');\n}\n\n// Return the extracted URLs as the output\nreturn [{\n  json: {\n    totalVideos: videoUrls.length,\n    videos: videoUrls\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        340,
+        1040
+      ],
+      "id": "95226349-739f-4453-8e35-3f7bc8ba5c25",
+      "name": "Split Out Parts (Kling)",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// N8n Code Node to extract URLs from output arrays and combine them into a single array\n\n// This code assumes your input JSON is in items[0].json or is multiple items\n// Determine data source format\nlet inputArray;\n\nif (items.length === 1 && Array.isArray(items[0].json)) {\n  // If we have a single item containing our array\n  inputArray = items[0].json;\n} else if (items.length > 1) {\n  // If we already have multiple items, each containing part of our data\n  inputArray = items.map(item => item.json || item);\n} else {\n  throw new Error('Input structure not recognized. Please check your data format.');\n}\n\n// Create a single array to hold all URLs\nconst urlArray = [];\n\n// Process each item in the input array\nfor (const item of inputArray) {\n  // Get the data object\n  const data = item;\n  \n  // Check if the item has an output array\n  if (data.output && Array.isArray(data.output)) {\n    // For each URL in the output array, add to our URL array\n    for (const url of data.output) {\n      // You can choose to add just the URL or include metadata\n      urlArray.push({\n        url: url,\n        sourceId: data.id,\n        createdAt: data.createdAt\n      });\n    }\n  }\n}\n\n// Return a single item containing the array of all URLs\nreturn [{\n  json: {\n    urls: urlArray\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1260,
+        300
+      ],
+      "id": "bd2ffd6e-9f71-455a-bf8a-670db1ded8cf",
+      "name": "Split Out Parts"
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "reader",
+            "type": "anyone",
+            "allowFileDiscovery": true
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        780,
+        560
+      ],
+      "id": "046689f5-8d9e-4797-bb5f-2e65f5d77384",
+      "name": "Share File",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "60zdCK3Sx2Shlbb4",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Nate Herk | AI Automation",
+        "height": 80,
+        "width": 500,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -300,
+        -460
+      ],
+      "typeVersion": 1,
+      "id": "4905f480-fbe5-4f3d-a208-5ed98dde1ac7",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Grab Idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grab Idea": {
+      "main": [
+        [
+          {
+            "node": "Set Animals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Animals": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 4o": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt Agent": {
+      "main": [
+        [
+          {
+            "node": "Remove \\n",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove \\n": {
+      "main": [
+        [
+          {
+            "node": "Set Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Prompts": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "90 seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "90 seconds": {
+      "main": [
+        [
+          {
+            "node": "Get Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Images": {
+      "main": [
+        [
+          {
+            "node": "Generate Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "8 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Get Videos (Kling)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Video Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Status": {
+      "main": [
+        [
+          {
+            "node": "Sound Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flash 2.0": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sound Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sound Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Audio": {
+      "main": [
+        [
+          {
+            "node": "Generate Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Audio": {
+      "main": [
+        [
+          {
+            "node": "Upload to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Drive": {
+      "main": [
+        [
+          {
+            "node": "Share File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Split Out Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render Video": {
+      "main": [
+        [
+          {
+            "node": "25 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "25 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Upload Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet": {
+      "main": [
+        [
+          {
+            "node": "Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Grab Idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Videos (Kling)": {
+      "main": [
+        []
+      ]
+    },
+    "Generate Videos (Kling)": {
+      "main": [
+        [
+          {
+            "node": "8 Minutes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Videos": {
+      "main": [
+        [
+          {
+            "node": "2 minutes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2 minutes": {
+      "main": [
+        [
+          {
+            "node": "Get Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Videos": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Parts (Kling)": {
+      "main": [
+        []
+      ]
+    },
+    "Split Out Parts": {
+      "main": [
+        [
+          {
+            "node": "Render Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share File": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "8bc68b3b-41ea-442b-8876-d5c1afe77e49",
+  "meta": {
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "Kz1vFWO2scWWgFE7",
+  "tags": []
+}

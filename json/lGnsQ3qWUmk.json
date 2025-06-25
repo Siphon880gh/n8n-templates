@@ -1,0 +1,1296 @@
+{
+  "name": "RESUME SCREENER",
+  "nodes": [
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3820,
+        -1200
+      ],
+      "id": "301ecb38-486c-4020-bc2a-718dee134bff",
+      "name": "Voting Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<extractedResume>\n{{ $json.output }}\n</extractedResume>",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Carefully compare the extracted resume information with the original resume text. Verify that all essential sections are captured accurately and comprehensively.\n\nPersonal Information: Full Name, Email, Phone Number, Professional Profile URL (e.g., LinkedIn, GitHub, portfolio), and Location (City, Country).\n\nProfessional Summary or Objective: Provide a brief summary or objective statement if available.\n\nWork Experience: Job title, company, duration (start and end dates), and key responsibilities and achievements.\n\nEducation: Institution, Degree, Field of Study, Graduation Date.\n\nSkills: Technical and Soft Skills.\n\nCertifications: Certification title, Issuing organization, Date issued (if available).\n\nAdditional: Include everything else here.\n\n\nIf any information is missing, incomplete, or incorrect, clearly state what is missing or incorrect, and provide actionable feedback to correct it.\n\nEvaluation Criteria:\n\nCompleteness: All essential information (Personal Information, Professional Summary/Objective, Work Experience, Education, Skills, Certifications, Additional) must be fully captured without missing details.\n\nAccuracy: Extracted data must accurately represent the original resume content without any distortions or errors.\n\nNo Hallucination: Ensure no information is invented or assumed; extracted data must strictly exist within the original resume text.\n\n\n<originalResumeText>\n{{ $('Document Data').item.json.concatenated_data }}\n</originalResumeText>\n\nReturn your evaluation as valid JSON with one of the following formats:\n\n1. If the extraction passes all criteria:\n{\n  \"pass\": true\n}\n\n2. If the extraction does not meet all criteria:\n{\n  \"pass\": false,\n  \"feedback\": \"Provide concise, actionable suggestions here.\"\n}\n\nNo extra keys or text outside the JSON structure.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2780,
+        -1200
+      ],
+      "id": "3791e8f6-8e96-4e82-83cc-36567b1244f1",
+      "name": "Evaluator"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c7cd25e9-31ab-4c2a-8880-0148aea726c2",
+              "leftValue": "={{ $json.output.pass }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3060,
+        -1200
+      ],
+      "id": "06e97874-edd3-459b-9a2b-316a3d2b1c23",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"pass\": true,\n\t\"feedback\": \"this is empty when pass is true\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3020,
+        -980
+      ],
+      "id": "2671fb11-0067-4c17-93c3-9205d26d6d8d",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "o3-mini",
+          "mode": "list",
+          "cachedResultName": "o3-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2540,
+        -1000
+      ],
+      "id": "16189d88-a175-4980-9671-2c0076d38619",
+      "name": "EO - o3 mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"extractedResume\": {{ JSON.stringify($('Resume Data Extractor').last().json.output) }},\n  \"feedback\": {{  JSON.stringify($json.output.feedback) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2780,
+        -980
+      ],
+      "id": "11d10da5-85b1-46cf-96d4-4341f9e78613",
+      "name": "feedback"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "has:attachment"
+        },
+        "options": {
+          "dataPropertyAttachmentsPrefixName": "data",
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        -1260
+      ],
+      "id": "599b171f-7c5d-486c-ac5a-978bac261d01",
+      "name": "COMPANY EMAIL",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BGXqyN7cgiiOKoo2",
+          "name": "OK98"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $('Document Data').item.json.concatenated_data }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Resume",
+              "description": "Whether or not this document is a resume"
+            },
+            {
+              "category": "No Action Required",
+              "description": "When the document is not a resume"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        2100,
+        -1200
+      ],
+      "id": "59c2a5e3-bd88-49fc-b916-aee364ae2df5",
+      "name": "Classify Attachment"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Document Data').item.json.concatenated_data }}",
+        "options": {
+          "systemMessage": "=Extract the following information from the provided resume: \n\nPersonal Information: Full Name, Email, Phone Number, Professional Profile URL (e.g., LinkedIn, GitHub, portfolio), and Location (City, Country).\n\nProfessional Summary or Objective: Provide a brief summary or objective statement if available.\n\nWork Experience: Job title, company, duration (start and end dates), and key responsibilities and achievements.\n\nEducation: Institution, Degree, Field of Study, Graduation Date.\n\nSkills: Technical and Soft Skills.\n\nCertifications: Certification title, Issuing organization, Date issued (if available).\n\nAdditional: Include everything else here.\n\n{{ $json?.feedback \n  ? `<feedback>${$json.feedback}<currentExtractedData>${$json.extractedResume}</currentExtractedData></feedback>` \n  : '' \n}}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        2500,
+        -1200
+      ],
+      "id": "c697ef96-76ff-4492-babc-169f4c9947c0",
+      "name": "Resume Data Extractor"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f68a5ec-43f7-40b1-9d6c-81a123e08240",
+              "name": "JobDescription",
+              "value": "=Job Title: Full Stack Developer (.NET & React)\nLocation: Remote \nEmployment Type: Full-Time\nAbout the Role:\nWe are seeking a skilled Full Stack Developer with experience in React and .NET to join our dynamic development team. You will work on building, enhancing, and maintaining scalable web applications for diverse business needs.\n\nKey Responsibilities:\nDesign, develop, and maintain web applications using React (frontend) and .NET (backend).\nWrite clean, scalable, and efficient code following best practices.\nCollaborate with UI/UX designers, product managers, and other developers.\nIntegrate APIs, third-party services, and databases (SQL/NoSQL).\nParticipate in code reviews, testing, and deployment activities.\nTroubleshoot, debug, and optimize performance.\nStay updated with emerging technologies and apply them where appropriate.\nTech Stack & Tools:\nFrontend: React, TypeScript, Redux, HTML5, CSS3, Tailwind/Bootstrap\nBackend: .NET Core, C#, Entity Framework\nDatabase: SQL Server, PostgreSQL, or MongoDB\nTools: Git, Docker, CI/CD pipelines, REST APIs, Swagger\nCloud: Azure / AWS  (optional)\nQualifications:\n2+ years of professional experience with React and .NET.\nProficient in C#, JavaScript/TypeScript, and modern frontend frameworks.\nExperience with RESTful API design and integration.\nFamiliarity with database design and query optimization.\nKnowledge of unit testing and version control (Git).\nStrong problem-solving and communication skills.",
+              "type": "string"
+            },
+            {
+              "id": "dd835d2a-b4a9-4b56-a0eb-e13593607671",
+              "name": "PriorityParameters",
+              "value": "={\n  \"PriorityWeights\": {\n    \"TechnicalSkills\": 8,\n    \"RelevantWorkExperience\": 8,\n    \"EducationalBackground\": 3,\n    \"Certifications\": 1,\n    \"LocationProximityOrWorkAuthorization\": 1\n  }\n}",
+              "type": "object"
+            },
+            {
+              "id": "deb86cf0-23e3-4667-bc67-e85a0632616b",
+              "name": "NumberOfIterations",
+              "value": 2,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        -1260
+      ],
+      "id": "84fb5034-b746-4209-b666-fd24c22cf942",
+      "name": "Configuration"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extracted Resume: {{ $json.resumeData }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are tasked with grading a candidate based on the extracted resume data provided below. Evaluate the candidate accurately and precisely on a scale from 0 to 100.\n\nInputs:\nJob Description: {{ $('Configuration').item.json.JobDescription }}\n\nPriority Parameters: Assigns importance to evaluation criteria (scale of 0-10):\n{{\n  Object.entries($('Configuration').item.json.PriorityParameters.PriorityWeights)\n    .map(([key, value]) => `${key}: ${value}`)\n    .join('\\n')\n}}\n\n\nScoring Methodology:\n1. For each priority parameter provided by the recruiter (TechnicalSkills, RelevantWorkExperience, etc.):\n   - Evaluate the candidate in this category on a scale of 0-10\n   - 0: No match/completely inadequate\n   - 5: Partial match/adequate\n   - 10: Perfect match/exemplary\n\n2. Calculate the weighted score:\n   - Multiply each category's raw score (0-10) by its provided priority weight\n   - Sum these weighted scores\n   - Normalize to a 0-100 scale by dividing by the maximum possible score and multiplying by 100\n\nExample calculation:\n- If TechnicalSkills has weight 8 and candidate scores 7/10, contribution is 7 × 8 = 56\n- If RelevantWorkExperience has weight 8 and candidate scores 8/10, contribution is 8 × 8 = 64\n- Add all weighted contributions and divide by maximum possible score (sum of all weights × 10)\n- Multiply by 100 to get final score on 0-100 scale\n\n\nConsistency Guidelines:\n- Calibration Examples: Consider these benchmark scores for reference:\n  * 90-100: Exceptional candidate exceeding all requirements\n  * 75-89: Strong candidate meeting all essential requirements plus several nice-to-haves\n  * 60-74: Qualified candidate meeting most essential requirements\n  * 40-59: Potential candidate missing several key requirements but showing transferable skills\n  * Below 40: Not recommended for this position\n\n- Bias Mitigation: Before finalizing your score, check for potential biases:\n  * Avoid being influenced by university prestige unless directly relevant\n  * Focus on skills and achievements rather than company name recognition\n  * Consider equivalent experience from different industries equally\n  * Ensure you're not penalizing career gaps without context\n\n- Justification Requirement: For any score, provide specific evidence from the resume to support your assessment with at least 3 concrete examples.\n\n\nOutput Structure:\n{\n  \"Score\": 0,\n  \"Reasoning\": \"Provide detailed reasoning explaining the score based on the alignment with the job description, fulfillment of essential and nice-to-have skills, and priority parameters.\"\n}\n\nEnsure your evaluation is detailed and justifies the grading with clear references to provided inputs.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        3460,
+        -1500
+      ],
+      "id": "07f5d0fd-2931-4618-8d0a-c711f1bedfab",
+      "name": "OpenAI Resume Grader",
+      "retryOnFail": true,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.airtable.com/v0/meta/bases/{baseId}/tables",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"description\": \"Candidate resume data\",\n  \"name\": \"Resume Data\",\n  \"fields\": [\n    {\n      \"name\": \"First Name\",\n      \"type\": \"singleLineText\"\n    },\n    {\n      \"name\": \"Last Name\",\n      \"type\": \"singleLineText\"\n    },\n    {\n      \"name\": \"Email\",\n      \"type\": \"email\"\n    },\n    {\n      \"name\": \"Phone\",\n      \"type\": \"phoneNumber\"\n    },\n    {\n      \"name\": \"Professional Url\",\n      \"type\": \"url\"\n    },\n    {\n      \"name\": \"Score\",\n      \"type\": \"number\",\n      \"options\": {\n        \"precision\": 1\n      }\n    },\n    {\n      \"name\": \"Reasoning\",\n      \"type\": \"multilineText\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        -1820
+      ],
+      "id": "44d07732-45de-4bb4-9673-8e7ca2b344cf",
+      "name": "Create Resume Table",
+      "credentials": {
+        "airtableApi": {
+          "id": "TEqbAKI9oPFmDdHH",
+          "name": "Airtable account"
+        },
+        "httpHeaderAuth": {
+          "id": "uFOcsczctJLwCibo",
+          "name": "Airtable Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extracted Resume: {{ $json.resumeData }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are tasked with grading a candidate based on the extracted resume data provided below. Evaluate the candidate accurately and precisely on a scale from 0 to 100.\n\nInputs:\nJob Description: {{ $('Configuration').item.json.JobDescription }}\n\nPriority Parameters: Assigns importance to evaluation criteria:\n{{\n  Object.entries($('Configuration').item.json.PriorityParameters.PriorityWeights)\n    .map(([key, value]) => `${key}: ${value}`)\n    .join('\\n')\n}}\n\n\nScoring Methodology:\n1. For each priority parameter provided by the recruiter (TechnicalSkills, RelevantWorkExperience, etc.):\n   - Evaluate the candidate in this category on a scale of 0-10\n   - 0: No match/completely inadequate\n   - 5: Partial match/adequate\n   - 10: Perfect match/exemplary\n\n2. Calculate the weighted score:\n   - Multiply each category's raw score (0-10) by its provided priority weight\n   - Sum these weighted scores\n   - Normalize to a 0-100 scale by dividing by the maximum possible score and multiplying by 100\n\nExample calculation:\n- If TechnicalSkills has weight 8 and candidate scores 7/10, contribution is 7 × 8 = 56\n- If RelevantWorkExperience has weight 8 and candidate scores 8/10, contribution is 8 × 8 = 64\n- Add all weighted contributions and divide by maximum possible score (sum of all weights × 10)\n- Multiply by 100 to get final score on 0-100 scale\n\n\nConsistency Guidelines:\n- Calibration Examples: Consider these benchmark scores for reference:\n  * 90-100: Exceptional candidate exceeding all requirements\n  * 75-89: Strong candidate meeting all essential requirements plus several nice-to-haves\n  * 60-74: Qualified candidate meeting most essential requirements\n  * 40-59: Potential candidate missing several key requirements but showing transferable skills\n  * Below 40: Not recommended for this position\n\n- Bias Mitigation: Before finalizing your score, check for potential biases:\n  * Avoid being influenced by university prestige unless directly relevant\n  * Focus on skills and achievements rather than company name recognition\n  * Consider equivalent experience from different industries equally\n  * Ensure you're not penalizing career gaps without context\n\n- Justification Requirement: For any score, provide specific evidence from the resume to support your assessment with at least 3 concrete examples.\n\n\nOutput Structure:\n{\n  \"Score\": 0,\n  \"Reasoning\": \"Provide detailed reasoning explaining the score based on the alignment with the job description, fulfillment of essential and nice-to-have skills, and priority parameters.\"\n}\n\nEnsure your evaluation is detailed and justifies the grading with clear references to provided inputs.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        3460,
+        -1200
+      ],
+      "id": "ef4b6ebb-720e-49ea-83dc-69de5f3b0cc5",
+      "name": "Anthropic Resume Grader",
+      "retryOnFail": true,
+      "maxTries": 3
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3460,
+        -720
+      ],
+      "id": "f550c7f7-71e5-49df-940c-1dc379140cf6",
+      "name": "2.0 Flash Grader",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Wmas7f2LBKkthj1j",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the value of NumberOfIteration from the Configuration node\nconst numberOfIterations = $('Configuration').first().json.NumberOfIterations\n\n// Validate the number (optional)\nif (typeof numberOfIterations !== 'number' || numberOfIterations < 1) {\n  throw new Error(\"Invalid NumberOfIteration value.\");\n}\n\n// Create an array of empty objects based on the numberOfIterations\nconst result = [];\nfor (let i = 0; i < numberOfIterations; i++) {\n  result.push({ json: {\n    resumeData: $('Resume Data Extractor').item.json.output\n  } });\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3300,
+        -1200
+      ],
+      "id": "87b5f199-20fc-469f-817d-37924336dcea",
+      "name": "Code",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extracted Resume: {{ $json.resumeData }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are tasked with grading a candidate based on the extracted resume data provided below. Evaluate the candidate accurately and precisely on a scale from 0 to 100.\n\nInputs:\nJob Description: {{ $('Configuration').item.json.JobDescription }}\n\nPriority Parameters: Assigns importance to evaluation criteria (scale of 0-10):\n{{\n  Object.entries($('Configuration').item.json.PriorityParameters.PriorityWeights)\n    .map(([key, value]) => `${key}: ${value}`)\n    .join('\\n')\n}}\n\n\nScoring Methodology:\n1. For each priority parameter provided by the recruiter (TechnicalSkills, RelevantWorkExperience, etc.):\n   - Evaluate the candidate in this category on a scale of 0-10\n   - 0: No match/completely inadequate\n   - 5: Partial match/adequate\n   - 10: Perfect match/exemplary\n\n2. Calculate the weighted score:\n   - Multiply each category's raw score (0-10) by its provided priority weight\n   - Sum these weighted scores\n   - Normalize to a 0-100 scale by dividing by the maximum possible score and multiplying by 100\n\nExample calculation:\n- If TechnicalSkills has weight 8 and candidate scores 7/10, contribution is 7 × 8 = 56\n- If RelevantWorkExperience has weight 8 and candidate scores 8/10, contribution is 8 × 8 = 64\n- Add all weighted contributions and divide by maximum possible score (sum of all weights × 10)\n- Multiply by 100 to get final score on 0-100 scale\n\n\nConsistency Guidelines:\n- Calibration Examples: Consider these benchmark scores for reference:\n  * 90-100: Exceptional candidate exceeding all requirements\n  * 75-89: Strong candidate meeting all essential requirements plus several nice-to-haves\n  * 60-74: Qualified candidate meeting most essential requirements\n  * 40-59: Potential candidate missing several key requirements but showing transferable skills\n  * Below 40: Not recommended for this position\n\n- Bias Mitigation: Before finalizing your score, check for potential biases:\n  * Avoid being influenced by university prestige unless directly relevant\n  * Focus on skills and achievements rather than company name recognition\n  * Consider equivalent experience from different industries equally\n  * Ensure you're not penalizing career gaps without context\n\n- Justification Requirement: For any score, provide specific evidence from the resume to support your assessment with at least 3 concrete examples.\n\n\nOutput Structure:\n{\n  \"Score\": 0,\n  \"Reasoning\": \"Provide detailed reasoning explaining the score based on the alignment with the job description, fulfillment of essential and nice-to-have skills, and priority parameters.\"\n}\n\nEnsure your evaluation is detailed and justifies the grading with clear references to provided inputs."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        3440,
+        -900
+      ],
+      "id": "5b98e484-a7b9-4234-a7b9-37d4a24faec3",
+      "name": "Gemini Resume Grader",
+      "retryOnFail": true,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        4020,
+        -1200
+      ],
+      "id": "d5e7d575-5eef-4b90-82d0-9a5ff585cda3",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"Score\": {{ $json.output.map(item => item.Score).reduce((a, b) => a + b, 0) / $json.output.length}},\n  \"CombinedReasoning\": {{ JSON.stringify($json.output.map(item => item.Reasoning).join('\\n')) }},\n  \"ResumeData\": {{ JSON.stringify( $('Resume Data Extractor').item.json.output) }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4140,
+        -1200
+      ],
+      "id": "4a13b0aa-857e-4b34-9e73-ce54355bcf20",
+      "name": "Summary"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app0e8Mtu7Iu2VEW4",
+          "mode": "list",
+          "cachedResultName": "N8N",
+          "cachedResultUrl": "https://airtable.com/app0e8Mtu7Iu2VEW4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblP4hlvHQzPouXbs",
+          "mode": "list",
+          "cachedResultName": "Resume Data",
+          "cachedResultUrl": "https://airtable.com/app0e8Mtu7Iu2VEW4/tblP4hlvHQzPouXbs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reasoning": "={{ $json.output.Summary }}",
+            "First Name": "={{ $json.output.FirstName }}",
+            "Last Name": "={{ $json.output.LastName }}",
+            "Email": "={{ $json.output.Email }}",
+            "Phone": "={{ $json.output.Phone }}",
+            "Professional Url": "={{ $json.output.ProfessionalURL }}",
+            "Score": "={{ $('Summary').item.json.Score }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Professional Url",
+              "displayName": "Professional Url",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Reasoning",
+              "displayName": "Reasoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        4580,
+        -760
+      ],
+      "id": "b3a0e208-382f-4a93-8fd1-df5e4282cbad",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "bEx4hCs2WSZXBmfO",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Score\": 0,\n  \"Reasoning\": \"Provide detailed reasoning explaining the score based on the alignment with the job description, fulfillment of essential and nice-to-have skills, and priority parameters.\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3820,
+        -900
+      ],
+      "id": "70a7569b-08a7-4cc9-a04c-5ea7e1c1ecaf",
+      "name": "Grade Parser"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        3260,
+        -920
+      ],
+      "id": "5af445ef-6ae7-4a18-b7dd-78f2f5b27ec7",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        4260,
+        -1000
+      ],
+      "id": "38315fdd-c8f1-4c6d-9673-c6309f746009",
+      "name": "O3-MINI Grader1",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const binary = $('COMPANY EMAIL').item.binary;\nconst result = [];\n\nfor (const key of Object.keys(binary)) {\n  const binaryData = binary[key];\n\n  result.push({\n    json: {\n      fileName: binaryData.fileName,\n      mimeType: binaryData.mimeType,\n      fileSize: binaryData.fileSize,\n      fileExtension: binaryData.fileExtension,\n      fieldName: key  // Optional: lets you reference the field\n    },\n    binary: {\n      [key]: binaryData\n    }\n  });\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1260,
+        -1200
+      ],
+      "id": "ec8e56d2-da47-40e3-8d4e-e94e00123637",
+      "name": "Binary Extractor"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mimeType }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "dbe1e8db-d4ab-447c-a6da-547f95204c6c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3a2d560b-7085-4fbc-8a01-d088615e6923",
+                    "leftValue": "={{ $json.mimeType }}",
+                    "rightValue": "text/html",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1380,
+        -1200
+      ],
+      "id": "f0004da9-311e-4711-aacb-41a4fe4db94c",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "={{$json.fieldName}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        -1300
+      ],
+      "id": "ecb92d66-1ae5-4c37-a01d-5484232b63ac",
+      "name": "PDF EXTRACTOR"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "binaryPropertyName": "={{$json.fieldName}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        -1080
+      ],
+      "id": "e227e95e-6e41-45e3-ada1-2d196206170c",
+      "name": "HTML EXTRACTOR"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<OverallScore>\nCandidate Overall Score: {{ $json.Score }}\n</OverallScore>\n\n<CombinedReasoning>\n{{ $json.CombinedReasoning }}\n</CombinedReasoning>\n\n<ResumeData>\n{{ $json.ResumeData }}\n</ResumeData>",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Create a unified summary from <CombinedReasoning> by merging all key points into one clear, concise paragraph. Preserve all important evaluation details and avoid redundancy. For Context, the Overall Score of the candidate can be found in the <OverallScore> section.\n\n\nFrom <ResumeData>, extract:\nFirstName\nLastName\nEmail\nPhone\nProfessionalURL\nIf any information cannot be found, leave the field empty.\n\nPlease follow the following output format\n\nOutput Format:\n{\n  \"Summary\": \"Unified summary from CombinedReasoning.\",\n  \"FirstName\": \"John\",\n  \"LastName\": \"Doe\",\n  \"Email\": \"JohnDoe@gmail.com\",\n  \"Phone\": \"+ 90 51 etc\",\n  \"ProfessionalURL\": \"www.linkedin.com\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        4260,
+        -1200
+      ],
+      "id": "daa83f9b-5246-4dc6-b7d9-0fea36f25a6a",
+      "name": "Distiller Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Summary\": \"Unified summary from CombinedReasoning.\",\n  \"FirstName\": \"\",\n  \"LastName\": \"\",\n  \"Email\": \"\",\n  \"Phone\": \"\",\n  \"ProfessionalURL\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        4440,
+        -1000
+      ],
+      "id": "222964f1-179e-4766-a949-f10a90ab553f",
+      "name": "Distilled Output"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-3-5-sonnet-20241022",
+          "mode": "list",
+          "cachedResultName": "Claude 3.5 Sonnet (New)"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        3460,
+        -1060
+      ],
+      "id": "ce2b301a-6f7c-4950-af67-8633952c7812",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "PwuwcK3SurM5266H",
+          "name": "Anthropic account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        -1260
+      ],
+      "id": "571c4dc1-4018-4881-8b3c-0979ba7fcee4",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"data\": {{ JSON.stringify($json.text ?? $json.data) }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1780,
+        -1200
+      ],
+      "id": "248020e5-bfde-4ba7-ba7a-eafeec6a644c",
+      "name": "Extracted Data"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        1940,
+        -1200
+      ],
+      "id": "1e453d9c-5714-412b-832d-738bb2271190",
+      "name": "Document Data"
+    },
+    {
+      "parameters": {
+        "content": "# Create the Table with this\n\n\n### 1. If you haven't already, create an account following [this guide](https://docs.n8n.io/integrations/builtin/credentials/airtable/#supported-authentication-methods).\n### 2. Create a new [Token](https://airtable.com/create/tokens)\n### 3. Add the token to the \"Header Auth\" Section in the Http Node Below\n### 4. Copy the Base ID from Airtable (starts with 'app') and replace `{baseId}` in the URL field of the HTTP node. This is the base where the table will be created. You can find the Base ID in the URL as shown below.\n![Image](https://i.imgur.com/aEYaHZ8.png)\n\n\n\n\n\n\n## 5. RUN! ->",
+        "height": 680,
+        "width": 760,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        740,
+        -2340
+      ],
+      "id": "5abdda19-9ece-40c3-929b-6d671f305619",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        900,
+        -1820
+      ],
+      "id": "12fba31b-4812-4922-8404-09487406248a",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "content": "# Evaluator & Optimizer Pattern",
+        "height": 620,
+        "width": 820,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2420,
+        -1340
+      ],
+      "id": "6e09ebf5-c0bb-4e7b-9a01-21bbee2cadfa",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# PARALLELIZATION: VOTING Pattern",
+        "height": 1020,
+        "width": 700,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3260,
+        -1620
+      ],
+      "id": "3e91bbed-957e-49cf-82f5-eae3fa828dd5",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3460,
+        -1320
+      ],
+      "id": "91ae7cc4-f882-484d-b97c-94a33c54e3ce",
+      "name": "OpenAI Grader",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Voting Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluator": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Evaluator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EO - o3 mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Evaluator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Classify Attachment",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Resume Data Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "feedback": {
+      "main": [
+        [
+          {
+            "node": "Resume Data Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "COMPANY EMAIL": {
+      "main": [
+        [
+          {
+            "node": "Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Attachment": {
+      "main": [
+        [
+          {
+            "node": "Resume Data Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Data Extractor": {
+      "main": [
+        [
+          {
+            "node": "Evaluator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuration": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Resume Grader": {
+      "main": [
+        [
+          {
+            "node": "Voting Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Resume Grader": {
+      "main": [
+        [
+          {
+            "node": "Voting Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "2.0 Flash Grader": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini Resume Grader",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Resume Grader",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Resume Grader",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gemini Resume Grader",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Resume Grader": {
+      "main": [
+        [
+          {
+            "node": "Voting Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary": {
+      "main": [
+        [
+          {
+            "node": "Distiller Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grade Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "OpenAI Resume Grader",
+            "type": "ai_outputParser",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Resume Grader",
+            "type": "ai_outputParser",
+            "index": 0
+          },
+          {
+            "node": "Gemini Resume Grader",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI Resume Grader",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Gemini Resume Grader",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Resume Grader",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "O3-MINI Grader1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Distiller Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Binary Extractor": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "PDF EXTRACTOR",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTML EXTRACTOR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF EXTRACTOR": {
+      "main": [
+        [
+          {
+            "node": "Extracted Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML EXTRACTOR": {
+      "main": [
+        [
+          {
+            "node": "Extracted Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Distiller Agent": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Distilled Output": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Distiller Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Anthropic Resume Grader",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Binary Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracted Data": {
+      "main": [
+        [
+          {
+            "node": "Document Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Data": {
+      "main": [
+        [
+          {
+            "node": "Classify Attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create Resume Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Grader": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "OpenAI Resume Grader",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "413a0e0a-cb9d-4bae-8b3a-e6c8d6e23736",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f3130526459e1309ac4588328f0c877843a975ce87cb56510970ea4653bdfb74"
+  },
+  "id": "99vm9PAgpemhsfys",
+  "tags": []
+}

@@ -1,0 +1,157 @@
+{
+  "name": "1. Generate Application Copy",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7d8ad24a-0ac5-4ea8-ac0f-9088d1e9b1e0",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent Upwork application writer.",
+              "role": "system"
+            },
+            {
+              "content": "=I'm an automation specialist applying to jobs on freelance platforms.\n\nYour task is to take as input an Upwork job description and return as output a customized proposal.\n\nHigh-performing proposals are typically templated as follows:\n\n```\nHi, I do {thing} all the time. Am so confident I'm the right fit for you that I just created a workflow diagram + a demo of your {thing} in no-code: $$$\n\nAbout me: I'm a {relevantJobDescription} that has done {coolRelevantThing}. Of note, {otherCoolTieIn}.\n\nHappy to do this for you anytime—just respond to this proposal (else I don't get a chat window). \n\nThank you!\n```\n\nOutput your results in JSON using this format:\n\n{\"proposal\":\"Your proposal\"}\n\nRules:\n- $$$ is what we're using to replace links later on, so leave that untouched.\n- Write in a casual, spartan tone of voice.\n- Don't use emojis or flowery language.\n- If there's a name included somewhere in the description, add it after \"Hi\"\n\nSome facts about me for the personalization: {{ $json.aboutMe }}\n"
+            },
+            {
+              "content": "={\"jobDescription\":\"{{ $('Execute Workflow Trigger').item.json.query }}\"}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        440,
+        0
+      ],
+      "id": "95b75b18-177e-45c8-8054-b109475c23b6",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e980c92c-07d9-400e-b40c-a8fbdbe8bbcb",
+              "name": "aboutMe",
+              "value": "I'm an AI and automation freelancer that builds outreach systems, CRM systems, project management systems, no-code systems, and integrations.|Some notable things I've done:- End to end project management for a $1M/yr copywriting agency- Outbound acquisition system that grew a content company from $10K/mo to $92K/mo in 12 mo- Monday.com CRM and PM for a recruiting company doing >$1M/yr- Automated content generation system for an SEO agency doing >$10M/yr- ClickUp CRM build for a marketing company doing $1M/yr- I run a Make.com community that does $100,000/mo- I run a YouTube channel about automation with over 50,000 subscribers- Email outreach system for a $MM San Diego real estate brokerage that closed $150K revenue in the first three days- Email outreach systems for a $200K/mo ecommerce dog treat company",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d714bace-8f7c-40fc-b556-c2221455777d",
+      "name": "Set Variable"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "468a03c7-1537-435a-9f98-ce7c58a51c8b",
+              "name": "response",
+              "value": "={{ $json.message.content.proposal }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        0
+      ],
+      "id": "beb0dc85-bfe3-4fa3-a2ac-bf1018e69a0b",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Variable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variable": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1e574d8c-20a3-4a2f-b12b-bb6e982add85",
+  "meta": {
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "HOncCvVmxtQKVDy5",
+  "tags": [
+    {
+      "createdAt": "2025-01-23T18:12:52.273Z",
+      "updatedAt": "2025-01-23T18:12:52.273Z",
+      "id": "l8MPK4ZirgwFWMno",
+      "name": "N8N Course"
+    }
+  ]
+}

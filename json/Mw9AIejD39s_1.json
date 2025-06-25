@@ -1,0 +1,314 @@
+{
+  "name": "Google Sheet Watch Changes",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e26a4b1d-c7ed-4a65-8d61-ff3d17d198103",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b4c5d501-f41f-4929-a7fc-d41feecd138b",
+      "name": "Webhook",
+      "webhookId": "e26a4b1d-c7ed-4a65-8d61-ff3d17d19810"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.range.columnStart }}",
+                    "rightValue": 7,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "512f7d73-542c-428a-ab82-d2dbdf11fb7f",
+                    "leftValue": "={{ $json.body.range.columnStart }}",
+                    "rightValue": 8,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b03b7337-434a-4f1e-babb-128f347bc444",
+                    "leftValue": "={{ $json.body.range.columnStart }}",
+                    "rightValue": 9,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        460,
+        0
+      ],
+      "id": "cb1b74dc-6602-4bf8-b2d0-8fb1921f3fec",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c15ef578-470c-4fba-afb1-7cc20905e49e",
+              "leftValue": "={{ $json.body.value }}",
+              "rightValue": "TRUE",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "7c4c2fd7-11cd-4947-8dbd-e2fc40b04be5",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.body.rowValues[0][\"2\"] }}",
+        "subject": "Thanks for inquiring with ABC company!",
+        "emailType": "text",
+        "message": "=Hey {{ $json.body.rowValues[0][\"0\"] }},\n\nThanks for inquiring. \n\nBest,\nJono",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        -120
+      ],
+      "id": "46345975-f2f2-4934-b718-448ca0fc5b8c",
+      "name": "Gmail",
+      "webhookId": "bb556487-0484-438a-a1f0-0cf66f454223",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "vbYCZg5MvSoAANCu",
+          "name": "Gmail account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/hooks/6Jwyv0H9PIQbm8a1APCN/webhook-trigger/d6714a8f-0e46-4e4d-87a0-ce2bf3f2583a",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $json.body.rowValues[0][\"2\"] }}"
+            },
+            {
+              "name": "package",
+              "value": "={{ $json.body.rowValues[0][\"11\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        120
+      ],
+      "id": "6c932aee-75ae-437d-a45a-e6deb9fd601f",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "jonocatliff.app.n8n.cloud",
+            "user-agent": "Mozilla/5.0 (compatible; Google-Apps-Script; beanserver; +https://script.google.com; id: UAEmdDd_I7eaFwcEmykTS2IkPd7NY8uTzIg)",
+            "content-length": "525",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "107.178.203.97",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "9279cb4bb4d12edd-SEA",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "107.178.203.97, 172.71.147.134",
+            "x-forwarded-host": "jonocatliff.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-32-7487c6b997-gc8kf",
+            "x-is-trusted": "yes",
+            "x-real-ip": "107.178.203.97"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "spreadsheetId": "1T-OYuge_YUWGv-nY372FP2HpB2jvWLKPdVwUN8c7Jrw",
+            "spreadsheetName": "n8n Custom Dashboard",
+            "sheetId": 0,
+            "sheetName": "Sheet1",
+            "rangeA1Notation": "G5",
+            "range": {
+              "columnEnd": 7,
+              "columnStart": 9,
+              "rowEnd": 5,
+              "rowStart": 5
+            },
+            "oldValue": "false",
+            "value": "TRUE",
+            "user": {
+              "email": "jonocatliff@gmail.com",
+              "nickname": "jonocatliff"
+            },
+            "rowValues": [
+              {
+                "0": "Jono",
+                "1": "Catliff",
+                "2": "jccatliff@gmail.com",
+                "3": 4321233333,
+                "4": "",
+                "5": true,
+                "6": true,
+                "7": "",
+                "8": "",
+                "9": "",
+                "10": "Sales Call",
+                "11": "A",
+                "12": "2025-03-28T15:53:03.069-04:00",
+                "13": ""
+              }
+            ]
+          },
+          "webhookUrl": "https://jonocatliff.app.n8n.cloud/webhook-test/e26a4b1d-c7ed-4a65-8d61-ff3d17d198103",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1063c2f4-f09c-4273-8893-c70d3d21b572",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "V6Y4KGdrGhKZqONo",
+  "tags": []
+}

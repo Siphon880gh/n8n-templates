@@ -1,0 +1,138 @@
+{
+  "name": "n8n Excuse Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "0e80e6c0-cde2-4314-a073-8a38a856332f",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        -40
+      ],
+      "id": "912ed09f-9a5f-4b83-b5a2-1658ad676368",
+      "name": "Webhook",
+      "webhookId": "0e80e6c0-cde2-4314-a073-8a38a856332f"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=The problem: {{ $json.body.problem }}\nTone: {{ $json.body.tone }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an AI Excuse Generator. Your job is to create clever, creative, and context-appropriate excuses that someone could use to avoid or get out of a situation.\n\n## Instructions\n1) You will receive a problem as well as a tone for the excuse.\n2) Possible tones include:\n- Realistic: Believable and reasonable\n- Funny: Lighthearted and humorous\n- Ridiculous: Over-the-top and clearly fake, but entertaining\n- Outrageous: Wild and dramatic, pushing the limits of believability\n3) Your excuse should be 1–3 sentences long and match the selected tone.\n\n## Output\n- Only return the excuse\n- Add a touch of humor to the excuses.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        160,
+        -40
+      ],
+      "id": "b4a94ceb-c372-4aab-a905-a7786eadd3bc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        180
+      ],
+      "id": "cd66a2d8-49a5-401f-8298-f846b40268a5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zkQ3q030SsRCNbNh",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        -40
+      ],
+      "id": "c681bc04-866b-4289-937d-9a7d25145aa0",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "# 🛠 **Setup Guide**\n\n## 👨‍💻 [**Nate Herk**](https://www.youtube.com/@nateherk)\n\n1️⃣ **OpenAI Credential**  \nSet up your OpenAI credentials (or connect a different chat model if preferred).\n\n2️⃣ **Webhook URL**  \nCopy the webhook URL:  \nUse the **Test URL** for testing workflows  \nUse the **Production URL** for live workflows  \nThen, paste it into Lovable so it knows where to send data.\n\n3️⃣ **Respond to Lovable**  \nMake sure your workflow includes a **\"Respond to Webhook\"** node so Lovable can receive the data back.\n\n✅ That’s it! You’re ready to build magic.\n",
+        "height": 480,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -740,
+        -120
+      ],
+      "id": "d96879b0-8ac3-424b-9cd7-e5334e587922",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "029ed104-a060-4b0c-aabc-d7425aa241a6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "lPiOfpsAioed41rJ",
+  "tags": []
+}

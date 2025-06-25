@@ -1,0 +1,303 @@
+{
+  "name": "2. Generate Google Doc Proposal",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        0
+      ],
+      "id": "d6f6b3db-3151-406d-b4bb-0eade87b69c1",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "1rUO3VaO2yDGO5wf0Zz72gaG7e__wjXY26PJkX8h-Y00",
+          "mode": "list",
+          "cachedResultName": "Google Docs Upwork Proposal Template",
+          "cachedResultUrl": "https://docs.google.com/document/d/1rUO3VaO2yDGO5wf0Zz72gaG7e__wjXY26PJkX8h-Y00/edit?usp=drivesdk"
+        },
+        "name": "={{ $json.message.content.titleOfSystem }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        500,
+        0
+      ],
+      "id": "7bd3e147-b2f2-4b7e-83de-fcbf39ba105e",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "reader",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        720,
+        0
+      ],
+      "id": "f8e4e9a8-82d6-4999-b7fd-1bcc6cc0b56e",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent proposal writer.",
+              "role": "system"
+            },
+            {
+              "content": "=I'm an automation specialist applying to jobs on freelance platforms.\n\nYour task is to take as input an Upwork job description and return as output JSON for a customized proposal (which I'll upload to Google Docs).\n\nHigh-performing proposals are typically templated as follows:\n\n```\n# {titleOfSystem} \n## {briefExplanationOfSystem}\n\nHi. As mentioned, I’m so confident I’m the right fit for this I went ahead and created a proposal for you, including a step-by-step of how I’d do it.\n\nI’ve done the below many times and working with {specificPartOfTheirRequest} is actually one of my favorite things to do. Talk about serendipity!\n\nAnyway, here’s how we'll build {paraphrasedSystem}:\n{stepByStepBulletPoints}\n\nSo basically, {leftToRightFlowWithArrows}.\n\nA little about me:\n{aboutMeBulletPoints}\n\nTo be upfront: my goal is to work with you on a long-term retainer, since I find it aligns incentives and lets me help clients better. So I'd treat everything we do together as foundational, and help you build systems that drive revenue/maximize cost savings. \n\nI am really confident I can blow this out of the park for you, so if this sounds like something you're into, just respond to my proposal on Upwork & we'll take it from there. \n\nThank you for your time!\n```\n\nOutput your results in JSON using this format:\n\n{\n  \"titleOfSystem\": \"\",\n  \"briefExplanationOfSystem\": \"\",\n  \"specificPartOfTheirRequest\": \"\",\n  \"stepByStepBulletPoints\": \"\",\n  \"leftToRightFlowWithArrows\": \"\",\n  \"aboutMeBulletPoints\": \"\",\n}\n\nRules:\n- Write in a casual, spartan tone of voice.\n- Don't use emojis or flowery language.\n- If there's a name included somewhere in the description, add it for personalization purposes.\n- Return \"stepByStepBulletPoints\" and \"aboutMeBulletPoints\" as strings, and delimit each bullet point with a \\n and make sure it includes a -\n- In \"aboutMeBulletPoints\", prefer to mention social proof that includes $ and numbers.\n- For \"leftToRightFlowWithArrows\", write a simplified left to right flow delimited by \"->\" strings. For instance, we receive a new email -> we add that to the CRM -> we send an email to the new lead.\n- Use first-person \"I\" language, like \"I'd streamline...\" for bullet points etc.\n\n\nSome facts about me for the personalization: {{ $json.aboutMe }}\n"
+            },
+            {
+              "content": "={\"jobDescription\":\"{{ $('Execute Workflow Trigger').item.json.query }}\"}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        120,
+        0
+      ],
+      "id": "183f7403-9b45-41ff-a8b9-930a4bdf1404",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e980c92c-07d9-400e-b40c-a8fbdbe8bbcb",
+              "name": "aboutMe",
+              "value": "I'm an AI and automation freelancer that builds outreach systems, CRM systems, project management systems, no-code systems, and integrations.|Some notable things I've done:- End to end project management for a $1M/yr copywriting agency- Outbound acquisition system that grew a content company from $10K/mo to $92K/mo in 12 mo- Monday.com CRM and PM for a recruiting company doing >$1M/yr- Automated content generation system for an SEO agency doing >$10M/yr- ClickUp CRM build for a marketing company doing $1M/yr- I run a Make.com community that does $100,000/mo- I run a YouTube channel about automation with over 50,000 subscribers- Email outreach system for a $MM San Diego real estate brokerage that closed $150K revenue in the first three days- Email outreach systems for a $200K/mo ecommerce dog treat company",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "db659b7c-bd2e-4dc9-8451-9e47d6c421ad",
+      "name": "Set Variable"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Google Drive').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "{{titleOfSystem}}",
+              "replaceText": "={{ $('OpenAI').item.json.message.content.titleOfSystem }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{briefExplanationOfSystem}}",
+              "replaceText": "={{ $('OpenAI').item.json.message.content.briefExplanationOfSystem }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{specificPartOfTheirRequest}}",
+              "replaceText": "={{ $('OpenAI').item.json.message.content.specificPartOfTheirRequest }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{stepByStepBulletPoints}}",
+              "replaceText": "={{ $('OpenAI').item.json.message.content.stepByStepBulletPoints }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{leftToRightFlowWithArrows}}",
+              "replaceText": "={{ $('OpenAI').item.json.message.content.leftToRightFlowWithArrows }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{aboutMeBulletPoints}}",
+              "replaceText": "={{ $('OpenAI').item.json.message.content.aboutMeBulletPoints }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        940,
+        0
+      ],
+      "id": "cfd8f51b-0cae-4319-a730-7608f393e3bf",
+      "name": "Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "bWX69KE7zZ04MuP3",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "74b2ef09-da1d-4fe0-b6ea-242f25edf5e8",
+              "name": "urlOfProposal",
+              "value": "=https://docs.google.com/document/d/{{ $json.documentId }}/edit",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1160,
+        0
+      ],
+      "id": "9dbe74e4-da18-4a4b-90a2-a5050372329c",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Variable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variable": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "928cc6e5-8513-46ee-99a4-d550f55398d1",
+  "meta": {
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "95AZvQ50eHm2pFVA",
+  "tags": [
+    {
+      "createdAt": "2025-01-23T18:12:52.273Z",
+      "updatedAt": "2025-01-23T18:12:52.273Z",
+      "id": "l8MPK4ZirgwFWMno",
+      "name": "N8N Course"
+    }
+  ]
+}

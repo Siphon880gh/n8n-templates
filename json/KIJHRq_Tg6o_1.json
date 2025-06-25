@@ -1,0 +1,499 @@
+{
+  "name": "🤖Customer Support Email Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "id": "e0f8d436-f232-4267-9d4b-5c1a96904674",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1020,
+        140
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PblbJue2OKr80hIY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "48bb2e0c-15a8-4f10-bca7-4d1d67ac7296",
+              "name": "emailBody",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "06a6a58d-58f8-42c7-a4d8-988d52565ec2",
+              "name": "threadID",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "e9624de8-55ce-4ceb-a47b-26ce1028f57b",
+              "name": "from",
+              "value": "={{ $json.to.value[0].address }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d036c8db-7278-4b8d-832d-1cf24534277a",
+      "name": "Set Content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1180,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Prompt:\nAnalyze the content of the following email and determine whether it is related to customer support. If the email pertains to any of the following topics, mark customerSupport as true; otherwise, mark it as false.\n\nCustomer Support Topics Include:\n\nQuestions about order status, tracking, or changes\nIssues with damaged or defective products\nRefund or return requests\nSubscription cancellations or adjustments\nTechnical issues with products, website, or app\nPayment or billing inquiries\nRequests for speaking with a support representative\n\nOutput:\nProvide the result in JSON format with a field named \"customerSupport\" set to true or false.",
+              "role": "system"
+            },
+            {
+              "content": "=Here is the incoming email: {{ $json.emailBody }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "f26b56e7-5f2f-4485-8e0f-f7e9eafc9edd",
+      "name": "Customer Support Eval",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        1360,
+        140
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "PI7dqswJpx1Asynn",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4e809672-faf2-4414-a2a1-5d1783b42dc8",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        80
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "PI7dqswJpx1Asynn",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "customerSupportDocs",
+        "description": "Retrieves information about our customer support policies and FAQs"
+      },
+      "id": "de4c9b1c-ded5-4e3f-b636-66c6035957b7",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3a908f4f-4659-436f-8f33-a8849d353f13",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2340,
+        320
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "PI7dqswJpx1Asynn",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d1960c8b-0331-43ac-84fc-de4b487fb6d2",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        2120,
+        400
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "PI7dqswJpx1Asynn",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "sample",
+          "mode": "list",
+          "cachedResultName": "sample"
+        },
+        "options": {
+          "pineconeNamespace": "customerSupport"
+        }
+      },
+      "id": "fe486e71-0838-426b-a388-f527684b41aa",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        240
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "kRQGVexSgzWhzJz2",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "threadId": "={{ $('Set Content').item.json.threadID }}",
+          "sendTo": "={{ $('Set Content').item.json.from }}"
+        }
+      },
+      "id": "8d22575d-8ba9-4025-b89e-7158d2beaac5",
+      "name": "createDraft",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        2540,
+        100
+      ],
+      "webhookId": "aa94fec5-4706-4d8d-89e0-ba0ebe17452e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PblbJue2OKr80hIY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Set Content').item.json.emailBody }}",
+        "options": {
+          "systemMessage": "=# System Role\nYou are a highly skilled and empathetic customer support agent specializing in drafting professional and helpful responses to incoming customer emails.\n\n# Task Specification\n1. Take an incoming customer support email.\n2. Use the **\"customerSupportDocs\"** tool to look up relevant policies or FAQs to ensure accurate and policy-compliant responses.\n3. Create a draft response using the **\"createDraft\"** tool.\n4. After drafting the email, provide a concise summary of the email content.\n\nEnsure the response:\n- Directly addresses the customer's query.\n- Maintains a polite and professional tone.\n- Ends with the sign-off:  \n  **\"Kelly, Customer Support ABC Corp.\"**\n\n# Specifics and Context\n- You must use the **\"customerSupportDocs\"** tool before drafting to ensure the response aligns with company policies and FAQs.\n- The **\"createDraft\"** tool must be used to finalize and prepare the draft for sending.\n- The summary should briefly explain the issue addressed and the key points or resolution provided in the response.\n\n# Examples\n## Example 1\n**Incoming Email:**  \n\"I ordered a product a week ago, but it still hasn't shipped. When will it arrive?\"\n\n**customerSupportDocs Search Query:**  \n\"shipping timelines\"\n\n**Relevant Info Found:**  \nStandard shipping takes 7–10 business days. Delays may occur during high-demand periods.\n\n**Draft Response (via createDraft):**  \nDear [Customer's Name],  \n\nThank you for reaching out regarding your order. Standard shipping typically takes 7–10 business days. However, during high-demand periods, there may be slight delays.  \n\nI’ve checked your order, and it’s currently being prepared for shipment. You should receive a tracking number shortly. If you have any further questions, feel free to let me know.  \n\nBest regards,  \nKelly, Customer Support ABC Corp  \n\n**Summary:**  \nDrafted a response to inform the customer about shipping timelines (7–10 business days) and noted that their order is being prepared for shipment. Included reassurance and an invitation for further inquiries.\n\n---\n\n## Example 2\n**Incoming Email:**  \n\"I tried to cancel my subscription but was still charged this month. Can I get a refund?\"\n\n**customerSupportDocs Search Query:**  \n\"subscription cancellation policy\"\n\n**Relevant Info Found:**  \nCancellations must be made 48 hours before the next billing cycle to avoid charges.\n\n**Draft Response (via createDraft):**  \nDear [Customer's Name],  \n\nThank you for contacting us about your subscription charge. Our records show the cancellation was processed after the billing cycle had begun. To avoid future charges, cancellations must be made at least 48 hours prior to the next billing cycle.  \n\nAs a courtesy, I’ve initiated a refund for this month’s charge. Please allow 3–5 business days for the refund to appear on your statement.  \n\nIf you have any other questions, feel free to reach out.  \n\nBest regards,  \nKelly, Customer Support ABC Corp  \n\n**Summary:**  \nDrafted a response explaining the subscription cancellation policy (48-hour notice) and initiated a one-time refund as a courtesy. Provided reassurance and invited further questions.\n\n# Reminders\n- Always use **\"customerSupportDocs\"** to ensure responses align with company policies and FAQs.\n- Use the **\"createDraft\"** tool to finalize the email draft.\n- Summarize the draft concisely, covering the issue addressed and the resolution or key points provided.\n- Maintain a polite, professional, and empathetic tone.\n- Always sign off as:  \n  **\"Kelly, Customer Support ABC Corp.\"**\n"
+        }
+      },
+      "id": "31b9d45a-8e32-4bdb-95a6-dbebb6fe1811",
+      "name": "Customer Support Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2160,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "=",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "cc75e564-6f0f-41ac-a6e9-e74483980d31",
+      "name": "Response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2560,
+        -120
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "9jQWan3cOz3tE62s",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "=You received an email at {{ $now.format('hh:mm') }} saying:\n\n{{ $('Set Content').item.json.emailBody }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "ecfa14c2-63b3-4f71-a5af-f03521a213c3",
+      "name": "Response Not Customer Support",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1900,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "9jQWan3cOz3tE62s",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.content.customerSupport }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Customer Support"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3461ccc2-8323-4c31-b964-618240c03795",
+                    "leftValue": "={{ $json.message.content.customerSupport }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Not Customer Support"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "73111908-e61a-4436-95a9-6137e5f2d764",
+      "name": "Customer Support?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1680,
+        140
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Content": {
+      "main": [
+        [
+          {
+            "node": "Customer Support Eval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Support Eval": {
+      "main": [
+        [
+          {
+            "node": "Customer Support?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Customer Support Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Customer Support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createDraft": {
+      "ai_tool": [
+        [
+          {
+            "node": "Customer Support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Support Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Support?": {
+      "main": [
+        [
+          {
+            "node": "Customer Support Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response Not Customer Support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "507d9f13-8c9e-4547-b693-38c24d7af234",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "8FC4O1mKGQxIq8BR",
+  "tags": []
+}

@@ -1,0 +1,224 @@
+{
+  "name": "Logo Generator (AI Graphic Designer)",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "imagePrompt"
+            },
+            {
+              "name": "resolution"
+            },
+            {
+              "name": "imageType"
+            },
+            {
+              "name": "fileName"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        460,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "gpt-image-1",
+        "prompt": "={{ $json.imagePrompt }}",
+        "options": {
+          "quality": "low",
+          "size": "={{ $json.resolution }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        680,
+        360
+      ],
+      "id": "a28371e9-9734-40ed-93c3-315a21b7e2b0",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "SPa2bDcl9q7nQ6ZB",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('When Executed by Another Workflow').item.json.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        900,
+        360
+      ],
+      "id": "bae2a251-106b-4b2a-9177-a9b41e80ba99",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        360
+      ],
+      "id": "ee896236-807b-4f93-90ae-8583e4ea33d2",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc5839f6-8d08-405e-bf8e-fc038e1bb121",
+              "name": "webViewLink",
+              "value": "={{ $('Google Drive').item.json.webViewLink }}",
+              "type": "string"
+            },
+            {
+              "id": "0808c18a-075d-4d90-bbec-55a505512d30",
+              "name": "initialPrompt",
+              "value": "={{ $('When Executed by Another Workflow').item.json.imagePrompt }}",
+              "type": "string"
+            },
+            {
+              "id": "26209b1c-9d62-48a3-a4a6-290802b2e0c5",
+              "name": "fileName",
+              "value": "={{ $('When Executed by Another Workflow').item.json.fileName }}",
+              "type": "string"
+            },
+            {
+              "id": "2d72a62f-1871-43a4-9c8f-687d0006b31d",
+              "name": "imageType",
+              "value": "={{ $('When Executed by Another Workflow').item.json.imageType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1340,
+        360
+      ],
+      "id": "2de05cea-89cf-441b-b106-a7200238b173",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a42ddcdb-bc1c-40c7-bb6b-c8870e35f448",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "6XCAq81V1voPR3kB",
+  "tags": []
+}

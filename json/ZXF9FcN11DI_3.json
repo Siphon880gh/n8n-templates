@@ -1,0 +1,349 @@
+{
+  "name": "Image Processing",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"message\": \"\",\n  \"id\": \"\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        -140
+      ],
+      "id": "f43baa6a-b459-4126-aa16-f9e91bbd730f",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        -140
+      ],
+      "id": "9d936bc8-13d1-4fd9-9c2c-dda1226c0563",
+      "name": "Telegram",
+      "webhookId": "0b60a1de-a75c-4b2f-ae0f-aa63111441a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "01mV9LiKwL8ZJOqv",
+          "name": "Telegram account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You're an intelligent bot that is great at extracting data from text. Here is the information you need to extract:\n{{ $('When Executed by Another Workflow').item.json.message }}",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the document you need to extract the right information from\n{{ $json.choices[0].message.content }}"
+            },
+            {
+              "content": "Please output the following in JSON data as structured below:\n{\n  \"invoice_number\": \"INV-1001\",\n  \"invoice_date\": \"2025-03-26\",\n  \"due_date\": \"2025-04-02\",\n  \"sender\": {\n    \"company_name\": \"Your Company Name\",\n    \"address\": \"123 Business St, Suite 100\",\n    \"city\": \"Toronto\",\n    \"province\": \"ON\",\n    \"postal_code\": \"M1A 2B3\",\n    \"country\": \"Canada\",\n    \"email\": \"info@yourcompany.com\",\n    \"phone\": \"+1-123-456-7890\"\n  },\n  \"recipient\": {\n    \"company_name\": \"Client Company Inc.\",\n    \"contact_name\": \"Jane Doe\",\n    \"address\": \"456 Client Rd\",\n    \"city\": \"Vancouver\",\n    \"province\": \"BC\",\n    \"postal_code\": \"V5K 0A1\",\n    \"country\": \"Canada\",\n    \"email\": \"jane.doe@client.com\"\n  },\n  \"items\": [\n    {\n      \"description\": \"Website Design\",\n      \"quantity\": 1,\n      \"unit_price\": 2000.00,\n      \"total\": 2000.00\n    },\n    {\n      \"description\": \"Monthly Hosting (March)\",\n      \"quantity\": 1,\n      \"unit_price\": 100.00,\n      \"total\": 100.00\n    }\n  ],\n  \"subtotal\": 2100.00,\n  \"taxes\": [\n    {\n      \"type\": \"GST\",\n      \"rate\": 5,\n      \"amount\": 105.00\n    }\n  ],\n  \"total\": 2205.00,\n  \"currency\": \"CAD\",\n  \"notes\": \"Thank you for your business!\",\n  \"terms\": \"Payment due within 7 days.\"\n}\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        860,
+        -140
+      ],
+      "id": "367648e2-587b-4a0f-8171-9f9285f7140e",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "TO1vFDrcaE6Gx0cU",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "message.content.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        -140
+      ],
+      "id": "fbfdd9d7-4dfc-45e8-b83e-3c94e3209cfd",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1i1ZPwD-lkKh5ByZrA6UDRWVgqAKHN0q3oazNR0BpEXM",
+          "mode": "list",
+          "cachedResultName": "n8n OCR Extraction",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i1ZPwD-lkKh5ByZrA6UDRWVgqAKHN0q3oazNR0BpEXM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i1ZPwD-lkKh5ByZrA6UDRWVgqAKHN0q3oazNR0BpEXM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.description }}",
+            "QTY": "={{ $json.quantity }}",
+            "Line Item": "={{ $json.description }}",
+            "Price": "={{ $json.total }}",
+            "Invoice Total": "={{ $('OpenAI').item.json.message.content.total }}",
+            "Invoice #": "={{ $('OpenAI').item.json.message.content.invoice_number }}",
+            "Date": "={{ $('OpenAI').item.json.message.content.invoice_date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Line Item",
+              "displayName": "Line Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Invoice #",
+              "displayName": "Invoice #",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "QTY",
+              "displayName": "QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Invoice Total",
+              "displayName": "Invoice Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1420,
+        -140
+      ],
+      "id": "4f6b41f9-353d-42c2-809a-c0b2edc7905e",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "text": "Please pull out all the text from this image",
+        "inputType": "base64",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        640,
+        -140
+      ],
+      "id": "a5f0be64-0775-40ef-8820-55517b605c02",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "TO1vFDrcaE6Gx0cU",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "composite",
+        "dataPropertyNameComposite": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        440,
+        -140
+      ],
+      "id": "c7d3eb2d-5b35-44ac-bb0b-4677edc643f8",
+      "name": "Edit Image"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "message": "Please pull out the tax, discount and line items",
+          "document": "AgACAgEAAxkBAAMqZ-RXMezjje1ukK6HPluIWdCyUc4AAtiuMRv7byFHqE7UVzYsuuEBAAMCAANtAAM2BA"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Edit Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "10a08212-de2e-4cf6-9321-52b342776018",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "m0C4Xan9A80W4bjz",
+  "tags": []
+}

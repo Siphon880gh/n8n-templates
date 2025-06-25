@@ -244,6 +244,32 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                         $categories = [];
                         $availableDownloads = 0;
 
+                        // Function to find all JSON files for a given template ID
+                        function findJsonFiles($jsonDir, $templateId) {
+                            $jsonFiles = [];
+                            if (empty($templateId)) return $jsonFiles;
+                            
+                            // Check for base file first
+                            $baseFile = $jsonDir . $templateId . '.json';
+                            if (file_exists($baseFile)) {
+                                $jsonFiles[] = $baseFile;
+                            }
+                            
+                            // Check for numbered variants
+                            $counter = 1;
+                            while (true) {
+                                $numberedFile = $jsonDir . $templateId . '_' . $counter . '.json';
+                                if (file_exists($numberedFile)) {
+                                    $jsonFiles[] = $numberedFile;
+                                    $counter++;
+                                } else {
+                                    break;
+                                }
+                            }
+                            
+                            return $jsonFiles;
+                        }
+
                         if (file_exists($csvPath)) {
                             $handle = fopen($csvPath, 'r');
                             $headers = fgetcsv($handle, 0, ',', '"', '\\'); // Get headers
@@ -289,17 +315,18 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                             $creators[] = $creator;
                                         }
                                         
-                                        // Collect unique categories for filter
-                                        $category = trim($template['category'] ?? '');
-                                        if (!empty($category) && !in_array($category, $categories)) {
-                                            $categories[] = $category;
-                                        }
-                                        
-                                        // Check if JSON file exists
-                                        $jsonFile = $jsonDir . ($template['id'] ?? '') . '.json';
-                                        if (file_exists($jsonFile)) {
-                                            $availableDownloads++;
-                                        }
+                                                                // Collect unique categories for filter
+                        $category = trim($template['category'] ?? '');
+                        if (!empty($category) && !in_array($category, $categories)) {
+                            $categories[] = $category;
+                        }
+                        
+                        // Check if JSON files exist (including numbered variants)
+                        $templateId = $template['id'] ?? '';
+                        $jsonFiles = findJsonFiles($jsonDir, $templateId);
+                        if (!empty($jsonFiles)) {
+                            $availableDownloads++;
+                        }
                                     }
                                 }
                                 fclose($handle);
@@ -332,14 +359,14 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                 }
                             }
                             
-                            // Check if JSON file exists
-                            $jsonFile = $jsonDir . $id . '.json';
-                            $hasJsonFile = file_exists($jsonFile);
+                            // Check if JSON files exist (including numbered variants)
+                            $jsonFiles = findJsonFiles($jsonDir, $id);
+                            $hasJsonFiles = !empty($jsonFiles);
                             
                             // Truncate description for display
                             $shortDescription = strlen($description) > 150 ? substr($description, 0, 150) . '...' : $description;
                             
-                            echo '<tr class="hover:bg-gray-50 template-row" data-creator="' . strtolower($creator) . '" data-search="' . strtolower($name . ' ' . $title . ' ' . $description . ' ' . $creator . ' ' . $category) . '" data-category="' . strtolower($category) . '" data-template="' . strtolower($name) . '" data-date="' . htmlspecialchars($formattedDate) . '" data-download="' . ($hasJsonFile ? '1' : '0') . '" data-view="' . ($hasJsonFile ? '1' : '0') . '">';
+                            echo '<tr class="hover:bg-gray-50 template-row" data-creator="' . strtolower($creator) . '" data-search="' . strtolower($name . ' ' . $title . ' ' . $description . ' ' . $creator . ' ' . $category) . '" data-category="' . strtolower($category) . '" data-template="' . strtolower($name) . '" data-date="' . htmlspecialchars($formattedDate) . '" data-download="' . ($hasJsonFiles ? '1' : '0') . '" data-view="' . ($hasJsonFiles ? '1' : '0') . '">';
                             
                             // Category column
                             echo '<td class="px-6 py-4 text-center">';
@@ -392,10 +419,37 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             
                             // Download column
                             echo '<td class="px-6 py-4 text-center">';
-                            if ($hasJsonFile) {
-                                echo '<a href="' . htmlspecialchars($jsonFile) . '" download class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full hover:bg-green-200 transition-colors">';
-                                echo '<i class="fas fa-download mr-1"></i> JSON';
-                                echo '</a>';
+                            if ($hasJsonFiles) {
+                                if (count($jsonFiles) == 1) {
+                                    // Single file
+                                    echo '<a href="' . htmlspecialchars($jsonFiles[0]) . '" download class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full hover:bg-green-200 transition-colors">';
+                                    echo '<i class="fas fa-download mr-1"></i> JSON';
+                                    echo '</a>';
+                                } else {
+                                    // Multiple files - show dropdown
+                                    echo '<div class="relative inline-block text-left">';
+                                    echo '<button onclick="toggleDropdown(\'download-' . htmlspecialchars($id) . '\')" class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full hover:bg-green-200 transition-colors">';
+                                    echo '<i class="fas fa-download mr-1"></i> JSON (' . count($jsonFiles) . ')';
+                                    echo '<i class="fas fa-chevron-down ml-1"></i>';
+                                    echo '</button>';
+                                    echo '<div id="download-' . htmlspecialchars($id) . '" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">';
+                                    echo '<div class="py-1">';
+                                    foreach ($jsonFiles as $index => $jsonFile) {
+                                        $filename = basename($jsonFile);
+                                        $label = str_replace($id, '', str_replace('.json', '', $filename));
+                                        if (empty($label)) {
+                                            $label = 'Main';
+                                        } else {
+                                            $label = 'Part ' . ltrim($label, '_');
+                                        }
+                                        echo '<a href="' . htmlspecialchars($jsonFile) . '" download class="block px-4 py-2 text-xs text-gray-700 hover:bg-gray-100">';
+                                        echo '<i class="fas fa-download mr-2"></i>' . htmlspecialchars($label);
+                                        echo '</a>';
+                                    }
+                                    echo '</div>';
+                                    echo '</div>';
+                                    echo '</div>';
+                                }
                             } else {
                                 echo '<span class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">';
                                 echo '<i class="fas fa-times mr-1"></i> N/A';
@@ -405,10 +459,37 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             
                             // View column
                             echo '<td class="px-6 py-4 text-center">';
-                            if ($hasJsonFile) {
-                                echo '<button onclick="viewJson(\'' . htmlspecialchars($jsonFile) . '\', \'' . htmlspecialchars(addslashes($name)) . '\')" class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors">';
-                                echo '<i class="fas fa-eye mr-1"></i> View';
-                                echo '</button>';
+                            if ($hasJsonFiles) {
+                                if (count($jsonFiles) == 1) {
+                                    // Single file
+                                    echo '<button onclick="viewJson(\'' . htmlspecialchars($jsonFiles[0]) . '\', \'' . htmlspecialchars(addslashes($name)) . '\')" class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors">';
+                                    echo '<i class="fas fa-eye mr-1"></i> View';
+                                    echo '</button>';
+                                } else {
+                                    // Multiple files - show dropdown
+                                    echo '<div class="relative inline-block text-left">';
+                                    echo '<button onclick="toggleDropdown(\'view-' . htmlspecialchars($id) . '\')" class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors">';
+                                    echo '<i class="fas fa-eye mr-1"></i> View (' . count($jsonFiles) . ')';
+                                    echo '<i class="fas fa-chevron-down ml-1"></i>';
+                                    echo '</button>';
+                                    echo '<div id="view-' . htmlspecialchars($id) . '" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">';
+                                    echo '<div class="py-1">';
+                                    foreach ($jsonFiles as $index => $jsonFile) {
+                                        $filename = basename($jsonFile);
+                                        $label = str_replace($id, '', str_replace('.json', '', $filename));
+                                        if (empty($label)) {
+                                            $label = 'Main';
+                                        } else {
+                                            $label = 'Part ' . ltrim($label, '_');
+                                        }
+                                        echo '<button onclick="viewJson(\'' . htmlspecialchars($jsonFile) . '\', \'' . htmlspecialchars(addslashes($name . ' - ' . $label)) . '\')" class="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-100">';
+                                        echo '<i class="fas fa-eye mr-2"></i>' . htmlspecialchars($label);
+                                        echo '</button>';
+                                    }
+                                    echo '</div>';
+                                    echo '</div>';
+                                    echo '</div>';
+                                }
                             } else {
                                 echo '<span class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">';
                                 echo '<i class="fas fa-times mr-1"></i> N/A';
@@ -737,6 +818,33 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
         $(document).on('keydown', function(e) {
             if (e.key === 'Escape' && !$('#jsonModal').hasClass('hidden')) {
                 closeJsonModal();
+            }
+        });
+        
+        // Dropdown toggle function for multiple JSON files
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const isHidden = dropdown.classList.contains('hidden');
+            
+            // Close all other dropdowns first
+            document.querySelectorAll('[id^="download-"], [id^="view-"]').forEach(d => {
+                if (d.id !== dropdownId) {
+                    d.classList.add('hidden');
+                }
+            });
+            
+            // Toggle current dropdown
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        }
+        
+        // Close dropdowns when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.relative').length) {
+                $('[id^="download-"], [id^="view-"]').addClass('hidden');
             }
         });
     </script>

@@ -1,0 +1,959 @@
+{
+  "name": "Viral Fashion Reels",
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "id": "c8c5a8ef-50ff-46ba-bdfe-45d5494762ae",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        2660,
+        640
+      ],
+      "webhookId": "dc8a5198-d383-4df8-8fcb-c959a50b7a68",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a21fe2d1-533b-4f09-94aa-9312c3dd05b8",
+              "name": "=prompt",
+              "type": "string",
+              "value": "=Analyze the Reels video: 1. What is the video about, in one sentence 2. What is the hook of the video - e.g. first 5 seconds usually, maybe the first text on the screen, maybe the first words of the author - this is the thing that is made to grab attention of the viewer 3. What is going on in the video - write me a whole script, that I can easily replicate, include the whole text of the author (if there is any text at all), include all the important details. Structure your output like this: 1. Idea: ..., 2. Hook: ..., 3. Script: ... - WRITE NOTHING ELSE EXCEPT FOR THIS 3 BULLETS, NO EXTRA WORDS AT THE BEGINNING."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4dc1c473-145f-46de-a72a-e17d684d56f5",
+      "name": "Set Prompt",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2820,
+        640
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/upload/v1beta/files",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyAG9XFqflVl98aHxLSrgN4kX4CriZ_yEm8"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Upload-Protocol",
+              "value": "resumable"
+            },
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "start"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Length",
+              "value": "={{ $json.Video[0].size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Type",
+              "value": "={{ $json.Video[0].type }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"file\": {\n\"display_name\": \"{{ $json.Video[0].filename }}\"\n}\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "438382d6-e07e-4279-b6c1-0af8ec71709d",
+      "name": "Gemini - Generate Upload URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1980,
+        640
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Gemini - Generate Upload URL').item.json.headers['x-goog-upload-url'] }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyAG9XFqflVl98aHxLSrgN4kX4CriZ_yEm8"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Length",
+              "value": "={{ $('Get Video').item.json.Video[0].size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Offset",
+              "value": "0"
+            },
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "upload, finalize"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {
+          "response": {}
+        }
+      },
+      "id": "e640e8b9-eafa-4bde-81d7-72c009dda0b5",
+      "name": "Gemini - Upload File",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2320,
+        640
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyAG9XFqflVl98aHxLSrgN4kX4CriZ_yEm8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n   \"contents\": [\n      {\n         \"parts\": [\n            {\n               \"text\": \"{{ $json.prompt }}\"\n            },\n            {\n               \"file_data\": {\n                  \"mime_type\": \"{{ $('Save Values').item.json.mimeType }}\",\n                  \"file_uri\": \"{{ $('Save Values').item.json.gemini_file_url }}\"\n               }\n            }\n         ]\n      }\n   ]\n}\n",
+        "options": {
+          "response": {}
+        }
+      },
+      "id": "14f42184-aea3-4369-8d56-1456089ccc65",
+      "name": "Gemini - Ask Questions",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3020,
+        640
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4fb7b732-17f9-41a2-986d-5d62b1331242",
+              "name": "gemini_file_url",
+              "type": "string",
+              "value": "={{ $json.file.uri }}"
+            },
+            {
+              "id": "5f3018b4-571f-433c-a07b-2fb86f63b9b6",
+              "name": "mimeType",
+              "type": "string",
+              "value": "={{ $json.file.mimeType }}"
+            },
+            {
+              "id": "c5532f11-ec31-49f8-aa26-7f42b7d24fa4",
+              "name": "airtable_rec_id",
+              "type": "string",
+              "value": "={{ $('Get Video').item.json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b7b622d2-e0c3-4ca3-be98-370106d13d92",
+      "name": "Save Values",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2500,
+        640
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "apify_api_iCr3t5mDFPGpi4PbW0WRMb5M9xIwQW02Ltzd"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"addParentData\": false,\n    \"directUrls\": [\n        \"https://www.instagram.com/{{ $json['Instagram Username'] }}/\"\n    ],\n    \"enhanceUserSearchWithFacebookPage\": false,\n    \"isUserReelFeedURL\": false,\n    \"isUserTaggedFeedURL\": false,\n    \"onlyPostsNewerThan\": \"{{ new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().slice(0, 10) }}\",\n    \"resultsLimit\": 20,\n    \"resultsType\": \"stories\"\n}",
+        "options": {}
+      },
+      "id": "03d8c02c-a2cf-436a-9975-198964083c5c",
+      "name": "Apify - Fetch Reels",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1920,
+        340
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "views",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9d3abe88-6eb5-49b8-8fa9-2f7dc196d8bb",
+      "name": "Sort",
+      "type": "n8n-nodes-base.sort",
+      "position": [
+        2340,
+        340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "id": "d392e34d-6bf4-414b-b1dd-9ade826888b2",
+      "name": "Limit",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        2540,
+        340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"url\": {{ JSON.stringify($json.videoUrl) }}\n,\n  \"views\": {{ $json.videoViewCount }},\n\"caption\": {{ JSON.stringify($json.caption) }}\n,\n\"creator\": \"{{ $('Loop Over Items').item.json.Name }}\"\n}",
+        "options": {}
+      },
+      "id": "41c12dbb-7ef3-49ef-9b7a-a8e2be916b71",
+      "name": "Save Fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2120,
+        340
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9cb83247-b6da-47d8-be78-4b0a35d20589",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        1660,
+        340
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Get Video').item.json.Video[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "7175a2b5-08e0-4cf0-bd4a-86f2a44457c8",
+      "name": "Download File",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2160,
+        640
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appoQM8cbMoz4HHlh",
+          "mode": "list",
+          "cachedResultName": "Viral Fashion Reels",
+          "cachedResultUrl": "https://airtable.com/appoQM8cbMoz4HHlh"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllWMXkRYTI9WiFW",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appoQM8cbMoz4HHlh/tbllWMXkRYTI9WiFW"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Caption": "={{ $json.caption }}",
+            "Video": "={{ [ {\"url\":$json.url} ] }}",
+            "Creator": "={{ $json.creator }}",
+            "Views": "={{ $json.views }}",
+            "Creation Date": "={{ new Date().toISOString().split('T')[0] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video",
+              "displayName": "Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Creation Date",
+              "displayName": "Creation Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Views",
+              "displayName": "Views",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Guideline",
+              "displayName": "Guideline",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "42735507-be94-4f89-b59c-81b394baf37b",
+      "name": "Create Video",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        1580,
+        640
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appoQM8cbMoz4HHlh",
+          "mode": "list",
+          "cachedResultName": "Viral Fashion Reels",
+          "cachedResultUrl": "https://airtable.com/appoQM8cbMoz4HHlh"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllWMXkRYTI9WiFW",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appoQM8cbMoz4HHlh/tbllWMXkRYTI9WiFW"
+        },
+        "id": "={{ $json.id }}",
+        "options": {}
+      },
+      "id": "e341f320-1c96-4421-881a-310d5f609a35",
+      "name": "Get Video",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        1780,
+        640
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appoQM8cbMoz4HHlh",
+          "mode": "list",
+          "cachedResultName": "Viral Fashion Reels",
+          "cachedResultUrl": "https://airtable.com/appoQM8cbMoz4HHlh"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllWMXkRYTI9WiFW",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appoQM8cbMoz4HHlh/tbllWMXkRYTI9WiFW"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Get Video').first().json.id }}",
+            "Guideline": "={{ $json.candidates[0].content.parts[0].text }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video",
+              "displayName": "Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Creation Date",
+              "displayName": "Creation Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Views",
+              "displayName": "Views",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Guideline",
+              "displayName": "Guideline",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "0edd7978-591e-42ef-afdb-552983c86649",
+      "name": "Set Guideline",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        3200,
+        640
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appoQM8cbMoz4HHlh",
+          "mode": "list",
+          "cachedResultName": "Viral Fashion Reels",
+          "cachedResultUrl": "https://airtable.com/appoQM8cbMoz4HHlh"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblp31TvkFft8LGhP",
+          "mode": "list",
+          "cachedResultName": "Creators",
+          "cachedResultUrl": "https://airtable.com/appoQM8cbMoz4HHlh/tblp31TvkFft8LGhP"
+        },
+        "returnAll": false,
+        "limit": null,
+        "options": {}
+      },
+      "id": "ed5b33d6-286e-462e-be15-55797911378c",
+      "name": "Search Creators",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        1440,
+        340
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 5
+            }
+          ]
+        }
+      },
+      "id": "139f0895-7ad0-49cd-8124-1102e4e0b71f",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        1220,
+        340
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "### Replace Apify token",
+        "height": 80,
+        "width": 220,
+        "color": 6
+      },
+      "id": "72f41a3f-dc2f-4dc9-8c96-6235e716cd0b",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1860,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Replace Google token",
+        "height": 80,
+        "width": 200,
+        "color": 6
+      },
+      "id": "bd4f4344-ed36-49a8-aade-b45fbcd2f6a7",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1940,
+        540
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Replace Google token",
+        "height": 80,
+        "width": 200,
+        "color": 6
+      },
+      "id": "6ecce2eb-8229-4de2-8c7f-70419d3b6abf",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2280,
+        540
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Replace Google token",
+        "height": 80,
+        "width": 200,
+        "color": 6
+      },
+      "id": "b3173af5-fc59-49f8-9ad4-acb143a963ac",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3000,
+        540
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Set your own prompt for analysis",
+        "height": 80,
+        "width": 200,
+        "color": 6
+      },
+      "id": "112c91bf-bb38-42f3-b2e7-4ec93b8fcbe8",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2780,
+        540
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": "={{ $node['Loop Over Items1'].context[\"done\"] }}"
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1320,
+        620
+      ],
+      "id": "162c4191-0f93-4799-9e4f-8d50f5b7b8c7",
+      "name": "Loop Over Items1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Set Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Generate Upload URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Prompt": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Ask Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Fields": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Values": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Video": {
+      "main": [
+        [
+          {
+            "node": "Get Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Upload File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Apify - Fetch Reels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Creators": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search Creators",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify - Fetch Reels": {
+      "main": [
+        [
+          {
+            "node": "Save Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Upload File": {
+      "main": [
+        [
+          {
+            "node": "Save Values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Ask Questions": {
+      "main": [
+        [
+          {
+            "node": "Set Guideline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Generate Upload URL": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Guideline": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "a3f749bc-5e48-4a69-82fd-d7c6a71b0bb9",
+  "meta": {
+    "templateId": "2993",
+    "instanceId": "69f54ab0f1afba7dd61c0a7a7609df8a8bd98642cf42d92572ea26f947c9a1d8"
+  },
+  "id": "chgO33CUGN1nApJS",
+  "tags": []
+}

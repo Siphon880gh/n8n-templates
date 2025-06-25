@@ -1,0 +1,222 @@
+{
+  "name": "AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "83ba2991-1cff-449e-970f-19d14f34d03e",
+      "name": "When chat message received",
+      "webhookId": "9ffd410c-30e0-4d4c-a356-821528a7c246"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview  \nYou are an AI agent designed to assist users by sending emails based on their queries. The agent uses the \"sendEmail\" tool to format and deliver messages effectively and the \"contactDatabase\" tool to retrieve contact information such as email addresses.  \n\n## Context  \n- The agent receives messages from users and identifies when an email needs to be sent.  \n- If the recipient's email address is not provided, the agent retrieves it using the \"contactDatabase\" tool.  \n- The agent should be friendly, helpful, and concise in its communication.  \n- The email content must reflect professionalism and clarity.  \n\n## Instructions  \n1. Receive the user message via the chat input.  \n2. Analyze the message to identify the email recipient, subject, and body.  \n3. If the recipient’s email address is missing:  \n   - Use the \"contactDatabase\" tool to look up the contact details.  \n   - Confirm with the user if multiple contacts are found with similar names.  \n4. Format the email appropriately:  \n   - Include a greeting and closing statement.  \n   - Add any required attachments (if specified).  \n5. Send the formatted email using the \"sendEmail\" tool.  \n6. Provide the user with a confirmation that the email has been sent successfully.  \n\n## Tools  \n- **OpenAI Chat Model**: Processes user inputs and generates responses.  \n- **Window Buffer Memory**: Retains the chat history for context.  \n- **sendEmail Tool**: Handles sending email messages based on the input fields.  \n- **contactDatabase Tool**: Retrieves contact data, such as email addresses, based on the recipient's name.  \n\n## Examples  \n- **Input**: \"Please send an email to John about the meeting tomorrow at 3 PM.\"  \n  - **Action**: If \"John\" is not associated with an email in the request, query \"contactDatabase\" for John's email address.  \n  - **Output**: \"Email sent to John (john@example.com) with the subject 'Meeting Reminder' and the body: 'Hi John, just a reminder that our meeting is scheduled for tomorrow at 3 PM. Let me know if you need anything else.'”  \n\n- **Input**: \"Send an update to Sarah with the latest report attached.\"  \n  - **Action**: Retrieve Sarah’s email address if it is not included. Attach the latest report.  \n  - **Output**: \"Email sent to Sarah (sarah@example.com) with the subject 'Latest Report' and the report attached.\"  \n\n## SOP (Standard Operating Procedure)  \n1. **Identify User Intent**: Ensure the message is a request to send an email.  \n2. **Extract Key Details**: Identify recipient, subject, message content, and any additional instructions (e.g., attachments).  \n3. **Check Contact Information**:  \n   - If the email address is not provided, query \"contactDatabase\" for the recipient’s contact details.  \n   - Handle multiple results by confirming with the user which contact to use.  \n4. **Generate Email Content**:  \n   - Start with \"Hi [Recipient Name],\"  \n   - Add the message body and a friendly closing.  \n5. **Send Email**:  \n   - Trigger the \"sendEmail\" tool with the prepared fields.  \n   - Handle any errors and notify the user if the email fails to send.  \n6. **Confirm with the User**: Provide feedback that the email has been successfully sent.  \n\n## Final Notes  \n- If no contact is found, ask the user to provide the recipient's email manually.  \n- Always confirm the correct contact if there are multiple entries with similar names.  \n- Maintain context using memory for longer conversations to avoid asking redundant questions. \n---  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        0
+      ],
+      "id": "eca5a04a-f283-40b8-ab16-5a9ce7328403",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        220
+      ],
+      "id": "c0e5146c-1bdc-47c1-baeb-9687819d0174",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        300,
+        220
+      ],
+      "id": "743af5a9-afc3-4b37-8252-5a1c94731b50",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"emailRecipient\") }}",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        220
+      ],
+      "id": "cfed0d4d-0997-4e61-88e8-96543c65390e",
+      "name": "sendEmail",
+      "webhookId": "fb1742fc-9eb4-42b8-9543-7e74eebdb962",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PblbJue2OKr80hIY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        220
+      ],
+      "id": "bce08512-095c-4107-80f3-d8fe7da09ee5",
+      "name": "contactDatabase",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DKJyEjZyGh00GFMv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fda8a59e-fa5e-44f3-b0c7-9943676c870a",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        0
+      ],
+      "id": "6fe06fb2-ee42-40bf-8ba3-0164292ea31a",
+      "name": "Output"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendEmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contactDatabase": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "40397ef5-7adf-4e0a-affd-8428d250285a",
+  "meta": {
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "90blCgGajJ0AJYDg",
+  "tags": []
+}

@@ -1,0 +1,267 @@
+{
+  "name": "Speed To Lead",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1a198aa3-71ab-4154-866e-672bf538e110",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        20
+      ],
+      "id": "91603513-42b7-4323-b7d4-940eb9930673",
+      "name": "Webhook",
+      "webhookId": "1a198aa3-71ab-4154-866e-672bf538e110"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/hooks/t9Oq9bMWtOjZsfpDCFVa/webhook-trigger/u5YeAgOT63AqmkYS2Qlf",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $('Webhook').item.json.body.Email }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ $('Webhook').item.json.body.Phone }}"
+            },
+            {
+              "name": "first_name",
+              "value": "={{ $('Webhook').item.json.body['First Name'] }}"
+            },
+            {
+              "name": "last_name",
+              "value": "={{ $('Webhook').item.json.body['Last Name'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        20
+      ],
+      "id": "d3dd74c0-355d-451b-98cc-ebd1ded43d67",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1AxISYIh33GopJl5wIdAmqE8Ue9OvrEBuMDacGUV1w6s",
+          "mode": "list",
+          "cachedResultName": "n8n New Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AxISYIh33GopJl5wIdAmqE8Ue9OvrEBuMDacGUV1w6s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AxISYIh33GopJl5wIdAmqE8Ue9OvrEBuMDacGUV1w6s/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "First Name": "={{ $('Webhook').item.json.body['First Name'] }}",
+            "Last Name": "={{ $('Webhook').item.json.body['Last Name'] }}",
+            "Email": "={{ $('Webhook').item.json.body.Email }}",
+            "Phone": "=647-000-0000",
+            "Date": "={{ $today }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Called",
+              "displayName": "Called",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        420,
+        20
+      ],
+      "id": "705b5ada-1522-4611-96b3-155340cc31d7",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=7557078776",
+        "text": "=New Lead:\nName: {{ $('Webhook').item.json.body['First Name'] }}\nEmail: {{ $('Webhook').item.json.body.Email }}\nPhone: 647-000-0000",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        840,
+        20
+      ],
+      "id": "3962af3b-580b-406f-a443-46965840ba8d",
+      "name": "Telegram",
+      "webhookId": "c19e0d52-cc68-467a-9898-70a9aa2a66d2",
+      "credentials": {
+        "telegramApi": {
+          "id": "hEr06EOnOazkGhHu",
+          "name": "Telegram account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        620,
+        -200
+      ],
+      "id": "a482b098-88a6-4548-8d3d-8ff4c7ec92bf",
+      "name": "Telegram Trigger",
+      "webhookId": "7b1e5ad0-835b-48cc-a3cb-ce0a87e7593f",
+      "credentials": {
+        "telegramApi": {
+          "id": "OGKm4F9KSKep4HTN",
+          "name": "Telegram account 4"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Telegram": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "69221484-21e6-485d-9733-73282e16d5cb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "QYo3NTV6i13Dw42i",
+  "tags": []
+}

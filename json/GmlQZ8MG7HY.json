@@ -1,0 +1,2332 @@
+{
+  "name": "LinkedIn AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appBwMrwjV4GLonZ5",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Posts",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblql7EnMlSqIJqBj",
+          "mode": "list",
+          "cachedResultName": "Posts",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5/tblql7EnMlSqIJqBj"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content": "={{ $('Merge 2').item.json.content }}",
+            "id": "={{ $('Merge 2').item.json.id }}",
+            "datePosted": "={{ $('Merge 2').item.json.datePosted }}",
+            "url": "={{ $('Merge 2').item.json.url }}",
+            "username": "={{ $('Merge 2').item.json.username }}",
+            "likesCount": "={{ $('Merge 2').item.json.likesCount }}",
+            "contentType": "={{ $('Merge 2').item.json.contentType }}",
+            "repurpose": "=Text only: \n{{ $('Repurpose').item.json.message.content.text }}\n\n---\n\nText + Infographic: \n{{ $('Repurpose').item.json.message.content.infographic }}\n\n---\n\nText + Tweet:\n{{ $('Repurpose').item.json.message.content.tweet }}",
+            "status": "review"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "datePosted",
+              "displayName": "datePosted",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "likesCount",
+              "displayName": "likesCount",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "contentType",
+              "displayName": "contentType",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "text",
+                  "value": "text"
+                },
+                {
+                  "name": "image",
+                  "value": "image"
+                },
+                {
+                  "name": "video",
+                  "value": "video"
+                },
+                {
+                  "name": "document",
+                  "value": "document"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "repurpose",
+              "displayName": "repurpose",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "finalText",
+              "displayName": "finalText",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "image",
+              "displayName": "image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "review",
+                  "value": "review"
+                },
+                {
+                  "name": "ready",
+                  "value": "ready"
+                },
+                {
+                  "name": "posted",
+                  "value": "posted"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2720,
+        1600
+      ],
+      "id": "21dc3b71-8fa9-45fd-a141-fa25cbdf7df2",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2820,
+        1820
+      ],
+      "id": "7cd64e9f-4b1d-4114-868a-eaf41a866766",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -460,
+        2220
+      ],
+      "id": "492b45c5-851f-48de-bee4-da429d283e0e",
+      "name": "Telegram Trigger",
+      "webhookId": "dca557d5-e6b7-4970-909f-e34c860106bd",
+      "credentials": {
+        "telegramApi": {
+          "id": "cqO3DZHiUlXcaD7f",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant that answers my questions"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1000,
+        2100
+      ],
+      "id": "eb0610e7-4ed1-4c75-9102-efdb9edb15ed",
+      "name": "AI Agent",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        920,
+        2320
+      ],
+      "id": "f6524552-d126-4d50-a451-9d541b743601",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=239"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1080,
+        2320
+      ],
+      "id": "81422163-4e71-44d4-8fe8-c5aabb86d9ce",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        1500
+      ],
+      "id": "42bf8425-6af6-4dd8-b0bf-f3a9513aba3c",
+      "name": "Schedule Trigger 1"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appBwMrwjV4GLonZ5",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Posts",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblbAlKEuUVmIPzv6",
+          "mode": "list",
+          "cachedResultName": "Creators",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5/tblbAlKEuUVmIPzv6"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -640,
+        1500
+      ],
+      "id": "b3b9814a-514e-4166-be1a-85439622f8ed",
+      "name": "Get Creators",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -460,
+        1500
+      ],
+      "id": "8fc856b1-3663-4634-aea6-ae99d7e10db7",
+      "name": "Loop Over Creators",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appBwMrwjV4GLonZ5",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Posts",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblql7EnMlSqIJqBj",
+          "mode": "list",
+          "cachedResultName": "Posts",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5/tblql7EnMlSqIJqBj"
+        },
+        "filterByFormula": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -260,
+        1500
+      ],
+      "id": "541072fb-5c7a-4c7d-bae7-20a45bd4c2fe",
+      "name": "Get Existing Posts",
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d0e0206b-9a56-49ff-b9f4-b83d7c402b61",
+              "name": "urn",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "3b7fd580-bea7-48f4-8883-2350d4d0f560",
+              "name": "source",
+              "value": "existingBase",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -120,
+        1500
+      ],
+      "id": "fe675088-2898-40b3-b3e4-26f81070dad2",
+      "name": "Set Source 1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "87fa717a-f65d-47a4-b946-09b9192c910f",
+              "name": "source",
+              "value": "newBase",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        180,
+        1660
+      ],
+      "id": "53bf5b5a-8078-4acc-acfc-e37268ef6525",
+      "name": "Set Source 2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        320,
+        1520
+      ],
+      "id": "683d2053-f020-4f15-bfff-814012278854",
+      "name": "Merge 1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all incoming items from both branches\nconst allItems = $input.all();\n\n// Separate the items based on their source (assumes you've tagged them earlier)\nconst nodeItems = allItems.filter(item => item.json.source === 'newBase');\nconst sheetItems = allItems.filter(item => item.json.source === 'existingBase');\n\n// Create a Set of Google Sheet IDs for fast lookup\nconst sheetIDs = new Set(sheetItems.map(item => item.json.urn));\n\n// Filter out node items whose ID is present in the Google Sheet IDs\nconst filteredNodeItems = nodeItems.filter(item => !sheetIDs.has(item.json.urn));\n\n// Check if the list is empty\nif (filteredNodeItems.length === 0) {\n  // Handle the empty case\n  return [{ json: { empty: true, message: \"The list is empty\" } }];\n} else {\n  // Handle the non-empty case\n  return filteredNodeItems;\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        1520
+      ],
+      "id": "51e9667f-0d3e-4071-8a84-9cd009e0de41",
+      "name": "Filter Out Existing Posts"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0791633a-8fa4-4b67-acab-cc1043cf687e",
+              "leftValue": "={{ $json.empty }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        1520
+      ],
+      "id": "609d236b-1f41-4c2f-8f3d-88e9311db246",
+      "name": "If New Posts Exist"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.document }}",
+                    "rightValue": "True",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "document"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4013684c-e924-42d5-8ab6-ad701b62d206",
+                    "leftValue": "={{ $json.media.type }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8a2d76e4-1c4e-446f-9ad4-f2eec0ef8585",
+                    "leftValue": "={{ $json.media.type }}",
+                    "rightValue": "video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "eca6b934-7659-4a26-8b21-686cb2a112d8",
+                    "leftValue": "={{ !$json.hasOwnProperty('media') && !$json.hasOwnProperty('document') && !$json.hasOwnProperty('reshared_post') }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        860,
+        1480
+      ],
+      "id": "9a07f563-089e-41b4-8c09-7c639fe57af3",
+      "name": "Switch Content Type",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.document.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        1340
+      ],
+      "id": "0a0d8d96-19aa-42db-8126-677f028c4442",
+      "name": "Download Document",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1260,
+        1340
+      ],
+      "id": "cf01e376-a3f8-493d-9a67-2bdaad25c8b4",
+      "name": "Extract Text"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "94b4b980-1f47-4897-996d-ce7f8f973254",
+              "name": "content",
+              "value": "=Text of the post: {{ $('Switch Content Type').item.json.text }}\n\nText inside the document: {{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "4c20b611-7fa8-4a9a-980a-bf94b5495c7e",
+              "name": "id",
+              "value": "={{ $('Switch Content Type').item.json.urn }}",
+              "type": "string"
+            },
+            {
+              "id": "50f39ee4-731b-432c-b2be-f619c9b6a2be",
+              "name": "datePosted",
+              "value": "={{ $('Switch Content Type').item.json.posted_at.date }}",
+              "type": "string"
+            },
+            {
+              "id": "f9cba8cd-7714-47c8-8acc-6bc1796505e5",
+              "name": "url",
+              "value": "={{ $('Switch Content Type').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "90ee9e05-e6df-487e-be3f-99d0b1a0b403",
+              "name": "username",
+              "value": "={{ $('Switch Content Type').item.json.author.username }}",
+              "type": "string"
+            },
+            {
+              "id": "9a96ed8d-70da-4c4e-a837-ad36c41e7ca2",
+              "name": "likesCount",
+              "value": "={{ $('Switch Content Type').item.json.stats.like }}",
+              "type": "string"
+            },
+            {
+              "id": "7ce51c59-cbd3-4f2e-abc2-c322951e8117",
+              "name": "contentType",
+              "value": "document",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1440,
+        1340
+      ],
+      "id": "ddf165d9-29a6-4ffe-9f13-404c260349a9",
+      "name": "Set Fields 1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "imageUrls": "={{ $json.media.url }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1100,
+        1500
+      ],
+      "id": "4ec84600-3799-4abf-ab0e-f4516cdac1ea",
+      "name": "Transcribe Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6046b97d-5ca8-4091-8994-fe5cc2ce56ab",
+              "name": "content",
+              "value": "=Text of the post: {{ $('Switch Content Type').item.json.text }}\n\nText inside the document: {{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "46ef10f6-fd99-4bc0-acf6-68157534e56f",
+              "name": "id",
+              "value": "={{ $('Switch Content Type').item.json.urn }}",
+              "type": "string"
+            },
+            {
+              "id": "8f76b959-f40c-40ad-8393-75397f0fbc09",
+              "name": "datePosted",
+              "value": "={{ $('Switch Content Type').item.json.posted_at.date }}",
+              "type": "string"
+            },
+            {
+              "id": "7a66b670-a580-4534-96fa-cdb48e9ae2dc",
+              "name": "url",
+              "value": "={{ $('Switch Content Type').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "861060d5-deb2-4bf5-8762-e22dba2aefc2",
+              "name": "username",
+              "value": "={{ $('Switch Content Type').item.json.author.username }}",
+              "type": "string"
+            },
+            {
+              "id": "f3f67354-d221-474b-a841-a727f0d2cd35",
+              "name": "likesCount",
+              "value": "={{ $('Switch Content Type').item.json.stats.like }}",
+              "type": "string"
+            },
+            {
+              "id": "7cd26868-9ffb-4324-b8a8-4ffdf5b035fe",
+              "name": "contentType",
+              "value": "image",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1540,
+        1480
+      ],
+      "id": "bd0e09ab-d5b7-42d5-81d2-7c0b87b64d91",
+      "name": "Set Fields 2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.image[0].url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        580,
+        2720
+      ],
+      "id": "6e271479-f989-4ca0-b243-47411b02d5ef",
+      "name": "Download Image"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.media.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        1680
+      ],
+      "id": "2eddc603-4cb9-4238-a306-9c8645535028",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Retrieve the current item\nconst item = $input.item;\n\n// Define the binary property name\nconst binaryPropertyName = 'data'; // Replace 'data' with your actual binary property name\n\n// Check if the binary data exists\nif (item.binary && item.binary[binaryPropertyName]) {\n  // Append '.mp4' to the existing file name\n  item.binary[binaryPropertyName].fileName = item.binary[binaryPropertyName].fileName + '.mp4';\n  // Optionally, update the mime type\n  item.binary[binaryPropertyName].mimeType = 'video/mp4';\n}\n\n// Return the modified item\nreturn item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1260,
+        1680
+      ],
+      "id": "c09b6f23-ed35-4bb1-8fa9-0df780a7c98c",
+      "name": "Change Format"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1440,
+        1680
+      ],
+      "id": "849f7dd7-dd68-482a-82c5-ce1ffdd688ab",
+      "name": "Transcribe Video",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        1780
+      ],
+      "id": "801db691-f2b0-494a-b0ef-98e408cf1b8b",
+      "name": "No audio, do nothing"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6046b97d-5ca8-4091-8994-fe5cc2ce56ab",
+              "name": "content",
+              "value": "=Text of the post: {{ $('Switch Content Type').item.json.text }}\n\nScript of the video: {{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "7d749b22-8b13-4441-974a-95bf0f0a274d",
+              "name": "url",
+              "value": "={{ $('Switch Content Type').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "9c3e913f-341e-4ba6-a0e9-8452e85e3310",
+              "name": "id",
+              "value": "={{ $('Switch Content Type').item.json.urn }}",
+              "type": "string"
+            },
+            {
+              "id": "a2ddced3-ee12-40c6-8380-0c7dfb2bda56",
+              "name": "username",
+              "value": "={{ $('Switch Content Type').item.json.author.username }}",
+              "type": "string"
+            },
+            {
+              "id": "f4d5a44b-f339-4fbd-a1ef-3a63171f4d31",
+              "name": "datePosted",
+              "value": "={{ $('Switch Content Type').item.json.posted_at.date }}",
+              "type": "string"
+            },
+            {
+              "id": "56effd49-ab3e-4a23-a26c-11aa3cc46560",
+              "name": "likesCount",
+              "value": "={{ $('Switch Content Type').item.json.stats.like }}",
+              "type": "string"
+            },
+            {
+              "id": "9ece07b9-39f6-44c4-bdaf-54967f7eb048",
+              "name": "contentType",
+              "value": "video",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1660,
+        1560
+      ],
+      "id": "7503a5c8-0603-437a-8f8f-be69f50d352d",
+      "name": "Set Fields 3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6046b97d-5ca8-4091-8994-fe5cc2ce56ab",
+              "name": "content",
+              "value": "=Text of the post: {{ $('Switch Content Type').item.json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "f232e55f-2a35-4bec-8786-f863372eedb5",
+              "name": "id",
+              "value": "={{ $('Switch Content Type').item.json.urn }}",
+              "type": "string"
+            },
+            {
+              "id": "163271b4-55ff-421e-84a7-6d1b3f94324b",
+              "name": "username",
+              "value": "={{ $('Switch Content Type').item.json.author.username }}",
+              "type": "string"
+            },
+            {
+              "id": "f5844737-8af9-423e-bfbb-ef68f7961442",
+              "name": "datePosted",
+              "value": "={{ $('Switch Content Type').item.json.posted_at.date }}",
+              "type": "string"
+            },
+            {
+              "id": "92f70f95-64b2-4fda-a26d-8320dd7ce7d9",
+              "name": "url",
+              "value": "={{ $('Switch Content Type').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "c32028da-a409-4432-b43e-9a4cc0b35bb4",
+              "name": "likesCount",
+              "value": "={{ $('Switch Content Type').item.json.stats.like }}",
+              "type": "string"
+            },
+            {
+              "id": "e459a0a4-d25b-4e30-ab0a-ddeabb9e73b7",
+              "name": "contentType",
+              "value": "text",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1100,
+        1840
+      ],
+      "id": "332e1c3a-a4ba-4f5e-ad8e-6da3d892344c",
+      "name": "Set Fields 4",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1940,
+        1540
+      ],
+      "id": "17397194-3ae6-46fd-ac71-a37e299ea6c7",
+      "name": "Merge 2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're a professional content creator for LinkedIn, you've gained a massive 1.000.000 audience by writing deeply valuable business posts.\n\nYour job is to help me write my content. I have a LinkedIn blog about marketing.",
+              "role": "system"
+            },
+            {
+              "content": "=Here is a post of another LinkedIn personality from my niche.\n\nI want to repurpose it for my blog.\n\nContent:\n{{ $json.content }}\n\n----\n\nYou have to repurpose it for 3 different formats:\n1. Text only post\n2. Text post + image of the tweet with a bold or interesting short text\n3. Text + image with infographics / charts (in this case you have to describe in detail what should be displayed)\n\nStructure your output as a JSON file:\n{\"relevant\": bool, \"text\": text, \"infographic\": text, \"tweet\": text}\nWhereas if the intial post is not relevant to marketing then set relevant = false and leave all of the remaining fields empty.\n\nRules:\nwrite in the style and structing similar to this post:\nText of the post: I used to be depressed, broke, and anxious. \n\nNow, I only work 4 hours per day and travel the world. \n\n10 habits that transformed my life:\n\n1. Daily Deep Work\n\nDedicate the first few hours of your day to deep, focused work on your needle-moving work.\n\nNo phone, no social media, no distractions.\n\nThis is when your mind is freshest and most creative.\n\nProtect this time at all costs.\n\n2. The AED System\n\nAutomate, Eliminate, Delegate\n\nRuthlessly apply this system to every task.\n\n• Automate repetitive tasks\n• Eliminate unnecessary ones\n• Delegate what does not require your unique skills\n\nYour time is gold; start acting like it.\n\n3. Quarterly Resets\n\nEvery quarter, take a step back, take a break, and reassess your goals, strategies, and habits.\n\nWhat's working? What's not? Make adjustments.\n\nRegular resets ensure that I stay aligned with my long-term vision and core values.\n\n4. Focus on the 4 W of Work\n\nOptimize the Who, What, Where, and When of your work:\n\n• Who: Surround yourself with high-performers\n• What: Focus on high-impact tasks\n• Where: Create an optimal environment\n• When: Leverage your natural energy\n\nSmall tweaks yield huge gains.\n\n5. Sobriety\n\nEliminating alcohol was a game-changer for my productivity and clarity.\n\nNo hangovers, brain fog, or wasted time.\n\nSobriety allows you to operate at your peak consistently.\n\nYou need to be sober to change your life for the better.\n\n6. No Agenda, No Meeting\n\nWith my team, if a meeting doesn't have a clear agenda and desired outcome, it doesn't happen.\n\nPeriod.\n\nThis simple rule eliminates countless hours of pointless meetings.\n\nWork matters, but most of your meetings don’t.\n\n7. No Meetings in the Morning\n\nMornings are for deep work, not meetings.\n\nProtect your peak creative hours.\n\nSchedule meetings in the afternoon when your energy naturally dips.\n\nSystemize your life.\n\n8. Hell Yes or No\n\nThis is an extension of AED.\n\nIf an opportunity or request isn't a \"Hell Yes!\", it's a no.\n\nRuthlessly guard your time and attention.\n\nSaying no to the mediocre allows you to say yes to the exceptional.\n\n9. Personal Time/Energy Audit\n\nTrack how you spend your time for a week.\n\nCategorize activities as energizing or draining.\n\nThen, systematically eliminate or minimize the draining activities.\n\nThe time audit raises your hourly rate by thousands of dollars.\n\n10. Daily Exercise\n\nThose who prioritize fitness enjoy a life expectancy up to 7 years longer.\n\nYour quality and duration of life is determined by your fitness habits.\n\nExercise is key to unlocking your full potential.\n\nI don’t care if it sounds corny: health is wealth.\n\n—\n\nEnjoy this? ♻️ Repost it to your network and follow Oleg Melnikov for more.\n\n------\n\nHere goes your output:"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2100,
+        1560
+      ],
+      "id": "b3e1607d-b151-47c7-9941-2651e84453ad",
+      "name": "Repurpose",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "be146f03-8f6a-4fe1-a0c5-e16c92d4e010",
+              "leftValue": "={{ $json.message.content.relevant || $json.message.content.relevant == \"true\" }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2440,
+        1560
+      ],
+      "id": "fbadcf77-c291-4774-b8b5-5dcf98fdeb5a",
+      "name": "If Content Relevant",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2600,
+        1720
+      ],
+      "id": "69ee790a-1a40-4a1f-b70f-bc670a629477",
+      "name": "Not relevant, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b13a7f80-4d52-4fb0-862f-1057162a4f26",
+              "leftValue": "={{ $json.message.from.id }}",
+              "rightValue": 291844618,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        2220
+      ],
+      "id": "fa586013-67db-4239-81d3-cf6867c1fc86",
+      "name": "Check Sender"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d173560d-9582-41f8-afea-00c0e9aa829f",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        40,
+        2100
+      ],
+      "id": "e71cc1d5-aca3-4863-bb19-8adb0cf3a53f",
+      "name": "Switch Message Type"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cb4bec7c-17cf-4e21-aa43-12416d4ed77b",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        360,
+        2100
+      ],
+      "id": "d5ab3948-cc1d-4f1d-9c2c-05325fb2f257",
+      "name": "Set Text"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        2280
+      ],
+      "id": "e034d8b2-f7b0-49ab-9213-b9ec7143386a",
+      "name": "Download Voice",
+      "webhookId": "ea91ebee-6940-4df9-b46f-132ee8f6ee5d",
+      "alwaysOutputData": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "cqO3DZHiUlXcaD7f",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        480,
+        2280
+      ],
+      "id": "6f6fd1ba-541b-4409-8f3c-312f94862add",
+      "name": "Transcribe Voice",
+      "alwaysOutputData": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        700,
+        2120
+      ],
+      "id": "3a3d16b0-b3ee-49d2-997a-d5c51d4fd18c",
+      "name": "Merge 3",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "name": "post_writer",
+        "description": "Call this tool to write a LinkedIn post based on the raw idea.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YfweMGvCgYhQYUxh",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Posts Writer"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "idea": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('idea', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "idea"
+          ],
+          "schema": [
+            {
+              "id": "idea",
+              "displayName": "idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        2320
+      ],
+      "id": "0d6e2f4d-1b3e-420d-9862-080bbe9da10a",
+      "name": "Post Writer"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1400,
+        2100
+      ],
+      "id": "66f9a0b6-b4d2-420a-b2df-30ca3f5dc5eb",
+      "name": "Send Message",
+      "webhookId": "50643ab1-8a66-4188-9604-f1e517ab5b90",
+      "credentials": {
+        "telegramApi": {
+          "id": "cqO3DZHiUlXcaD7f",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 16
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -280,
+        2620
+      ],
+      "id": "f6608cfb-d28b-4910-872b-b0625441aa54",
+      "name": "Schedule Trigger 2"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appBwMrwjV4GLonZ5",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Posts",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblql7EnMlSqIJqBj",
+          "mode": "list",
+          "cachedResultName": "Posts",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5/tblql7EnMlSqIJqBj"
+        },
+        "filterByFormula": "{status}='ready'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -60,
+        2620
+      ],
+      "id": "c5e18858-6146-411b-8995-1b03d445651b",
+      "name": "Get Ready Posts",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        160,
+        2620
+      ],
+      "id": "c7ec197c-0730-40df-a806-d841dd37fc03",
+      "name": "Pick One"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4204955e-2a7a-4d26-b5ee-04a68dadb92b",
+              "leftValue": "={{ $json.image }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        380,
+        2620
+      ],
+      "id": "bd36fd81-d240-4964-b249-fa2b9c47ced2",
+      "name": "Text Only?"
+    },
+    {
+      "parameters": {
+        "person": "-NknGiXASA",
+        "text": "={{ $json.finalText }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        640,
+        2540
+      ],
+      "id": "8d5fcf66-002e-42b7-8210-f6073024139d",
+      "name": "Publish Post 1",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "bjVsTxxkDa6LYDD3",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "-NknGiXASA",
+        "text": "={{ $json.finalText }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        760,
+        2720
+      ],
+      "id": "aecc23bf-92b7-46c3-8aa8-3363c3ac3951",
+      "name": "Publish Post 2",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "bjVsTxxkDa6LYDD3",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appBwMrwjV4GLonZ5",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Posts",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblql7EnMlSqIJqBj",
+          "mode": "list",
+          "cachedResultName": "Posts",
+          "cachedResultUrl": "https://airtable.com/appBwMrwjV4GLonZ5/tblql7EnMlSqIJqBj"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "posted",
+            "id": "={{ $('Pick One').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "urn",
+              "displayName": "urn",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "datePosted",
+              "displayName": "datePosted",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "likesCount",
+              "displayName": "likesCount",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "contentType",
+              "displayName": "contentType",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "text",
+                  "value": "text"
+                },
+                {
+                  "name": "image",
+                  "value": "image"
+                },
+                {
+                  "name": "video",
+                  "value": "video"
+                },
+                {
+                  "name": "document",
+                  "value": "document"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "repurpose",
+              "displayName": "repurpose",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "finalText",
+              "displayName": "finalText",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "image",
+              "displayName": "image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "review",
+                  "value": "review"
+                },
+                {
+                  "name": "ready",
+                  "value": "ready"
+                },
+                {
+                  "name": "posted",
+                  "value": "posted"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        940,
+        2620
+      ],
+      "id": "cbc41413-baa0-4bd1-99cb-0d234bebb80d",
+      "name": "Update Status",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Content Agent",
+        "height": 440,
+        "width": 2140
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -540,
+        2040
+      ],
+      "typeVersion": 1,
+      "id": "4516f902-9c60-4e5c-ad1e-2372137b5dcd",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Auto Publishing",
+        "height": 400,
+        "width": 1600,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -340,
+        2500
+      ],
+      "typeVersion": 1,
+      "id": "e29c4940-25b2-4c67-b1cc-7e0553556bfd",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Competitor's Scraping",
+        "height": 700,
+        "width": 3960,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -860,
+        1320
+      ],
+      "typeVersion": 1,
+      "id": "2a02bb7e-6a9c-483f-82fb-2482bafbed32",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/LQQIXN9Othf8f7R5n/run-sync-get-dataset-items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "apify_api_iCr3t5mDFPGpi4PbW0WRMb5M9xIwQW02Ltzd"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"username\": \"{{ $('Loop Over Creators').item.json.username }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        20,
+        1660
+      ],
+      "id": "37aa8c1c-8071-4e11-a7a1-104b34eca082",
+      "name": "Apify - Scrape LinkedIn Posts",
+      "executeOnce": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Creators",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger 1": {
+      "main": [
+        [
+          {
+            "node": "Get Creators",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Creators": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Creators",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Creators": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get Existing Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existing Posts": {
+      "main": [
+        [
+          {
+            "node": "Set Source 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Source 1": {
+      "main": [
+        [
+          {
+            "node": "Apify - Scrape LinkedIn Posts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Source 2": {
+      "main": [
+        [
+          {
+            "node": "Merge 1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge 1": {
+      "main": [
+        [
+          {
+            "node": "Filter Out Existing Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Out Existing Posts": {
+      "main": [
+        [
+          {
+            "node": "If New Posts Exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If New Posts Exist": {
+      "main": [
+        [
+          {
+            "node": "Switch Content Type",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Switch Content Type": {
+      "main": [
+        [
+          {
+            "node": "Download Document",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Transcribe Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Fields 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Document": {
+      "main": [
+        [
+          {
+            "node": "Extract Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text": {
+      "main": [
+        [
+          {
+            "node": "Set Fields 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields 1": {
+      "main": [
+        [
+          {
+            "node": "Merge 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Image": {
+      "main": [
+        [
+          {
+            "node": "Set Fields 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields 2": {
+      "main": [
+        [
+          {
+            "node": "Merge 2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Publish Post 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Change Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Change Format": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Video": {
+      "main": [
+        [
+          {
+            "node": "Set Fields 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No audio, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields 3": {
+      "main": [
+        [
+          {
+            "node": "Merge 2",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Set Fields 4": {
+      "main": [
+        [
+          {
+            "node": "Merge 2",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge 2": {
+      "main": [
+        [
+          {
+            "node": "Repurpose",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Repurpose": {
+      "main": [
+        [
+          {
+            "node": "If Content Relevant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Content Relevant": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not relevant, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Sender": {
+      "main": [
+        [
+          {
+            "node": "Switch Message Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Message Type": {
+      "main": [
+        [
+          {
+            "node": "Set Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Text": {
+      "main": [
+        [
+          {
+            "node": "Merge 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voice": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Voice": {
+      "main": [
+        [
+          {
+            "node": "Merge 3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge 3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Writer": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger 2": {
+      "main": [
+        [
+          {
+            "node": "Get Ready Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Ready Posts": {
+      "main": [
+        [
+          {
+            "node": "Pick One",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick One": {
+      "main": [
+        [
+          {
+            "node": "Text Only?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Only?": {
+      "main": [
+        [
+          {
+            "node": "Publish Post 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish Post 1": {
+      "main": [
+        [
+          {
+            "node": "Update Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish Post 2": {
+      "main": [
+        [
+          {
+            "node": "Update Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify - Scrape LinkedIn Posts": {
+      "main": [
+        [
+          {
+            "node": "Set Source 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "08f974a6-4e47-4b33-9cdc-c09c88b1d73d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69f54ab0f1afba7dd61c0a7a7609df8a8bd98642cf42d92572ea26f947c9a1d8"
+  },
+  "id": "b8g7LjPAJHm1o0GN",
+  "tags": []
+}

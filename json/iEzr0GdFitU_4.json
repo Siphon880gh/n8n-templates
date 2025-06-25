@@ -1,0 +1,482 @@
+{
+  "name": "Google Calendar Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ab380a2-a8d3-421c-ab4e-748ea8fb7904",
+              "name": "response",
+              "value": "Unable to perform task. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6e64e143-62b8-4c9c-822d-eb6f9522b658",
+      "name": "Try Again",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        100,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39c2f302-03be-4464-a17a-d7cc481d6d44",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "df0f5024-5bbc-4078-b2c9-fb154c86267f",
+      "name": "Success",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        100,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When Executed by Another Workflow').item.json.message }}",
+        "options": {
+          "systemMessage": "=You are a calendar management assistant responsible for scheduling, retrieving, updating, and deleting events in the user's calendar.\n\nCalendar Management Tools\n\nCreate Event with Attendee – Use this when an event includes a participant.\nCreate Event – Use this for solo events. If there's a participant/attendee, do not create a solo event, only create the event with an attendee\nGet Events – Retrieve calendar schedules when requested.\nDelete Event – Remove an event. First, use \"Get Events\" to obtain the event ID.\nUpdate Event – Modify an event. First, use \"Get Events\" to obtain the event ID.\nFinal Notes\nCurrent Date/Time: {{ $now }}\n\nIf no duration is specified, assume the event lasts one hour.\n\nIf inviting someone to an event, here’s the attendee’s information:\nName: {{ $json.names.displayName }}\nEmail: {{ $json.emailAddresses.undefined[0] }}"
+        }
+      },
+      "id": "367711a4-8132-4223-9e16-a2acc84bb3f4",
+      "name": "Calendar Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -240,
+        100
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -480,
+        340
+      ],
+      "id": "d4515408-a6c9-413f-bdb1-92319f6b09e0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ijZWPGwLXdAOVFfI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "e65463fc466fd521dc1ecc1964b4d6dbac77710e2a00f0a73b597f41477d9def@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "AI Agent"
+        },
+        "start": "={{ $fromAI(\"eventStart\") }}",
+        "end": "={{ $fromAI(\"eventEnd\") }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $fromAI(\"eventAttendeeEmail\", \"this is the attendee's email address\") }}"
+          ],
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        120,
+        340
+      ],
+      "id": "fd151695-0728-45e5-83e6-94be32f99a90",
+      "name": "Create Event with Attendee1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vH8czuEshd95ultk",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "e65463fc466fd521dc1ecc1964b4d6dbac77710e2a00f0a73b597f41477d9def@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "AI Agent"
+        },
+        "start": "={{ $fromAI(\"eventStart\") }}",
+        "end": "={{ $fromAI(\"eventEnd\") }}",
+        "additionalFields": {
+          "attendees": [],
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        340
+      ],
+      "id": "03cbab1d-7cd6-42e9-8cec-630458cfd9a6",
+      "name": "Create Event1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vH8czuEshd95ultk",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "e65463fc466fd521dc1ecc1964b4d6dbac77710e2a00f0a73b597f41477d9def@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "AI Agent"
+        },
+        "timeMin": "={{ $fromAI(\"dayBefore\",\"the day before the date the user requested\") }}",
+        "timeMax": "={{ $fromAI(\"dayAfter\",\"the day after the date the user requested\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -120,
+        340
+      ],
+      "id": "9e15b2b1-19b0-4b30-a04d-a3da2ad8fdd0",
+      "name": "Get Events1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vH8czuEshd95ultk",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "e65463fc466fd521dc1ecc1964b4d6dbac77710e2a00f0a73b597f41477d9def@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "AI Agent"
+        },
+        "eventId": "={{ $fromAI(\"eventID\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        340
+      ],
+      "id": "80c9a24f-46d8-4471-b533-5b6966553eb8",
+      "name": "Delete Event1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vH8czuEshd95ultk",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "e65463fc466fd521dc1ecc1964b4d6dbac77710e2a00f0a73b597f41477d9def@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "AI Agent"
+        },
+        "eventId": "={{ $fromAI(\"eventID\") }}",
+        "updateFields": {
+          "end": "={{ $fromAI(\"endTime\") }}",
+          "start": "={{ $fromAI(\"startTime\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -360,
+        340
+      ],
+      "id": "cd1f5d01-56d9-4aeb-8897-13d20c2e67dc",
+      "name": "Update Event1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vH8czuEshd95ultk",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"message\": \"\",\n  \"name\": \"\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1120,
+        100
+      ],
+      "id": "0b476e88-37cf-40d6-a26d-1058a238a257",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7b7d4e25-6623-40f1-8a73-3120cc9591d7",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -820,
+        100
+      ],
+      "id": "bca9b6dd-066c-49b5-b99b-c7f0726103e2",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -500,
+        100
+      ],
+      "id": "d4cbbbff-df6a-4edb-b464-8a77c567dc1f",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "fields": [
+          "names",
+          "emailAddresses"
+        ],
+        "useQuery": true,
+        "query": "={{ $json.name }}"
+      },
+      "type": "n8n-nodes-base.googleContacts",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -40
+      ],
+      "id": "da794831-dd85-44fc-86de-d9ef3a6bebcd",
+      "name": "Google Contacts1",
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "qcYkUUA34kc6XxMo",
+          "name": "Google Contacts account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "message": "invite jono to coffee at 5pm tomorrow",
+          "name": "Jono"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Calendar Agent": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event with Attendee1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Event1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Event1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Google Contacts1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Google Contacts1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "51bc9acf-3904-4656-9b6a-30e290ca7849",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "bbzZ21ReC0DmrpDJ",
+  "tags": []
+}

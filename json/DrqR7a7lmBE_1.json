@@ -1,0 +1,518 @@
+{
+  "name": "AI Graphic Designer",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful, intelligent design assistant. You generate high-quality designs using the provided tools (generate logo, generate style guide, and generate gradient background). Then you can also upscale them, and finally, you can revise them.\n\nWhen you receive an image from a tool, wrap it in nice looking Markdown (atx) format and present it to the user.\n\nThe only three things you can generate are logos, style guides, and gradient backgrounds. \n\nMake sure to clarify which (as well as any additional information needed) so the prompt you send to the image model is optimal.\n\nIf you are asked to adjust or revise an image, ask the user to define their changes as explicitly as possible.",
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        320,
+        100
+      ],
+      "id": "c88b0988-34c4-44c8-9c29-8ce0cf638939",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi—I can generate a logo, style guide, or background gradient for you. Let me know what you need?",
+        "options": {
+          "subtitle": "Message anytime!",
+          "title": "Design Agent 👋",
+          "customCss": ":root {\n  /* Colors */\n  --chat--color-primary: #e74266; /* leave as accent or swap if desired */\n  --chat--color-secondary: #A3CEF1;       /* pastel blue */\n  --chat--color-secondary-shade-50: #8EBEE8;\n  --chat--color-secondary-shade-100: #78ADDE;\n  --chat--color-white: #ffffff;\n  --chat--color-light: #f7f9fb;\n  --chat--color-light-shade-50: #eef1f5;\n  --chat--color-medium: #d2d4d9;\n  --chat--color-dark: #101330;\n  --chat--color-disabled: #a0a4ab;\n  --chat--color-typing: #404040;\n\n  /* Base Layout */\n  --chat--spacing: 1rem;\n  --chat--border-radius: 0.2rem;\n  --chat--transition-duration: 0.15s;\n\n  /* Window Dimensions */\n  --chat--window--width: 400px;\n  --chat--window--height: 600px;\n  --chat--window--bottom: var(--chat--spacing);\n  --chat--window--right: var(--chat--spacing);\n  --chat--window--z-index: 9999;\n  --chat--window--border: 1px solid var(--chat--color-light-shade-50);\n  --chat--window--border-radius: var(--chat--border-radius);\n  --chat--window--margin-bottom: var(--chat--spacing);\n\n  /* Header Styles */\n  --chat--header--background: var(--chat--color-white);\n  --chat--header--color: var(--chat--color-dark);\n  --chat--header--padding: calc(var(--chat--spacing) * 0.75);\n  --chat--header-height: auto;\n  --chat--header--border-bottom: 1px solid var(--chat--color-light-shade-50);\n\n  /* Message Styles */\n  --chat--message--font-size: 1rem;\n  --chat--message--padding: calc(var(--chat--spacing) * 0.75);\n  --chat--message--border-radius: var(--chat--border-radius);\n  --chat--message-line-height: 1.5;\n  --chat--message--margin-bottom: var(--chat--spacing);\n  --chat--message--bot--background: var(--chat--color-white);\n  --chat--message--bot--color: var(--chat--color-dark);\n  --chat--message--user--background: var(--chat--color-secondary);\n  --chat--message--user--color: var(--chat--color-white);\n  --chat--message--pre--background: rgba(0, 0, 0, 0.03);\n\n  /* Toggle Button */\n  --chat--toggle--background: var(--chat--color-secondary);\n  --chat--toggle--hover--background: var(--chat--color-secondary-shade-50);\n  --chat--toggle--active--background: var(--chat--color-secondary-shade-100);\n\n  /* Input Area */\n  --chat--textarea--height: 50px;\n  --chat--textarea--max-height: 30rem;\n  --chat--input--background: var(--chat--color-white);\n  --chat--input--color: var(--chat--color-dark);\n  --chat--input--padding: 0.8rem;\n  --chat--input--border: 1px solid var(--chat--color-light-shade-50);\n  --chat--input--border-active: 1px solid var(--chat--color-secondary-shade-100);\n  --chat--input--border-radius: var(--chat--border-radius);\n\n  /* Button Styles */\n  --chat--button--background: var(--chat--color-secondary);\n  --chat--button--color: var(--chat--color-white);\n  --chat--button--padding: 0.5rem var(--chat--spacing);\n  --chat--button--border-radius: var(--chat--border-radius);\n  --chat--button--hover--background: var(--chat--color-secondary-shade-50);\n\n  /* Send & File Buttons */\n  --chat--input--send--button--background: var(--chat--color-white);\n  --chat--input--send--button--color: var(--chat--color-secondary);\n  --chat--input--file--button--color: var(--chat--color-secondary);\n  --chat--files-spacing: 0.25rem;\n\n  /* Body & Footer */\n  --chat--body--background: var(--chat--color-light);\n  --chat--footer--background: var(--chat--color-light);\n  --chat--footer--color: var(--chat--color-dark);\n}\n\n.chat-message {\n  max-width: 50%;\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        60,
+        100
+      ],
+      "id": "6a483d98-ac75-4267-b985-75967e72cb70",
+      "name": "When chat message received",
+      "webhookId": "cbffc534-579a-4623-9f13-34537867d082"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        360
+      ],
+      "id": "120e930f-5d3b-455f-9254-73bc4be6dbcc",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        360
+      ],
+      "id": "98cda5dc-1271-472d-aa6a-c255dda25e9a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to generate a logo. Then return the webViewLink in markdown (atx) format, so the user can click it and open a new tab.\n\nSupported resolutions:\n1024x1024\n1536x1024\n1024x1536",
+        "workflowId": {
+          "__rl": true,
+          "value": "6XCAq81V1voPR3kB",
+          "mode": "list",
+          "cachedResultName": "Logo Generator (AI Graphic Designer)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "imagePrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagePrompt', ``, 'string') }}",
+            "resolution": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('resolution', ``, 'string') }}",
+            "imageType": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imageType', ``, 'string') }}",
+            "fileName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fileName', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "imagePrompt",
+              "displayName": "imagePrompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "resolution",
+              "displayName": "resolution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imageType",
+              "displayName": "imageType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fileName",
+              "displayName": "fileName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        360
+      ],
+      "id": "acab9219-f3d9-4ec7-bb91-5d8fd5905a1e",
+      "name": "Generate Logo"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to generate a style guide. Then return the webViewLink in markdown (atx) format, so the user can click it and open a new tab.\n\nSupported resolutions:\n1024x1024\n1536x1024\n1024x1536",
+        "workflowId": {
+          "__rl": true,
+          "value": "kjr6b4WQwpr6g9h5",
+          "mode": "list",
+          "cachedResultName": "Style Guide Generator (AI Graphic Designer)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "imagePrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagePrompt', ``, 'string') }}",
+            "resolution": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('resolution', ``, 'string') }}",
+            "imageType": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imageType', ``, 'string') }}",
+            "fileName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fileName', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "imagePrompt",
+              "displayName": "imagePrompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "resolution",
+              "displayName": "resolution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imageType",
+              "displayName": "imageType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fileName",
+              "displayName": "fileName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        360
+      ],
+      "id": "d393a348-da2c-4d0e-9614-14129272d671",
+      "name": "Generate Style Guide"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to generate a gradient background. Then return the webViewLink in markdown (atx) format, so the user can click it and open a new tab.\n\nSupported resolutions:\n1024x1024\n1536x1024\n1024x1536",
+        "workflowId": {
+          "__rl": true,
+          "value": "kZ2VRoLIX2txywbe",
+          "mode": "list",
+          "cachedResultName": "Gradient Image (AI Graphic Designer)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "imagePrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagePrompt', ``, 'string') }}",
+            "resolution": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('resolution', ``, 'string') }}",
+            "imageType": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imageType', ``, 'string') }}",
+            "fileName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fileName', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "imagePrompt",
+              "displayName": "imagePrompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "resolution",
+              "displayName": "resolution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imageType",
+              "displayName": "imageType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fileName",
+              "displayName": "fileName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        360
+      ],
+      "id": "20ebc312-38fa-4cd7-a968-80e366d99a67",
+      "name": "Generate Gradient Background"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Call this tool to upscale an image.\n\nFor upscale_factor, you can write x2 or x4. Nothing else.\n\nReturn the response[0].output parameter wrapped in nice markdown (atx) format for the user.",
+        "method": "POST",
+        "url": "https://api.replicate.com/v1/models/google/upscaler/predictions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer yourApiKeyGoesHere"
+            },
+            {
+              "name": "Prefer",
+              "value": "wait"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"input\": {\n    \"image\": \"{{ $fromAI(\"inputImageUrl\")}}\",\n    \"upscale_factor\": \"{{$fromAI(\"upscale_factor\")}}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        360
+      ],
+      "id": "d5531091-0a3a-4962-9513-ca96b71a8521",
+      "name": "Upscale Image"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to edit or revise an image. Only call this if you are explicitly asked to change something.\n\nSupported resolutions:\n1024x1024\n1536x1024\n1024x1536",
+        "workflowId": {
+          "__rl": true,
+          "value": "xRfWilBLzcDW8L3y",
+          "mode": "list",
+          "cachedResultName": "Design Editor/Revisor (AI Graphic Designer)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "imagePrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagePrompt', ``, 'string') }}",
+            "resolution": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('resolution', ``, 'string') }}",
+            "imageType": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imageType', ``, 'string') }}",
+            "fileName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fileName', ``, 'string') }}",
+            "previousImageUrl": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('previousImageUrl', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "imagePrompt",
+              "displayName": "imagePrompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "resolution",
+              "displayName": "resolution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imageType",
+              "displayName": "imageType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fileName",
+              "displayName": "fileName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "previousImageUrl",
+              "displayName": "previousImageUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        780,
+        360
+      ],
+      "id": "bacfa07a-1284-4967-a77c-a9f4e706d3f9",
+      "name": "Edit/Revise Image"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Logo": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Style Guide": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Gradient Background": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upscale Image": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit/Revise Image": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e158d766-8a57-4a03-b93b-decb81cf40dd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "2gIvtJmbtL5fWHs8",
+  "tags": []
+}

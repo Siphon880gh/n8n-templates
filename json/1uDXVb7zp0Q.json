@@ -1,0 +1,962 @@
+{
+  "name": "Prompting Cheat Sheet",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1860
+      ],
+      "id": "90c81749-297a-41ad-b600-97a2b2d18580",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an email router. \nReturn ONLY the JSON object exactly like the examples.\n\nExample 1\nEmail: “Hi team, my order #4321 arrived damaged. I need a replacement or a refund.”\nJSON: {\"queue\":\"Refund\"}\n\nExample 2\nEmail: “Tracking hasn’t updated for five days—has my package gone missing?”\nJSON: {\"queue\":\"Shipping\"}\n\n---  # New task below\nEmail: \"\"\"{{NEW_EMAIL_TEXT}}\"\"\"\nJSON:\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        340,
+        40
+      ],
+      "id": "26c82d3b-0c0c-4936-ba9f-9387223f2f2c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        260
+      ],
+      "id": "5d34fe44-42c2-43d9-b010-8fee19b6cea6",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        360,
+        260
+      ],
+      "id": "e379384e-7f6d-48dc-9477-0ee50b7f941a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "m8UPq7cBTQihWph9",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "When I was 3 years old, my partner was 3 times my age. Now, I\nam 20 years old. How old is my partner? Return a number"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        320,
+        580
+      ],
+      "id": "ff83382e-fe47-4446-a2d0-c911b0dfe9ff",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        340,
+        800
+      ],
+      "id": "00648c49-06bf-43a3-8a6d-64a887beaa2a",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "m8UPq7cBTQihWph9",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Consistency",
+        "height": 480,
+        "width": 1060,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        -40
+      ],
+      "id": "c5515180-12c9-497c-a43b-772accd63ea0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Accuracy: CoT",
+        "height": 480,
+        "width": 1060,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        480
+      ],
+      "id": "34fbbc3e-d523-4421-97d2-73875661acd5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Accuracy: Self-consistency",
+        "height": 620,
+        "width": 1060,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        1000
+      ],
+      "id": "35810faf-7930-4904-8042-b5b27472823b",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "920b63d4-6dab-4b42-bd81-0626de4b8c4c",
+              "name": "email",
+              "value": "Hi there,\n\nI paid for 2-day express shipping on my hoodie (order #56247), but the tracking page hasn’t moved past “Label created” for eight days. FedEx support keeps telling me only the sender can escalate the investigation.\n\nI’m flying out next Tuesday. Could you cancel the shipment and refund both the item and the express shipping fee so I can reorder later.\n\nThat said, if you’re able to put the same hoodie on an overnight courier today—and credit me just the express fee—I’m happy to keep the order open. Let me know which option is fastest on your end.\n\nThanks for sorting this out!\n— Sam",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        1180
+      ],
+      "id": "ef1560fb-3a35-432f-ab20-ab21ce3b0706",
+      "name": "email"
+    },
+    {
+      "parameters": {
+        "jsCode": "const N = 7;          // number of chains\nconst email = $json.email;\nreturn Array.from({ length: N }, (_, i) => ({\n  json: { run: i + 1, email }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        1180
+      ],
+      "id": "200b58ae-3516-439b-8db6-5ae48f297591",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        660,
+        1180
+      ],
+      "id": "ba49159d-6734-43d4-8bab-55a0dec07ad2",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Example 1\nEmail: “Hi team, my mug arrived cracked. Can I get a replacement or my money back?”\nJSON: {\"queue\":\"Refund\"}\n\nExample 2\nEmail: “Tracking says ‘delivered’ yesterday but nothing is on my porch. What now?”\nJSON: {\"queue\":\"Shipping\"}\n\nExample 3\nEmail: “Is the Alpine Jacket waterproof, and do you have it in XXL?”\nJSON: {\"queue\":\"ProductQuestion\"}\n\n---\nNow classify this email:\n\n{{ $json.email }}\n\nJSON:\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a support-email router for an e-commerce brand.  \nYour job: read the customer’s email and assign it to ONE of exactly three queues:\n\n• Refund – the customer is asking for money back or a cancelled order  \n\n• Shipping – tracking, delivery delays, lost package, wrong address, etc.  \n\n• ProductQuestion – sizing, colour, features, exchanges, how-to, care, warranty, etc.\n\nReturn your decision as a **single-line JSON object** with one key, “queue”.  \n\nExample: {\"queue\":\"Refund\"}\n\n⚠️  Do NOT add any other keys, commentary, markdown, or code fences.  \nThink silently; output only the JSON.\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        900,
+        1200
+      ],
+      "id": "d66839d8-5075-46b1-bc1c-9c7dbac8e3f7",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {
+          "temperature": 1.1,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        920,
+        1340
+      ],
+      "id": "668940d5-78d7-4160-a31c-0297e4ba5165",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "m8UPq7cBTQihWph9",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const counts = {};\nitems.forEach(item => {\n  const q = item.json.queue || \"Unknown\";\n  counts[q] = (counts[q] || 0) + 1;\n});\n\nconst sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);\nconst [winner, votes] = sorted[0];\nconst total = items.length;\n\nreturn [{\n  json: {\n    queue: winner,\n    votes,\n    total,\n    confidence: votes / total\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        860,
+        1040
+      ],
+      "id": "22349af9-c5fb-4c8a-9645-0f8776055197",
+      "name": "vote"
+    },
+    {
+      "parameters": {
+        "jsCode": "const obj = JSON.parse($json[\"text\"] || \"{}\");\nreturn [{ json: { queue: obj.queue } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1260,
+        1200
+      ],
+      "id": "d4f733e5-7163-4085-a09c-305fd4fb0797",
+      "name": "strip"
+    },
+    {
+      "parameters": {
+        "content": "## Accuracy: Step-Back",
+        "height": 620,
+        "width": 1060,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        1660
+      ],
+      "id": "e8523ad2-0633-4d90-a0b1-70bd08bbc0ef",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.request }}\n"
+            },
+            {
+              "content": "=You are a senior support operator. \n\nBreak the user’s request into the smallest answerable questions that must be resolved before deciding which queue to route to (Refund, Shipping, ProductQuestion). \n\nReturn them as a numbered Markdown list, no other text.",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        460,
+        1860
+      ],
+      "id": "5e6b07dc-500f-4eb5-b490-caa86c5f7bbd",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "m8UPq7cBTQihWph9",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "= {{ $json.message.content }}"
+            },
+            {
+              "content": "=Answer the numbered questions you produced, citing policy codes where relevant. \n\nEnd with “## ROUTE:” followed by exactly one of Refund | Shipping | ProductQuestion.",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        840,
+        1860
+      ],
+      "id": "27e01fb9-0b05-4d53-a453-380ab527879f",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "m8UPq7cBTQihWph9",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1fd5e9cd-5222-4611-939e-12ab6de4bea7",
+              "name": "request",
+              "value": "Hi support team,  Package status: I ordered a “TrailBlaze Pro” backpack on May 18th (Order #77831) with priority shipping. FedEx tracking has been stuck at “Departed Facility – Memphis” for seven days, and now the estimated delivery date just vanished. Can you check what’s going on and let me know whether you can upgrade the shipping or reroute it to my hotel in Denver? I fly out on June 6.  Warranty / refund options: If the bag can’t arrive before I leave, I’ll need a full refund on both the backpack and the priority-shipping fee. Also, I read you offer a lifetime warranty—does that cover zippers and straps if they fail later on? I’d like to know before deciding whether to reorder once I’m back.  Thanks for helping me sort this out quickly!  — Morgan",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        1860
+      ],
+      "id": "018797b9-945e-4509-bb3c-20828051fa9b",
+      "name": "supportRequest"
+    },
+    {
+      "parameters": {
+        "content": "## Accuracy: ReAct",
+        "height": 660,
+        "width": 1060,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        2320
+      ],
+      "id": "cdb6d3fa-3d8f-4815-ae3d-502958c07851",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        580,
+        2380
+      ],
+      "id": "bceea836-bbfc-4bde-84f2-a1bbedf8deac",
+      "name": "When chat message received",
+      "webhookId": "f4910fd5-33b6-4bbb-a45e-eb1133e2fd8e"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        520,
+        2800
+      ],
+      "id": "2dd7ecb6-2c34-4b32-98a5-b99eaf9fdab8",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "url": "example.com/index",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        2800
+      ],
+      "id": "9e327f38-d933-4091-9ec8-75205ccec324",
+      "name": "Weather"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "dommg1LcwK9P3yEy",
+          "mode": "list",
+          "cachedResultName": "Analyze Brand"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "companyUrl": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('companyUrl', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "companyUrl"
+          ],
+          "schema": [
+            {
+              "id": "companyUrl",
+              "displayName": "companyUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        2800
+      ],
+      "id": "c89132ef-5540-4e57-820e-91f4856ef39b",
+      "name": "search"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        2820
+      ],
+      "id": "ff043c80-817f-4c5c-a9a8-d584d80a0e11",
+      "name": "Calculator1"
+    },
+    {
+      "parameters": {
+        "url": "example.com/index",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        2820
+      ],
+      "id": "086a461c-b2b1-49b5-8ca5-b56f22dd0518",
+      "name": "Weather3"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "dommg1LcwK9P3yEy",
+          "mode": "list",
+          "cachedResultName": "Analyze Brand"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "companyUrl": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('companyUrl', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "companyUrl"
+          ],
+          "schema": [
+            {
+              "id": "companyUrl",
+              "displayName": "companyUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        2820
+      ],
+      "id": "df8f60e7-014b-4e68-ab79-63f9105f063d",
+      "name": "search1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful You are “TripMate,” a helpful travel concierge AI. Your goal is to assist the user with any travel-related request using the available tools.\n\nAvailable Tools:\n\n- weather: Use this to look up current or forecasted weather for any location.\n\n- search: Use this to find information online, like top attractions, restaurants, or travel tips.\n\n- calc: Use this for any numerical calculation, like budgeting, time conversion, or distances.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        260,
+        2580
+      ],
+      "id": "5da2d561-94cd-4ec7-9185-e2f29abd493c",
+      "name": "Old Way"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are “TripMate”, a travel-concierge agent who can THINK and ACT.\n\n**Available actions**\n1. weather(location:str, date:str) → returns JSON forecast\n2. search(query:str) → returns top 3 Google Places results as JSON\n3. calc(expression:str) → returns numeric result\n\n**Output rules**\n• Begin reasoning with: Thought: ...\n• To call a tool write: Action: <tool>(<args>)\n• I will reply with Observation: <result>. Continue the cycle.\n• Finish with: Answer: <final reply to user>  (no additional text).\n\nStay concise; keep Thoughts ≤ 1 sentence.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        780,
+        2580
+      ],
+      "id": "6674edcb-41b8-423b-89a8-e92373fc31f2",
+      "name": "ReAct Way"
+    },
+    {
+      "parameters": {
+        "content": "## Example\n**User** \nI’m in Kyoto next Tuesday. Is it likely to rain? If not, book me the best ramen within 1 km of Kiyomizu-dera and tell me the last bus back to Kyoto Station.\n\n**Model (ReAct run)**\n\nThought: Need forecast for Kyoto next Tuesday.\nAction: weather(\"Kyoto,JP\",\"2025-06-10\")\nObservation: {\"rain_mm\":0.3,\"temp_C\":28}\nThought: Dry day; proceed to ramen search near Kiyomizu-dera.\nAction: search(\"best ramen near Kiyomizu-dera within 1 km rating >4.5\")\nObservation: [{\"name\":\"Menya Inoichi\",\"rating\":4.7,\"distance_m\":620}, …]\nThought: Calculate walking time.\nAction: calc(\"620/80\")\nObservation: 7.75\nThought: Need last bus info.\nAction: search(\"Kyoto City Bus Kiyomizu to Kyoto Station last bus weekday\")\nObservation: \"Last bus 22:40 on route 206.\"\n\nAnswer: \n• Weather 10 Jun: 28 °C, <1 mm rain (dry).  \n• Ramen: **Menya Inoichi** (4.7★, 620 m ≈ 8 min walk).  \n• Last bus to Kyoto Station (route 206) departs 22:40.\n",
+        "height": 600,
+        "width": 540
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        2320
+      ],
+      "id": "fbd6b039-d508-4ebf-a982-6143e7255cd1",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Reliability: Auto fixing Output parser",
+        "height": 560,
+        "width": 1060,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        3020
+      ],
+      "id": "8ad17312-ad6f-46d9-a01e-905cd2044550",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an email router. \nReturn ONLY the JSON object exactly like the examples.\n\nExample 1\nEmail: “Hi team, my order #4321 arrived damaged. I need a replacement or a refund.”\nJSON: {\"queue\":\"Refund\"}\n\nExample 2\nEmail: “Tracking hasn’t updated for five days—has my package gone missing?”\nJSON: {\"queue\":\"Shipping\"}\n\n---  # New task below\nEmail: \"\"\"{{NEW_EMAIL_TEXT}}\"\"\"\nJSON:\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        260,
+        3120
+      ],
+      "id": "6b88a193-2cfe-4918-868f-ce32c1eb365b",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        540,
+        3420
+      ],
+      "id": "a3787581-a039-4294-b50f-e5c61cbffffc",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        280,
+        3340
+      ],
+      "id": "9e97ea57-9a94-4493-bdc1-27e037c7df4c",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "m8UPq7cBTQihWph9",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        460,
+        3280
+      ],
+      "id": "c34d6231-2669-4e58-ba66-750cf7e0ba0e",
+      "name": "Auto-fixing Output Parser"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "supportRequest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "vote",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "strip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "strip": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "supportRequest": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Old Way",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ReAct Way",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Old Way",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weather": {
+      "ai_tool": [
+        [
+          {
+            "node": "Old Way",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Old Way",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator1": {
+      "ai_tool": [
+        [
+          {
+            "node": "ReAct Way",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weather3": {
+      "ai_tool": [
+        [
+          {
+            "node": "ReAct Way",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search1": {
+      "ai_tool": [
+        [
+          {
+            "node": "ReAct Way",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3ee92c8f-464b-4709-821c-54a70efd5049",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "605a683b81a6e587f4e29323845487f54ca9ffb48ef0a7180153d72d510ddc13"
+  },
+  "id": "Etef8dzJCpnRxrTq",
+  "tags": []
+}

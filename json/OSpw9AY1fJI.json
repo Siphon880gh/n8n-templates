@@ -1,0 +1,1088 @@
+{
+  "name": "Viral TikToks",
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "e86bf187-219d-4dcc-8809-c0472ca1f5e7",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        1580,
+        880
+      ],
+      "webhookId": "3a5dbf58-3f15-49b7-b863-e2bc24cf4f12",
+      "typeVersion": 1.1,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a21fe2d1-533b-4f09-94aa-9312c3dd05b8",
+              "name": "=prompt",
+              "type": "string",
+              "value": "=Analyze the TikTok video: 1. What is the video about in one sentence 2. What is going on in the video - write me a whole script, that I can easily replicate, include all the important details 3. What makes the video viral, explain very specific, main viral components in 1-3 sentences (this video has {{ $('Create Video').item.json.fields.Views }} views). Structure your output as a JSON: {idea:text, script:text, why_viral:text} (with quotes symbols and without newlines) AND WRITE NOTHING ELSE EXCEPT THIS FILE, so begin with {"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c21e7689-4689-4b65-98a8-44e1a1402a0e",
+      "name": "Set Prompt",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1780,
+        880
+      ],
+      "typeVersion": 3.4,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/upload/v1beta/files",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyAG9XFqflVl98aHxLSrgN4kX4CriZ_yEm8"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Upload-Protocol",
+              "value": "resumable"
+            },
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "start"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Length",
+              "value": "={{ $json.Video[0].size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Type",
+              "value": "={{ $json.Video[0].type }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"file\": {\n\"display_name\": \"{{ $json.Video[0].filename }}\"\n}\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "b8faea88-6459-434c-8890-538931cf1ab9",
+      "name": "Gemini - Generate Upload URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1980,
+        580
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Gemini - Generate Upload URL').item.json.headers['x-goog-upload-url'] }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyAG9XFqflVl98aHxLSrgN4kX4CriZ_yEm8"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Length",
+              "value": "={{ $('Get Video').item.json.Video[0].size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Offset",
+              "value": "0"
+            },
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": "upload, finalize"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {
+          "response": {}
+        }
+      },
+      "id": "1fe984fa-b34f-4a7d-aa53-6ce51742fd35",
+      "name": "Gemini - Upload File",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2380,
+        580
+      ],
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4fb7b732-17f9-41a2-986d-5d62b1331242",
+              "name": "gemini_file_url",
+              "type": "string",
+              "value": "={{ $json.file.uri }}"
+            },
+            {
+              "id": "5f3018b4-571f-433c-a07b-2fb86f63b9b6",
+              "name": "mimeType",
+              "type": "string",
+              "value": "={{ $json.file.mimeType }}"
+            },
+            {
+              "id": "c5532f11-ec31-49f8-aa26-7f42b7d24fa4",
+              "name": "airtable_rec_id",
+              "type": "string",
+              "value": "={{ $('Get Video').item.json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8c4cf73b-3620-4d14-9eda-8967cd9cb9a3",
+      "name": "Save Values",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1380,
+        880
+      ],
+      "typeVersion": 3.4,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"url\":{{ JSON.stringify($json.videoMeta.downloadAddr) }},\n  \"views\": {{ $json.playCount }},\n  \"caption\": {{ JSON.stringify($json.text) }},\n  \"creator\": \"{{ $json.authorMeta.name }}\",\n  \"creationDate\": \"{{ $json.createTimeISO }}\"\n}",
+        "options": {}
+      },
+      "id": "1b41947c-1730-41cf-98f2-95961529d65b",
+      "name": "Save Fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1980,
+        280
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Get Video').item.json.Video[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "098c67a7-9522-46c3-ae5b-b381b7cfece7",
+      "name": "Download File",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2180,
+        580
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appkly415Svjnl1Hf",
+          "mode": "list",
+          "cachedResultName": "Viral TikToks",
+          "cachedResultUrl": "https://airtable.com/appkly415Svjnl1Hf"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllWMXkRYTI9WiFW",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appkly415Svjnl1Hf/tbllWMXkRYTI9WiFW"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Creation Date": "={{ $json.formattedDate }}",
+            "Creator": "={{ $json.creator }}",
+            "Video": "={{ [ {\"url\":$json.url} ] }}",
+            "Views": "={{ $json.views }}",
+            "Caption": "={{ $json.caption }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Creation Date",
+              "displayName": "Creation Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video",
+              "displayName": "Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Views",
+              "displayName": "Views",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Idea",
+              "displayName": "Idea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "What Made It Viral",
+              "displayName": "What Made It Viral",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "90a21aee-1066-406c-babd-69e93224adf9",
+      "name": "Create Video",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        1580,
+        580
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appkly415Svjnl1Hf",
+          "mode": "list",
+          "cachedResultName": "Viral TikToks",
+          "cachedResultUrl": "https://airtable.com/appkly415Svjnl1Hf"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllWMXkRYTI9WiFW",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appkly415Svjnl1Hf/tbllWMXkRYTI9WiFW"
+        },
+        "id": "={{ $json.id }}",
+        "options": {}
+      },
+      "id": "d662fcbe-93bc-40a8-aa57-eb21c03afd08",
+      "name": "Get Video",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        1780,
+        580
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appkly415Svjnl1Hf",
+          "mode": "list",
+          "cachedResultName": "Viral TikToks",
+          "cachedResultUrl": "https://airtable.com/appkly415Svjnl1Hf"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllWMXkRYTI9WiFW",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appkly415Svjnl1Hf/tbllWMXkRYTI9WiFW"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Get Video').first().json.id }}",
+            "Script": "={{ $json.llmAnalysis.script }}",
+            "Idea": "={{ $json.llmAnalysis.idea }}",
+            "What Made It Viral": "={{ $json.llmAnalysis.why_viral }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Creation Date",
+              "displayName": "Creation Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video",
+              "displayName": "Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Views",
+              "displayName": "Views",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Idea",
+              "displayName": "Idea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "What Made It Viral",
+              "displayName": "What Made It Viral",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "2ae4458a-4071-4ca3-8f2f-dd9c012fd8e5",
+      "name": "Set Guideline",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        2380,
+        880
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appkly415Svjnl1Hf",
+          "mode": "list",
+          "cachedResultName": "Viral TikToks",
+          "cachedResultUrl": "https://airtable.com/appkly415Svjnl1Hf"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblp31TvkFft8LGhP",
+          "mode": "list",
+          "cachedResultName": "Creators",
+          "cachedResultUrl": "https://airtable.com/appkly415Svjnl1Hf/tblp31TvkFft8LGhP"
+        },
+        "returnAll": false,
+        "limit": null,
+        "options": {}
+      },
+      "id": "ca2d54db-6413-4314-a80c-96444ddf1a2f",
+      "name": "Search Creators",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        1180,
+        280
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FE1KN1wU1zLtjBJc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 5
+            }
+          ]
+        }
+      },
+      "id": "fd9804c6-acea-4a04-afaa-6494d47648fb",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        980,
+        280
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "169d70ec-dabb-410d-8103-d0e911714dc1",
+              "leftValue": "={{ $json.videoMeta.downloadAddr }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1780,
+        280
+      ],
+      "id": "fbaad522-b1ea-4de6-8247-dea944e6a1cf",
+      "name": "Check If Video"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/clockworks~tiktok-scraper/run-sync-get-dataset-items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "apify_api_iCr3t5mDFPGpi4PbW0WRMb5M9xIwQW02Ltzd"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"profiles\": [\n        \"{{ $json['TikTok Username'] }}\"\n    ],\n    \"profileScrapeSections\": [\n      \"videos\"\n    ],\n    \"profileSorting\": \"latest\",\n    \"scrapeLastNDays\": 360,\n    \"shouldDownloadVideos\": true,\n    \"videoKvStoreIdOrName\": \"tiktok\",\n    \"resultsPerPage\": 10\n}",
+        "options": {}
+      },
+      "id": "b924e4e6-ff72-47ad-8764-9c0bbe0015d3",
+      "name": "Apify - Scrape TikToks",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1580,
+        280
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d41b56a0-b380-49e3-a61c-666b47731cd6",
+      "name": "Loop Over Creators",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        1380,
+        280
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": "={{ $node['Loop Over Videos'].context[\"done\"] }}"
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1180,
+        580
+      ],
+      "id": "cd8a9678-d7e4-4191-929e-9bd1a0b3d29d",
+      "name": "Loop Over Videos"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const dateStr = $json.creationDate; // e.g., \"2025-04-05T08:20:42.000Z\"\nconst dateObj = new Date(dateStr);\n\n// Get the day, month, and year using UTC methods\nconst day = String(dateObj.getUTCDate()).padStart(2, '0');\nconst month = String(dateObj.getUTCMonth() + 1).padStart(2, '0'); // Adjust month (0-indexed)\nconst year = dateObj.getUTCFullYear();\n\n// Format the date as \"dd-mm-yyyy\"\nconst formattedDate = `${day}-${month}-${year}`;\n\n// Add the formatted date to the current JSON\n$json.formattedDate = formattedDate;\n\n// Return the modified item\nreturn { json: $json };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1380,
+        580
+      ],
+      "id": "2dc08820-5529-4c2a-95f7-f782957ed122",
+      "name": "Format Date"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const parsedObject = JSON.parse($json.candidates[0].content.parts[0].text);\n$json.llmAnalysis = parsedObject;\nreturn $json;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2180,
+        880
+      ],
+      "id": "96a02c92-b9a2-4d6c-b36d-7ba397929531",
+      "name": "Format JSON"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "id": "3957fa5e-b39a-4e1a-a7a8-4e3797ace038",
+      "name": "Take Top-5",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        2380,
+        280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyAG9XFqflVl98aHxLSrgN4kX4CriZ_yEm8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n   \"contents\": [\n      {\n         \"parts\": [\n            {\n               \"text\": \"{{ $json.prompt }}\"\n            },\n            {\n               \"file_data\": {\n                  \"mime_type\": \"{{ $('Save Values').item.json.mimeType }}\",\n                  \"file_uri\": \"{{ $('Save Values').item.json.gemini_file_url }}\"\n               }\n            }\n         ]\n      }\n   ],\n   \"generationConfig\": {\n      \"response_mime_type\": \"application/json\"\n   }\n}\n",
+        "options": {}
+      },
+      "id": "9e6d095d-cad7-492a-b333-537bbc8e76f8",
+      "name": "Gemini - Analyse Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1980,
+        880
+      ],
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "views",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9be31051-4530-407e-8311-c39155b54797",
+      "name": "Sort Videos By Views",
+      "type": "n8n-nodes-base.sort",
+      "position": [
+        2180,
+        280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Connect Airtable Account",
+        "height": 80,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1140,
+        180
+      ],
+      "typeVersion": 1,
+      "id": "c210f29f-a4e8-4913-9388-e207e3cd436c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### Replace Apify Token",
+        "height": 80,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1540,
+        180
+      ],
+      "typeVersion": 1,
+      "id": "61a2126a-2ddb-4e1e-b659-2950d8c10217",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### Adjust The Analysis Prompt",
+        "height": 80,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1900,
+        780
+      ],
+      "typeVersion": 1,
+      "id": "f5ced370-abd2-43fd-b0fe-4d58b9a2276e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### Replace Gemini Token",
+        "height": 80,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1940,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "d46c3cc1-a8ed-4f7a-9bc2-10562920e942",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Set Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Generate Upload URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Prompt": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Analyse Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Fields": {
+      "main": [
+        [
+          {
+            "node": "Sort Videos By Views",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Values": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Video": {
+      "main": [
+        [
+          {
+            "node": "Get Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Upload File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Creators": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Creators",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search Creators",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Upload File": {
+      "main": [
+        [
+          {
+            "node": "Save Values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Generate Upload URL": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Guideline": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Video": {
+      "main": [
+        [
+          {
+            "node": "Save Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify - Scrape TikToks": {
+      "main": [
+        [
+          {
+            "node": "Check If Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Creators": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Apify - Scrape TikToks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Videos": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Creators",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Date": {
+      "main": [
+        [
+          {
+            "node": "Create Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format JSON": {
+      "main": [
+        [
+          {
+            "node": "Set Guideline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Take Top-5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Analyse Video": {
+      "main": [
+        [
+          {
+            "node": "Format JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort Videos By Views": {
+      "main": [
+        [
+          {
+            "node": "Take Top-5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "43beb9e5-564f-4215-a905-da2bb71abfb0",
+  "meta": {
+    "templateId": "2993",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69f54ab0f1afba7dd61c0a7a7609df8a8bd98642cf42d92572ea26f947c9a1d8"
+  },
+  "id": "JSjX01rvVCDYNiHg",
+  "tags": []
+}

@@ -1,0 +1,436 @@
+{
+  "name": "AI Agent Web Scraping",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4a00803e-deb0-45a4-843f-ec74c9f9f7e6",
+      "name": "When chat message received",
+      "webhookId": "b647c2f1-e3e9-4be0-965b-85826071d7a8"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are the personal assistant that excels at web scraping. Your job is to send the user's query to the correct tool. You should never be writing emails, or creating even summaries, you just need to call the correct tool.\n\n## Tools\n- google_maps_web_scraper: Use this tool to web scrape google. You'll want to aggregate all the results together and send a list back to the user\n- yellow_pages_web_scraper: Use this tool to web scrape yellow pages. You'll want to aggregate all the results together and send a list back to the user\n- apollo_web_scraper: Use this tool to web apollo. You'll want to aggregate all the results together and send a list back to the user\n- instagram_web_scraper: Use this tool to web scrape instagram. You'll want to aggregate all the results together and send a list back to the user\n- tiktok_web_scraper: Use this tool to web scrape tiktok. You'll want to aggregate all the results together and send a list back to the user\n\nIf the user asks you to scrape multiple sources, please combine them all in one output.\n\n## Workflow inputs\n- search: please insert the city. For example: Toronto, or Los Angeles\n- location: please insert the city. For example: Toronto, or Los Angeles\n- state: please insert the state/province code uppercase. For example: NY, CA\n- country: please insert the country code, lower case. For example: ca, or us"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "e76fd26c-ee86-441d-bbb1-43b72ee75684",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        220
+      ],
+      "id": "bfcfd116-9c32-4e1a-b4ec-290d1b47a67b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ijZWPGwLXdAOVFfI",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        120,
+        220
+      ],
+      "id": "f57e7cc5-f40d-4d82-93ad-a10cf217926e",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "name": "google_maps_web_scraper",
+        "description": "Call this tool to web scrape Google",
+        "workflowId": {
+          "__rl": true,
+          "value": "12AKoHjuuvaPIHb6",
+          "mode": "list",
+          "cachedResultName": "Google Maps Scraping"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "country": "={{ $fromAI(\"countryCodeLowerCase\", \"this is the country code that you'll use to search Google Maps with, such asus, ca, etc - it must be lower case\") }}",
+            "state": "={{ $fromAI(\"stateInitials\", \"this is the intials of the state that you'll use to search Google Maps with, such as NY, CA, etc - uppercase\") }}",
+            "location": "={{ $fromAI(\"city\", \"this is the city that you'll use to search Google Maps with, such as New York, Los Angeles, etc\") }}",
+            "search": "={{ $fromAI(\"industry\", \"this is the industry that you'll use to search Google Maps with, such as landscaping, roofing, photography, etc\") }}"
+          },
+          "matchingColumns": [
+            "Test"
+          ],
+          "schema": [
+            {
+              "id": "search",
+              "displayName": "search",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        260,
+        220
+      ],
+      "id": "c743beb4-df34-4b43-9bf4-f554e53d00a2",
+      "name": "Google Maps Web Scraper"
+    },
+    {
+      "parameters": {
+        "name": "yellow_pages_web_scraper",
+        "description": "Call this tool to web scrape Yellow Pages",
+        "workflowId": {
+          "__rl": true,
+          "value": "isA1okdngFHSlgk8",
+          "mode": "list",
+          "cachedResultName": "Yellow Pages Scraping"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "search": "={{ $fromAI(\"industry\", \"this is the industry that you'll use to search Yellow Pages with, such as landscaping, roofing, photography, etc\") }}",
+            "location": "={{ $fromAI(\"location\", \"this is the city that you'll use to search Yellow Pages with, such as New York, Los Angeles, etc\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "search",
+              "displayName": "search",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        420,
+        220
+      ],
+      "id": "c7d56ed1-6577-4a16-87f1-cc6a5a70d795",
+      "name": "Yellow Pages"
+    },
+    {
+      "parameters": {
+        "name": "apollo_web_scraper",
+        "description": "Call this tool to web scrape Apollo",
+        "workflowId": {
+          "__rl": true,
+          "value": "vg7ioHzFge25fuAy",
+          "mode": "list",
+          "cachedResultName": "Apollo Scraping"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "search": "={{ $fromAI(\"industry\", \"this is the industry that you'll use to search Apollo with, such as landscaping, roofing, photography, etc\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "search",
+              "displayName": "search",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        580,
+        220
+      ],
+      "id": "dbfb3b40-2cf1-4dd4-8ad3-722757a7fafa",
+      "name": "Apollo"
+    },
+    {
+      "parameters": {
+        "name": "instagram_web_scraper",
+        "description": "Call this tool to web scrape Instagram",
+        "workflowId": {
+          "__rl": true,
+          "value": "P3jGQDAnGLyToTCP",
+          "mode": "list",
+          "cachedResultName": "Instagram Scraping"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hashtag": "={{ $fromAI(\"industry\", \"this is the industry that you'll use to search Instagram with, such as landscaping, roofing, photography, etc\") }}"
+          },
+          "matchingColumns": [
+            "hashtag"
+          ],
+          "schema": [
+            {
+              "id": "hashtag",
+              "displayName": "hashtag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        740,
+        220
+      ],
+      "id": "e6642336-65cc-4440-9818-35307d11b3b5",
+      "name": "Instagram"
+    },
+    {
+      "parameters": {
+        "name": "tiktok_web_scraper",
+        "description": "Call this tool to web scrape TikTok",
+        "workflowId": {
+          "__rl": true,
+          "value": "XAoVK11JodOJWYqV",
+          "mode": "list",
+          "cachedResultName": "TikTok Scraping"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hashtag": "={{ $fromAI(\"industry\", \"this is the industry that you'll use to search TikTok with, such as landscaping, roofing, photography, etc\") }}"
+          },
+          "matchingColumns": [
+            "hashtag"
+          ],
+          "schema": [
+            {
+              "id": "hashtag",
+              "displayName": "hashtag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        880,
+        220
+      ],
+      "id": "6f95b3a7-cfdb-47da-878d-f8d7f8ed73fd",
+      "name": "TikTok"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Maps Web Scraper": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yellow Pages": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apollo": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7dd09b93-5a0e-4bd0-83bd-c9e8bcc48340",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "lc5FCRugvAlbrcH5",
+  "tags": []
+}

@@ -1,0 +1,230 @@
+{
+  "name": "Voice Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"date\": \"\",\n  \"start_time\": \"\",\n  \"end_time\": \"\",\n  \"hair_dresser\": \"\",\n  \"calendar_availability\": \"\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "40620d43-eb03-4698-bc80-46e7426fc3cc",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer b4202800-30fd-4d89-a224-5876bc261898"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phoneNumberId\": \"cba50fc1-754f-4143-ae3e-e75507f57cb2\",\n  \"assistantId\": \"7c61680b-16cc-4299-8158-b954cd11cd69\",\n  \"customer\": {\n    \"number\": \"\"\n  },\n  \"type\": \"outboundPhoneCall\",\n  \"assistant\": {\n        \"firstMessage\": \"Hey, I'd like to book a hair appointment.\",\n        \"model\": {\n        \"provider\": \"openai\",\n        \"model\": \"gpt-3.5-turbo\",\n        \"messages\": [\n          {\n            \"role\": \"system\",\n            \"content\": \"Ava is an intelligent personal assistant specializing in outbound calling and scheduling appointments. She has a warm yet professional tone, speaks clearly with a neutral accent for accessibility, and prioritizes efficiency.\\n\\nAva’s task for this call is to book a hair appointment for her client, Jono, at ABC Barbershop. She will speak with a representative and follow these instructions:\\n\\n1. **Preferred Appointment Time:**\\n   - Book an appointment between {{ $json.start_time }} - {{ $json.end_time }} PM on {{ $json.date }}.\\n   - If available, request {{ $json.hair_dresser }} as the stylist. If they are unavailable, any other available stylist is fine.\\n\\n2. **Availability Check:**\\n   - If no slots are available within the preferred timeframe, check for alternative openings outside of Jono's calendar conflicts.\\n   - Review Jono's schedule here: {{ $json.calendar_availability }} to ensure there are no conflicts before confirming the appointment.\\n\\n3. **Confirmation Details:**\\n   - Confirm the date, time, and stylist name before finalizing.\\n   - If no appointments are available, ask when the next earliest opening is and offer to book that instead.\\n\\n4. **Closing the Call:**\\n   - Thank the representative for their time and confirm that Jono will receive a reminder of the appointment.\"\n        }]\n      }\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "71de83fa-35c9-404e-a10c-1960bd49587f",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "url": "=  https://api.vapi.ai/call/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer b4202800-30fd-4d89-a224-5876bc261898"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        0
+      ],
+      "id": "7513ac6f-7837-42cc-97ed-418c0b046c87",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        0
+      ],
+      "id": "bc543254-dffa-4fda-8cf9-9a81a8a93eba",
+      "name": "Wait",
+      "webhookId": "4165f4d4-a543-4b1b-b694-61227073851d"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6317e9c3-fc74-4080-b8af-f24a00c1789b",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "ended",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        0
+      ],
+      "id": "7314dedc-2dd0-4083-938d-b8042d31c8be",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "33999b2c-11b6-41b4-b2c0-9ba40d2cf3f7",
+              "name": "call_transcript",
+              "value": "={{ $json.transcript }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        0
+      ],
+      "id": "84616188-f62c-4d83-8018-c1b262e5b390",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "date": "",
+          "start_time": "",
+          "end_time": "",
+          "hair_dresser": "",
+          "calendar_availability": ""
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "be367bad-c754-4b33-bc63-b285165395b4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "9cJr921WzIdmQKop",
+  "tags": []
+}

@@ -1,0 +1,359 @@
+{
+  "name": "Scraping Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "##Role\n\nYour job is to use the tools provided to scrape either LinkedIn, google maps, websites or trust pilot reviews\n\n##Task\n\nWhen you receive and input it will be to scrape or find either LinkedIn, google maps, websites or trust pilot reviews. You have 4 tools\n\n-----------\n\nGoogle Maps scraper - This tool can scrape google maps and find businesses for the user. You must input the tool with the location that a user wants to scrape and the industry. for the tool input you will see this json body\n{\n    \"language\": \"en\",\n    \"locationQuery\": \"{placeholder}\",\n    \"maxCrawledPlacesPerSearch\": 10,\n    \"searchStringsArray\": [\n        \"{placeholder}\"\n    ],\n    \"skipClosedPlaces\": false\n}\n\nsimply switch out the placeholder next to location query with actual location and the placeholder next to search strings array with the industry\n\n----------\n\nLinkedIn scraper - This tool can find linkedin pages based on keywords. The tools input looks like this\n\n{\n    \"isName\": false,\n    \"isUrl\": false,\n    \"keywords\": [\n        \"{paceholder}\"\n    ]\n}\n\nand you just need to switch out the placeholder value with the actual keywords ensuring you keep valid json\n\n-----------\n\nWebsite scraper - this tool can scrape website content. simply input a company name that the user gives you and wait for the output from the tool which will be a summary of that companies website\n\n----------\n\nreview scraper - this tool can scrape reviews from trust pilot. simply input a company name that the user gives you and wait for the output from the tool which will be a summary of that companies trust pilot reviews"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        200,
+        0
+      ],
+      "id": "05a52cff-bf6f-494a-99d9-0f3e901d90fa",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        120,
+        200
+      ],
+      "id": "639c681a-0c8d-41ab-8990-062d205f1380",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "This tool can scrape google maps to find businesses",
+        "method": "POST",
+        "url": "www.yoururl.com",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"language\": \"en\",\n    \"locationQuery\": \"{placeholder}\",\n    \"maxCrawledPlacesPerSearch\": 10,\n    \"searchStringsArray\": [\n        \"{placeholder}\"\n    ],\n    \"skipClosedPlaces\": false\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        420
+      ],
+      "id": "59b98443-7b4b-4f0d-b89c-620592fe1716",
+      "name": "Google maps scraper"
+    },
+    {
+      "parameters": {
+        "toolDescription": "This tool can find and scrape linkedin profiles",
+        "method": "POST",
+        "url": "www.yoururl.com",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"isName\": false,\n    \"isUrl\": false,\n    \"keywords\": [\n        \"{placeholder}\"\n    ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{placeholder}",
+              "description": "the keywords the user wants to search for"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        420
+      ],
+      "id": "3a137d6c-ae23-4607-8557-6c99128ddd07",
+      "name": "Linkedin Profile scraper"
+    },
+    {
+      "parameters": {
+        "name": "Website_scraper",
+        "description": "This tool is able to find websites for companies and then scrape there sites and create a summary",
+        "workflowId": {
+          "__rl": true,
+          "value": "S4GD0Xf8ZQRBZLDk",
+          "mode": "list",
+          "cachedResultName": "Website scraper"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Company_name', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Company name"
+          ],
+          "schema": [
+            {
+              "id": "Company name",
+              "displayName": "Company name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        580,
+        380
+      ],
+      "id": "243efa97-103e-438a-a931-1b292156736d",
+      "name": "Website scraper"
+    },
+    {
+      "parameters": {
+        "name": "review_scraper",
+        "description": "this tool can find a companies trust pilot page and scrape the reviews",
+        "workflowId": {
+          "__rl": true,
+          "value": "xG8IAya4jeKgZDcW",
+          "mode": "list",
+          "cachedResultName": "Review scraper"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Company_name', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Company name"
+          ],
+          "schema": [
+            {
+              "id": "Company name",
+              "displayName": "Company name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        680,
+        260
+      ],
+      "id": "881dfcef-30ef-4d1b-8e67-62dc4629869e",
+      "name": "Review scraper"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.from.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        220,
+        280
+      ],
+      "id": "99799eb6-5bfa-4fec-b2e6-168c34556ef8",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -20,
+        0
+      ],
+      "id": "0e3c0a52-6648-4981-896b-e044c32f1f4b",
+      "name": "Telegram Trigger",
+      "webhookId": "35ac5df0-0420-4c3f-8013-0f5767ba5dc9",
+      "credentials": {
+        "telegramApi": {
+          "id": "6LCSOglkLeQZVWwQ",
+          "name": "Scraper agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "34363c09-c75e-41e6-93c3-040c725b0506",
+      "name": "Telegram",
+      "webhookId": "40610cd6-d55b-4d63-98c5-75b9b08b56dd",
+      "credentials": {
+        "telegramApi": {
+          "id": "6LCSOglkLeQZVWwQ",
+          "name": "Scraper agent"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google maps scraper": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Linkedin Profile scraper": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Website scraper": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review scraper": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e25a7ef9-efdd-4163-acc7-4e387dc1af56",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8711ef6aba5ff6781b8ed3c0d9d8ad1fb3b9e4be41f1c9a056c02209236d4a91"
+  },
+  "id": "mgcq6rAeTRxOBnmc",
+  "tags": []
+}

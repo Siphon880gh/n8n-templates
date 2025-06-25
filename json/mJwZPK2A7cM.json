@@ -1,0 +1,1561 @@
+{
+  "name": "Tech CRM",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "httpMethod": [
+          "POST",
+          "GET"
+        ],
+        "path": "ben-ai-community",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        70
+      ],
+      "id": "ec6e138f-cae3-4784-ae66-c5776ac4b53c",
+      "name": "Webhook1",
+      "webhookId": "b5d59c5f-126b-4375-953f-158d18e1be5c"
+    },
+    {
+      "parameters": {
+        "url": "=https://app.circle.so/api/admin/v2/posts/{{ $json.body.data.post_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        -280
+      ],
+      "id": "2128fc5c-7f72-44bb-8c1c-a05634537a39",
+      "name": "Get Circle Post",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "B0JMKGb2byRA8XWD",
+          "name": "BenAI Circle - N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appQ9YsDJOJNLmkPe",
+          "mode": "list",
+          "cachedResultName": "BenAI Tech CRM",
+          "cachedResultUrl": "https://airtable.com/appQ9YsDJOJNLmkPe"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTFBo7twenvyW4R",
+          "mode": "list",
+          "cachedResultName": "Post Board",
+          "cachedResultUrl": "https://airtable.com/appQ9YsDJOJNLmkPe/tblTFBo7twenvyW4R"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "PostTitle": "={{ $json.name }}",
+            "PostDetails": "={{ $json.tiptap_body.circle_ios_fallback_text }}",
+            "UserEmail": "={{ $json.user_email }}",
+            "Username": "={{ $json.user_name }}",
+            "Status": "New",
+            "PostUrl": "={{ $json.url }}",
+            "UserID": "={{ $json.user_id }}",
+            "Topics": "={{ $json.topics.map(id => ({ \"151582\": \"Make\", \"156553\": \"RelevanceAI\", \"159745\": \"N8N\", \"159746\": \"Others\" }[id] || id)) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PostTitle",
+              "displayName": "PostTitle",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "PostDetails",
+              "displayName": "PostDetails",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "UserEmail",
+              "displayName": "UserEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New",
+                  "value": "New"
+                },
+                {
+                  "name": "Not Replied",
+                  "value": "Not Replied"
+                },
+                {
+                  "name": "Replied",
+                  "value": "Replied"
+                },
+                {
+                  "name": "Solved",
+                  "value": "Solved"
+                },
+                {
+                  "name": "Urgent Resolution",
+                  "value": "Urgent Resolution"
+                },
+                {
+                  "name": "Removed",
+                  "value": "Removed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Topics",
+              "displayName": "Topics",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "N8N",
+                  "value": "N8N"
+                },
+                {
+                  "name": "Make",
+                  "value": "Make"
+                },
+                {
+                  "name": "RelevanceAI",
+                  "value": "RelevanceAI"
+                },
+                {
+                  "name": "Others",
+                  "value": "Others"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Time Passed",
+              "displayName": "Time Passed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Go To Post",
+              "displayName": "Go To Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "RecordID",
+              "displayName": "RecordID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Check Status",
+              "displayName": "Check Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Resolution Steps",
+              "displayName": "Resolution Steps",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "PostUrl",
+              "displayName": "PostUrl",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "UserID",
+              "displayName": "UserID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date of Post",
+              "displayName": "Date of Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "PostID",
+              "displayName": "PostID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Modified",
+              "displayName": "Last Modified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        660,
+        -280
+      ],
+      "id": "74f9c7d5-5642-40f7-b95d-ba35891be4e8",
+      "name": "Airtable",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "VdBsIRNi49gmz0hc",
+          "name": "GrowthOS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.action }}",
+                    "rightValue": "checkStatus",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "cc8f1668-6510-4fbc-9e5c-a8ca15560dc4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "checkStatus"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3c357c6f-1534-4f18-8fd2-e3810d5ba7de",
+                    "leftValue": "={{ $json.query.action }}",
+                    "rightValue": "solvedTicket",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "solvedTicket"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        140,
+        220
+      ],
+      "id": "a21979c9-1fb2-4fb5-bae0-5d161d9a8304",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "=https://app.circle.so/api/admin/v2/comments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "post_id",
+              "value": "={{ $json.PostID }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        690,
+        120
+      ],
+      "id": "fbe4a21e-f622-4f8e-86d9-f78ffb608a21",
+      "name": "Get Circle Comments",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "B0JMKGb2byRA8XWD",
+          "name": "BenAI Circle - N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "base": {
+          "__rl": true,
+          "value": "appQ9YsDJOJNLmkPe",
+          "mode": "list",
+          "cachedResultName": "BenAI Tech CRM",
+          "cachedResultUrl": "https://airtable.com/appQ9YsDJOJNLmkPe"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTFBo7twenvyW4R",
+          "mode": "list",
+          "cachedResultName": "Post Board",
+          "cachedResultUrl": "https://airtable.com/appQ9YsDJOJNLmkPe/tblTFBo7twenvyW4R"
+        },
+        "id": "={{ $json.query.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        360,
+        120
+      ],
+      "id": "f47b44a3-6825-41cc-a6ff-884b621a9ee6",
+      "name": "Airtable1",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "VdBsIRNi49gmz0hc",
+          "name": "GrowthOS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e12cbb13-aebf-481f-9ea6-4058a6247203",
+              "name": "comments",
+              "value": "={{ $json.records }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1020,
+        120
+      ],
+      "id": "41527d28-37c6-4db2-8d53-0749c7ff939f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "comments",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        120
+      ],
+      "id": "4e50aec3-eed3-474d-83c1-b3725d5a7bc6",
+      "name": "Split Out",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "47511b46-4fd8-40bf-be20-854be09b620d",
+              "name": "Comment",
+              "value": "={{ $json.user.name }} Commented: {{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        120
+      ],
+      "id": "350190f2-fac4-4fa3-a087-d322c0e86280",
+      "name": "Edit Fields1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.body?.body ?? '<p>No comments found</p>' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        120
+      ],
+      "id": "3f802f9e-7463-4553-865f-3755df583420",
+      "name": "Markdown",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Comment"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        120
+      ],
+      "id": "2c41e403-0bd3-4491-8ff2-643def2abecb",
+      "name": "Aggregate",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Post Title: {{ $('Airtable1').item.json.PostTitle }}\n- Post Description: {{ $('Airtable1').item.json.PostDetails }}\n- Time Since Posted: {{ $('Airtable1').item.json['Time Passed'] }}\n\n- Comments: {{ $json.Comments }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an AI customer support agent responsible for analyzing tech support posts. You will receive a support query input structured clearly, containing these details:\n\n- **Post Title:**  \n- **Post Description:**  \n- **Time Since Posted:** (format: hours/days, e.g., 5 hours, 1 day, 3 days)  \n- **Comments:** (clearly marked commenter name, comment content, and timestamp, if provided)\n\nBased on the provided details, your job is:\n\n1. Clearly understand the technical issue from the title, description and discussion comments provided.  \n2. Determine if the provided comments contain sufficient resolution information to indicate the problem has been resolved.  \n3. Provide a clear and concise, SINGLE-LINE recommendation for the next resolution step.  \n4. Accurately identify the current status from the following options based on these rules:\n   - **\"Solved\"** if the issue described in the post is clearly resolved by the comments.\n   - **\"Not Replied\"** if there are no comments OR if there's only one comment from \"BenAI Agent\".\n   - **\"Urgent Resolution\"** if the issue remains unresolved for 1 day or more without any reply in comments.\n   - **\"Replied\"** if comments exist (beyond just BenAI Agent's initial comment), but the issue isn't fully resolved yet and the time since posted is less than 1 day.\n\nDON'T GIVE Urgent Resolution if there is atleast more than 1 comments.\n\nAlways present your output in this exact JSON format:\n\n**Justification:** [Your concise 1-line justification o your response]  \n**Status:** [Not Replied / Replied / Solved / Urgent Resolution]\n\n---\n\n{\n      \"Justification\": \"The discussion includes multiple comments and suggestions but does not lead to a clear resolution of the original query.\",\n      \"Status\": \"Replied\"\n    }\n\nEnsure that your answers follow these guidelines accurately, carefully incorporating the logic described here every time."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        2340,
+        120
+      ],
+      "id": "5a3ceab2-bc87-4bc0-a554-85094c568366",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dca363b2-9aa3-455e-977f-5a94aa504f4d",
+              "name": "Comments",
+              "value": "={{ $json.Comment }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2120,
+        120
+      ],
+      "id": "82e88523-174b-45eb-b93b-850c41903877",
+      "name": "Edit Fields2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2368,
+        340
+      ],
+      "id": "46a7e49c-9004-420a-8efa-c3182303ca5c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "wqEQ7odXwSaY9kst",
+          "name": "OpenAi Sales Summary & Proposal System"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"name\": \"resolution_status\",\n  \"description\": \"Function for tracking resolution status in a support system\",\n  \"strict\": true,\n  \"parameters\": {\n    \"type\": \"object\",\n    \"required\": [\n      \"justification\",\n      \"status\"\n    ],\n    \"properties\": {\n      \"justification\": {\n        \"type\": \"string\",\n        \"description\": \"A concise 1-line justification for your status\"\n      },\n      \"status\": {\n        \"type\": \"string\",\n        \"description\": \"Current status of the resolution step\",\n        \"enum\": [\n          \"Not Replied\",\n          \"Replied\",\n          \"Solved\",\n          \"Urgent Resolution\"\n        ]\n      }\n    },\n    \"additionalProperties\": false\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2488,
+        340
+      ],
+      "id": "f4b75e9e-a8a5-427c-9243-042f9ee979da",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appQ9YsDJOJNLmkPe",
+          "mode": "list",
+          "cachedResultName": "BenAI Tech CRM",
+          "cachedResultUrl": "https://airtable.com/appQ9YsDJOJNLmkPe"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTFBo7twenvyW4R",
+          "mode": "list",
+          "cachedResultName": "Post Board",
+          "cachedResultUrl": "https://airtable.com/appQ9YsDJOJNLmkPe/tblTFBo7twenvyW4R"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Airtable1').item.json.id }}",
+            "Status": "={{ $json.output.Status }}",
+            "Justification": "={{ $json.output.Justification }}",
+            "UserID": 0,
+            "PostID": 0
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "PostTitle",
+              "displayName": "PostTitle",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "PostDetails",
+              "displayName": "PostDetails",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "UserEmail",
+              "displayName": "UserEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New",
+                  "value": "New"
+                },
+                {
+                  "name": "Not Replied",
+                  "value": "Not Replied"
+                },
+                {
+                  "name": "Replied",
+                  "value": "Replied"
+                },
+                {
+                  "name": "Solved",
+                  "value": "Solved"
+                },
+                {
+                  "name": "Urgent Resolution",
+                  "value": "Urgent Resolution"
+                },
+                {
+                  "name": "Removed",
+                  "value": "Removed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Topics",
+              "displayName": "Topics",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "N8N",
+                  "value": "N8N"
+                },
+                {
+                  "name": "Make",
+                  "value": "Make"
+                },
+                {
+                  "name": "RelevanceAI",
+                  "value": "RelevanceAI"
+                },
+                {
+                  "name": "Others",
+                  "value": "Others"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Time Passed",
+              "displayName": "Time Passed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Go To Post",
+              "displayName": "Go To Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "RecordID",
+              "displayName": "RecordID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Check Status",
+              "displayName": "Check Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Justification",
+              "displayName": "Justification",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "PostUrl",
+              "displayName": "PostUrl",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "UserID",
+              "displayName": "UserID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date of Post",
+              "displayName": "Date of Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "PostID",
+              "displayName": "PostID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Modified",
+              "displayName": "Last Modified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2716,
+        120
+      ],
+      "id": "5d340d5a-52f6-4888-8731-3046b37cb409",
+      "name": "Airtable2",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "VdBsIRNi49gmz0hc",
+          "name": "GrowthOS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://app.circle.so/api/admin/v2/comments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "body",
+              "value": "=<p>Hey there! Our automated AI marked this post as solved. If you feel it’s not fully fixed, please tag a moderator and they’ll help you out.</p>\n<br>\n<p>FYI, this is an early prototype, so the results might not always be perfect. Thanks for your patience!</p>"
+            },
+            {
+              "name": "post_id",
+              "value": "={{ $json.PostID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        540
+      ],
+      "id": "5071edda-c46f-453f-90b2-b7f725caf22b",
+      "name": "Post Circle Comments",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "B0JMKGb2byRA8XWD",
+          "name": "BenAI Circle - N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "base": {
+          "__rl": true,
+          "value": "appQ9YsDJOJNLmkPe",
+          "mode": "list",
+          "cachedResultName": "BenAI Tech CRM",
+          "cachedResultUrl": "https://airtable.com/appQ9YsDJOJNLmkPe"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTFBo7twenvyW4R",
+          "mode": "list",
+          "cachedResultName": "Post Board",
+          "cachedResultUrl": "https://airtable.com/appQ9YsDJOJNLmkPe/tblTFBo7twenvyW4R"
+        },
+        "id": "={{ $json.query.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        380,
+        540
+      ],
+      "id": "4bca9b92-f729-4ff1-9c20-ce63e14e36ca",
+      "name": "Airtable3",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "VdBsIRNi49gmz0hc",
+          "name": "GrowthOS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://app.circle.so/api/admin/v2/posts/{{ $('Airtable3').item.json.PostID }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "=<Solved> {{ $('Airtable3').item.json.PostTitle }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        540
+      ],
+      "id": "38863bd6-199e-4f90-ae6a-22488cb01023",
+      "name": "Update Circle Post",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "B0JMKGb2byRA8XWD",
+          "name": "BenAI Circle - N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://app.circle.so/api/admin/v2/comments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "body",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "post_id",
+              "value": "={{ $('Webhook1').item.json.body.data.post_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        -280
+      ],
+      "id": "43873b99-abc4-47bb-bb4c-b30a1cfd8a87",
+      "name": "PostComments",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4wRsP4UfOhm7GnOb",
+          "name": "BenAI Bot Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here's the Post Details:\n\nPostTitle: {{ $json.fields.PostTitle }}\n\nPostbody: {{ $json.fields.PostDetails }}\n\nTools: {{ $json.fields.Topics }}\n\n\n---\nYou can use each tool multiple times to strengthen your answer.",
+        "options": {
+          "systemMessage": "=You are the official assistant for the Ben AI community. Your task is to answer member questions accurately and helpfully, always delivering your responses clearly and consistently in HTML format **without** the `<html>`, `<head>`, or `<body>` tags.\n\n## CRITICAL WORKFLOW - FOLLOW THIS EXACT SEQUENCE:\n\n### 1. ALWAYS Use the SearchTool FIRST\n- Input the phrases of the input question into the community and search the keywords if something similar posts might have been there.\n- If similar questions exist, adapt those answers into your response.\n\n### 2. IF Search Results are Insufficient, USE the PerplexityTool\n- Create specific and very clear search questions related to the user's question, mention the tool when you're search ing in prplexity.\n- All PerplexityTool responses must include sources and hyperlinks provided by Perplexity AI.\n- Never skip this step if the SearchTool doesn't yield satisfactory answers.\n\n===\nBE VERY SPECIFIC WHEN YOU ASK PerplexityTool, don't be vague.\n===\n\n## HTML Response Structure\nAlways format your responses exactly as follows (**without** <html>, <head>, <body> tags):\n\n\n<p>Hi [User's Name or Generic Greeting]!</p>\n\n<p>[Direct answer with actionable steps]</p>\n\n<h3>Steps to Follow:</h3>\n<ul>\n  <li>Step 1: [Clearly outlined actionable step]</li>\n  <li>Step 2: [Clearly outlined actionable step]</li>\n  <li>Step 3: [Clearly outlined actionable step, if necessary]</li>\n</ul>\n\n<h3>Additional Resources:</h3>\n<ul>\n  <li><a href=\"[Link URL]\">Resource Title or Description</a></li>\n  <li><a href=\"[Link URL]\">Resource Title or Description</a></li>\n</ul>\n\n<p>If you have further questions or need clarification, feel free to ask!</p>\n\n<footer>\n  <small>PS: This response is aggregated through research tools and may have varying degrees of accuracy. If something seems off, please reach out to the moderators. (Confidence Level: [High/Medium/Low])</small>\n</footer>\n\n\n## IMPORTANT RULES\n- Never respond with \"I'm unable to provide a response\" without first using BOTH tools.\n- If Search Tool results are insufficient, you MUST use the Perplexity Tool.\n- Every response must be helpful, integrating general knowledge with tool-derived information.\n- Always include hyperlinks to sources from the Perplexity Tool when used.\n- Final formating should be in html directly, don't need to use any intendation directly start with paragraph text strictly.\n- Link the post if the post if any post is found when you're using searchTool and have similar set of question\n\n## Confidence Level Criteria\n- **High**: Confirmed by multiple reliable sources.\n- **Medium**: Limited sources available or minor assumptions necessary.\n- **Low**: Information scarce or sources conflict.\n\n- IMPORTANT: Always start your output with <p>. NEVER USE \"```html\" to the beginning of your answer.\n- IMPORTANT: Always add the links of relevant information found in the search tool to the output, so the user can check those old post links to find more info.  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        900,
+        -380
+      ],
+      "id": "23863cc0-32cb-454d-8196-cda01873503a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-pro-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        860,
+        -160
+      ],
+      "id": "ea5daa9d-0da2-4eb7-87eb-b7df338874cc",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "71XNWlXlIxQGOgn3",
+          "name": "Gemini perceptive "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Resolved",
+        "height": 260,
+        "width": 960,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        480
+      ],
+      "id": "27e17207-8078-44d8-b8fd-3278425c027b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Check Status",
+        "height": 460,
+        "width": 2600,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        0
+      ],
+      "id": "05dcc3f4-9348-421d-a47e-a7aa230bb1ee",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Customer Support Agent",
+        "height": 440,
+        "width": 1220,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -460
+      ],
+      "id": "9e950a95-8212-491e-a86e-e06901c1e8cf",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Call this tool when you need to search beyond the SearchTool, it can be used to search and get answers to a solution, input should be well articulated, problem of nocode automations in either make/relevanceai/n8n.",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"sonar-pro\",\n  \"messages\": [\n    { \"role\": \"system\", \"content\": \"Only respond with information from verifiable and credible sources. Include source urls and event dates when possible\" },\n    { \"role\": \"user\", \"content\": {query} }\n  ]\n}\n\n",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "query",
+              "description": "The query used for the search",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "d878d670-ca80-41b1-aea5-209b9fb79337",
+      "name": "PerplexityTool",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        -160
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "UvPmkASYWAsaRc6B",
+          "name": "Perplexity"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Call this tool when you need to search inside the circle community, You CAN ONLY search a speciic word that have high likely to exist, don't search an entire sentence or multiple words. Use ONLY 1 word only when searching. ",
+        "url": "=https://app.circle.so/api/admin/v2/posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "search_text"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1140,
+        -160
+      ],
+      "id": "d349a142-d6c9-4e5b-9533-b473bfefefea",
+      "name": "SearchTool",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "B0JMKGb2byRA8XWD",
+          "name": "BenAI Circle - N8N"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Airtable": [
+      {
+        "json": {
+          "id": "recCriahtH14FpfU7",
+          "createdTime": "2025-04-03T06:47:40.000Z",
+          "fields": {
+            "PostTitle": "n8n vs relevanceai",
+            "PostDetails": "Hi everyone! I'm looking for comparision between n8n & relevanceai, which platform to choose.",
+            "UserEmail": "jur.claassens@gmail.com",
+            "Username": "Jurgen Claassens",
+            "UserID": 26607707,
+            "PostUrl": "https://bens-ai.circle.so/c/tech-troubleshooting/n8n-lovable-educational-content-and-prompt",
+            "Status": "New",
+            "Date of Post": "2025-04-03T06:47:41.324Z",
+            "Topics": [
+              "N8N",
+              "Others"
+            ],
+            "Time Passed": "<1 hour",
+            "Go To Post": {
+              "label": "Go to post",
+              "url": "https://bens-ai.circle.so/c/tech-troubleshooting/n8n-lovable-educational-content-and-prompt-demo"
+            },
+            "Check Status": {
+              "label": "Check Status",
+              "url": "https://airtable.com/tblTFBo7twenvyW4R/recCriahtH14FpfU7?blocks=blitTypbp4P3EgiQ9"
+            },
+            "RecordID": "recCriahtH14FpfU7"
+          }
+        }
+      }
+    ],
+    "Webhook1": []
+  },
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Get Circle Post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Circle Post": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Airtable1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Airtable3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable1": {
+      "main": [
+        [
+          {
+            "node": "Get Circle Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Circle Comments": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Airtable2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable3": {
+      "main": [
+        [
+          {
+            "node": "Post Circle Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Circle Comments": {
+      "main": [
+        [
+          {
+            "node": "Update Circle Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "PostComments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PerplexityTool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SearchTool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dbc71cdc-6f90-4713-9f30-c089b869f9e7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "909085f42eb97c736deb6b82d2c110f03ccf50d782b66aa0c8b46722c473d9a6"
+  },
+  "id": "6iEQuevVSlTmzt8N",
+  "tags": [
+    {
+      "createdAt": "2025-03-19T20:18:46.435Z",
+      "updatedAt": "2025-03-19T20:18:46.435Z",
+      "id": "yvRvbcTSO8LDAlp4",
+      "name": "BenAI Community"
+    }
+  ]
+}

@@ -1,0 +1,1026 @@
+{
+  "name": "AI Agents Vs AI Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -20,
+        200
+      ],
+      "id": "27ad0491-8ad0-454f-8932-2334f9e63091",
+      "name": "LLM",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1260,
+        160
+      ],
+      "id": "c14bc9f0-f043-44f7-bd75-910371596f92",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_2833459228691956744"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1900,
+        -20
+      ],
+      "id": "c0870650-f593-4cee-b1cb-0ba19de3eb8f",
+      "name": "Urgent Labelling",
+      "webhookId": "18af62bd-0f35-4a6c-be9c-8aeb3d68c177",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_3637812355174870557"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1900,
+        160
+      ],
+      "id": "83ac600c-3812-43ab-be5c-403e1ad4b843",
+      "name": "Todo Labelling",
+      "webhookId": "18af62bd-0f35-4a6c-be9c-8aeb3d68c177",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_6618720310508995748"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1900,
+        360
+      ],
+      "id": "be9fd945-46ee-4a0c-bef0-c77a57e96c3b",
+      "name": "Reference Labelling",
+      "webhookId": "18af62bd-0f35-4a6c-be9c-8aeb3d68c177",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=oncekod98@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        360,
+        200
+      ],
+      "id": "f411f86d-0372-47e1-b692-41d678142abf",
+      "name": "Send Email",
+      "webhookId": "1dc094c6-8627-4eee-bea0-395c111e1174",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "oncekod98@gmail.com",
+        "subject": "=Urgent Email Notice",
+        "message": "=You have an Urgent Email From: {{ $('Gmail Trigger').item.json.From }}\nSubject: {{ $('Gmail Trigger').item.json.Subject }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2120,
+        -20
+      ],
+      "id": "61b9b6b0-29fb-4019-9851-28faf39080b6",
+      "name": "Notify Urgent Email",
+      "webhookId": "18af62bd-0f35-4a6c-be9c-8aeb3d68c177",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=From: {{ $json.From }}\nSubject: {{ $json.Subject }}\nContent: {{ $json.snippet }}",
+        "options": {
+          "systemMessage": "=# Context\nYou are an Email Labeler Assistant. Your task is to help organize and categorize emails based on their content. Please label each email according to the following categories:\n\nUrgent – Time-sensitive or high-priority emails requiring immediate attention.\n\nTodo – Emails that require some action or follow-up.\n\nReference – Informational emails that do not require immediate action.\n\n# TOOLS\nYou have access to the following tools\n\nGet Labels - Gets all the labels, you will use this to get the necessary label id that corresponds to options above.\n\nLabel Email- This is the tool you are going to use to label emails, you will pass the id you get from the \"Get Labels\" tool that corresponds to the label of your choice.\n\nSend Email - This is the tool that you will use to send an email to notify me of an urgent email.\n\n# Rules\n1. Always begin by calling \"Get Labels\" to obtain the appropriate label ID.\n2. Assign the correct label ID based on the email's classification.\n3. Always notify me via email when an email is categorized as urgent.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c330ee9a-66d4-490a-8c11-f782f0ceb8a2",
+      "name": "Email Labeller"
+    },
+    {
+      "parameters": {
+        "inputText": "=From: {{ $json.From }}\nSubject: {{ $json.Subject }}\nContent: {{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Urgent ",
+              "description": "For time-sensitive or high-priority emails"
+            },
+            {
+              "category": "To Do",
+              "description": "Emails that require action or follow-up."
+            },
+            {
+              "category": "Reference",
+              "description": "Emails for informational purposes or those that don’t require immediate action."
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "You are an Email Labeler Assistant. Your task is to help organize and categorize emails based on their content. Please label each email according to the following categories\n\n{categories}\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        160
+      ],
+      "id": "a6719ec5-2093-43fb-b755-4428e379e36b",
+      "name": "Email Label Classifier"
+    },
+    {
+      "parameters": {
+        "content": "# AI Agent",
+        "height": 80,
+        "width": 960,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        -140
+      ],
+      "id": "569f03a3-44d9-4ef2-b95d-2d2052cbb92e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# AI Workflow",
+        "height": 80,
+        "width": 1040,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        -140
+      ],
+      "id": "bf8af5b5-e224-4df2-9de1-14c16c84736f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# EMAIL LABELLING SYSTEM",
+        "height": 80,
+        "width": 500,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        660,
+        -260
+      ],
+      "id": "d6f9207e-9098-4eda-9630-d55832ee1657",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        120,
+        200
+      ],
+      "id": "e2881d05-5062-4e19-9c0a-28799f647a9d",
+      "name": "Get Labels",
+      "webhookId": "1dc094c6-8627-4eee-bea0-395c111e1174",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        200
+      ],
+      "id": "6b5210ea-e100-48c7-95f4-9f41cde39ddc",
+      "name": "Label Email",
+      "webhookId": "1dc094c6-8627-4eee-bea0-395c111e1174",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "id": "83c45cfe-2576-4201-8a81-ba22d758669e",
+      "name": "Gmail Trigger ",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1460,
+        340
+      ],
+      "id": "a915d01f-6d7a-44db-8bf0-a46de9bff8ca",
+      "name": "LLM1",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## **When to Use an AI Agent:**\n- When the task requires **reasoning, decision-making, or tool selection based on context**\n- For **complex, dynamic problems** where the right path isn’t obvious upfront\n- When flexibility and adaptability are more important than predictability\n- If you're exploring or experimenting, and **occasional failure is acceptable**\n\n## **When to Use an AI Workflow:**\n- When the steps are **clear, repeatable, and predictable**\n- When **accuracy and reliability** matter more than flexibility\n- For **deterministic tasks** like form filling, data routing, scheduled automation, etc.\n- When you want **low cost, fast execution, and minimal risk of failure**\n- Ideal for **production-ready** systems where consistency is key",
+        "height": 320,
+        "width": 640,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        600,
+        -620
+      ],
+      "id": "114b4a9b-73a9-438d-ae17-2b53876868d1",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Complaint Ticket Processing",
+        "height": 80,
+        "width": 520,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        660,
+        580
+      ],
+      "id": "4e2bbfbe-77d0-4d45-8181-bccd8d4ca161",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        1060
+      ],
+      "id": "41a4c810-b639-406d-8497-4e09ecafb30f",
+      "name": "LLM2",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=The form fields are:\n\nName: {{ $json['Your Name'] }}\n\nEmail: {{ $json['Your Email'] }}\n\nComplaint: {{ $json['Your Complaint'] }}\n\nSubmitted At: {{ $json.submittedAt }}",
+        "options": {
+          "systemMessage": "=#Context\nYou are a Complaint Handling Agent. When a user submits a complaint through the form, your job is to:\n\nReview the complaint content.\n\nLog all submission details into a Google Sheet.\n\nSend a personalized email response to the user acknowledging the complaint.\n\n#Tools\nYou have access to the following tools:\n\nComplaints Sheet (append: sheet) – Use this to log the complaint details as a new row in the spreadsheet.\n\nSend An Email (send: message) – Use this to send a personalized email reply to the user.\n\n#Rules\nAppend a row to the Google Sheet with the following columns:\n- Name\n- Email\n- Complaint\n- Submitted At\n\nCraft a personalized response email that:\n- Acknowledges receipt of the complaint.\n- Reflects understanding of the specific complaint.\n- Is empathetic and professional.\n- Is addressed to {{ $json['Your Name'] }} and sent to {{ $json['Your Email'] }}.\n\nDo not ask the user to resubmit anything.\nAlways Sign of as \"Customer Support\"\nKeep your message clear, concise, and supportive."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -60,
+        840
+      ],
+      "id": "5ad5874c-6982-4877-9e98-98666e1f8046",
+      "name": "Complaint Agent"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        260,
+        1060
+      ],
+      "id": "ff4df416-7e9b-41d2-978c-28f6ce606c89",
+      "name": "Send An Email",
+      "webhookId": "df01cc97-4ec5-4262-b6b5-c247a1587c1f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EiLpfKi3BQBFOg27",
+          "name": "Oncekod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# AI Workflow",
+        "height": 80,
+        "width": 1040,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        680
+      ],
+      "id": "98b3790c-0151-4dac-88b0-73f0c25ede3a",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "# AI Agent",
+        "height": 80,
+        "width": 960,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        680
+      ],
+      "id": "6b265304-ed88-47b7-96f7-783fc38b619c",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ABOA2bRWMkZLuZuprjXcNo3UAnaaKiuCrygaMKScvb0",
+          "mode": "list",
+          "cachedResultName": "Complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ABOA2bRWMkZLuZuprjXcNo3UAnaaKiuCrygaMKScvb0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ABOA2bRWMkZLuZuprjXcNo3UAnaaKiuCrygaMKScvb0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', ``, 'string') }}",
+            "Complaint": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Complaint', ``, 'string') }}",
+            "Submitted At": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Submitted_At', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Complaint",
+              "displayName": "Complaint",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        120,
+        1060
+      ],
+      "id": "3caf9cb8-0491-4b47-b1b2-f230691ffb6f",
+      "name": "Complaints Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RpUQkcFbQLhNFCyy",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1460,
+        1020
+      ],
+      "id": "a5221652-2668-4fc4-8e49-ee6b28ff0621",
+      "name": "LLM3",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Complaint Form').item.json['Your Email'] }}",
+        "subject": "=Your Complaint Has Been Submitted",
+        "emailType": "text",
+        "message": "={{ $json.text }}\n\nRegards,\n\nCustomer Support",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1800,
+        840
+      ],
+      "id": "75e75d77-f996-46d9-a7b2-84bc39518784",
+      "name": "Complaint Email Response",
+      "webhookId": "18af62bd-0f35-4a6c-be9c-8aeb3d68c177",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QN6m77lM4aL3TSNE",
+          "name": "MkTech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Use the following information from the submission:\n\nName: {{ $json['Your Name'] }}\n\nEmail: {{ $json['Your Email'] }}\n\nComplaint: {{ $json['Your Complaint'] }}\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=#Context\nYou are a Complaint Handling Agent. A user has submitted a complaint through the form. Your task is to craft a personalized email response acknowledging the complaint.\n\n#Rules\nThe email response must:\nAcknowledge receipt of the complaint.\nReflect an understanding of the specific complaint.\nBe empathetic and professional.\nBe addressed to {{ $json['Your Name'] }}.\nBe clear, concise, and supportive.\nDo not ask the user to resubmit anything.\nGenerate only the email message content, Don't include sign offs, just the body of the email."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1460,
+        840
+      ],
+      "id": "f344fb59-1a78-4955-91c5-89c9fb916395",
+      "name": "Complaint Response LLM "
+    },
+    {
+      "parameters": {
+        "formTitle": "Complaint Form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Your Name",
+              "placeholder": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Email",
+              "fieldType": "email",
+              "placeholder": "Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Complaint",
+              "fieldType": "textarea",
+              "placeholder": "Complaint Details",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        1240,
+        840
+      ],
+      "id": "664fc995-da2d-44fc-846f-52163b66efde",
+      "name": "Complaint Form",
+      "webhookId": "96e32410-0b12-44ae-9db4-f9e544cedf05"
+    },
+    {
+      "parameters": {
+        "formTitle": "Complaint Form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Your Name",
+              "placeholder": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Email",
+              "fieldType": "email",
+              "placeholder": "Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Complaint",
+              "fieldType": "textarea",
+              "placeholder": "Complaint Details",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -280,
+        840
+      ],
+      "id": "002dabb1-fb62-4b33-8225-a330365cdb38",
+      "name": "Complaint Form Submission",
+      "webhookId": "74302eff-372a-4346-b48b-a5696419fbc1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ABOA2bRWMkZLuZuprjXcNo3UAnaaKiuCrygaMKScvb0",
+          "mode": "list",
+          "cachedResultName": "Complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ABOA2bRWMkZLuZuprjXcNo3UAnaaKiuCrygaMKScvb0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ABOA2bRWMkZLuZuprjXcNo3UAnaaKiuCrygaMKScvb0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Complaint Form').item.json['Your Name'] }}",
+            "Email": "={{ $('Complaint Form').item.json['Your Email'] }}",
+            "Complaint": "={{ $('Complaint Form').item.json['Your Complaint'] }}",
+            "Submitted At": "={{ $('Complaint Form').item.json.submittedAt }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Complaint",
+              "displayName": "Complaint",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1980,
+        840
+      ],
+      "id": "3c9e6fa2-5a56-44f0-8eb2-f48d044d7b02",
+      "name": "Complaints Sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RpUQkcFbQLhNFCyy",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Labeller",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Email Label Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Urgent Labelling": {
+      "main": [
+        [
+          {
+            "node": "Notify Urgent Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reference Labelling": {
+      "main": [
+        []
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Labeller",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Label Classifier": {
+      "main": [
+        [
+          {
+            "node": "Urgent Labelling",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Todo Labelling",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reference Labelling",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Labels": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Labeller",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Labeller",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger ": {
+      "main": [
+        [
+          {
+            "node": "Email Labeller",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Label Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Complaint Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send An Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Complaint Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complaints Sheet": {
+      "ai_tool": [
+        [
+          {
+            "node": "Complaint Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Complaint Response LLM ",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complaint Response LLM ": {
+      "main": [
+        [
+          {
+            "node": "Complaint Email Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complaint Email Response": {
+      "main": [
+        [
+          {
+            "node": "Complaints Sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complaint Form": {
+      "main": [
+        [
+          {
+            "node": "Complaint Response LLM ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complaint Form Submission": {
+      "main": [
+        [
+          {
+            "node": "Complaint Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cfe285e2-b664-4253-b860-6afca37a9ee9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f3130526459e1309ac4588328f0c877843a975ce87cb56510970ea4653bdfb74"
+  },
+  "id": "sHdlwgoJzf7SFYE0",
+  "tags": []
+}

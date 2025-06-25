@@ -1,0 +1,1923 @@
+{
+  "name": "n8n Recruitment",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "indeed subject:applied on Indeed"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "41a77d5d-25e8-44f8-a75b-9308ef055774",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wbC6ZP26bgrevwNw",
+          "name": "Jono n8n"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot capable of pulling out the job title from an email subject line",
+              "role": "system"
+            },
+            {
+              "content": "=Please pull out the job title from this email subject line:\n{{ $json.subject }}"
+            },
+            {
+              "content": "=Please output the data in JSON format with the following structure:\n{\n  \"job\": \"\"\n}\n",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d1983707-750c-4ed3-8927-0e0e21b8245e",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "9RWAaaO3Wu3uNVX7",
+          "name": "n8n Jono"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg",
+          "mode": "list",
+          "cachedResultName": "n8n Recruitment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "First Name": "={{ $('Gmail Trigger').item.json.from.value[0].name.split(\" \")[0] }}",
+            "Last Name": "={{ $('Gmail Trigger').item.json.from.value[0].name.split(\" \")[1] }}",
+            "Job": "={{ $json.message.content.job }}",
+            "Date Added": "={{ $today }}",
+            "Code": "={{ Math.floor(Math.random() * 999999999999) }}",
+            "Indeed Email": "={{ $('Gmail Trigger').item.json.from.value[0].address }}"
+          },
+          "matchingColumns": [
+            "Indeed Email"
+          ],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job",
+              "displayName": "Job",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rejected",
+              "displayName": "Rejected",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Questions",
+              "displayName": "Questions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Screening",
+              "displayName": "Screening",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Test Complete",
+              "displayName": "Test Complete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Test Approved",
+              "displayName": "Test Approved",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interview Scheduled",
+              "displayName": "Interview Scheduled",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hire",
+              "displayName": "Hire",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Indeed Email",
+              "displayName": "Indeed Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resume",
+              "displayName": "Resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Portfolio Link",
+              "displayName": "Portfolio Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Years Of Experience",
+              "displayName": "Years Of Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Expected Salary",
+              "displayName": "Expected Salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date Added",
+              "displayName": "Date Added",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Code",
+              "displayName": "Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        0
+      ],
+      "id": "1ca01f74-8445-4198-a2e1-4b0e2a89f301",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=jccatliff@gmail.com",
+        "subject": "=RE:  {{ $('OpenAI').item.json.message.content.job }} Position",
+        "emailType": "text",
+        "message": "=Hey {{ $json['First Name'] }},\n\nThanks for applying for the {{ $('OpenAI').item.json.message.content.job }} position at company XYZ! The next steps are to fill out our onboarding forms here:\nhttps://jonocatliff.app.n8n.cloud/form-test/a5317131-bc2c-4620-a0ec-8acb7d866388\n\nPlease enter in the code:\n{{ $json.Code }}\n\nBest,\nJono",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "04e68b2a-13b0-4306-824a-b3d4ff6f6d01",
+      "name": "Gmail",
+      "webhookId": "bfd3564f-d46f-42ca-9fc5-1b95dfd22161",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wbC6ZP26bgrevwNw",
+          "name": "Jono n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Onboarding Form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name"
+            },
+            {
+              "fieldLabel": "Last Name"
+            },
+            {
+              "fieldLabel": "Email"
+            },
+            {
+              "fieldLabel": "Resume",
+              "fieldType": "file"
+            },
+            {
+              "fieldLabel": "Portfolio Link",
+              "placeholder": "Please add in a Google Drive Link"
+            },
+            {
+              "fieldLabel": "Years Of Experience"
+            },
+            {
+              "fieldLabel": "Expected Salary",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Code",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        240
+      ],
+      "id": "38270e20-bd4d-457f-b6d6-e5444e7bbf73",
+      "name": "On form submission",
+      "webhookId": "a5317131-bc2c-4620-a0ec-8acb7d866388"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg",
+          "mode": "list",
+          "cachedResultName": "n8n Recruitment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "First Name": "={{ $json['First Name'] }}",
+            "Last Name": "={{ $json['Last Name'] }}",
+            "Date Added": "={{ $today }}",
+            "Code": "={{ $json.Code }}",
+            "Indeed Email": "=",
+            "Resume": "={{ $json.Resume }}",
+            "Years Of Experience": "={{ $json['Years Of Experience'] }}",
+            "Expected Salary": "={{ $json['Expected Salary'] }}",
+            "Email": "={{ $json.Email }}",
+            "Portfolio Link": "={{ $json['Portfolio Link'] }}",
+            "Questions": "TRUE",
+            "Rejected": "={{ $if($json['Years Of Experience'] <= 3, \"TRUE\", \"FALSE\") }}"
+          },
+          "matchingColumns": [
+            "Code"
+          ],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job",
+              "displayName": "Job",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rejected",
+              "displayName": "Rejected",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Questions",
+              "displayName": "Questions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Screening",
+              "displayName": "Screening",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Test Complete",
+              "displayName": "Test Complete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Test Approved",
+              "displayName": "Test Approved",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Interview Scheduled",
+              "displayName": "Interview Scheduled",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hire",
+              "displayName": "Hire",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Indeed Email",
+              "displayName": "Indeed Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resume",
+              "displayName": "Resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Portfolio Link",
+              "displayName": "Portfolio Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Years Of Experience",
+              "displayName": "Years Of Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Expected Salary",
+              "displayName": "Expected Salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date Added",
+              "displayName": "Date Added",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Code",
+              "displayName": "Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        240
+      ],
+      "id": "f027c4f8-835c-4ea9-982d-9ffd4eac6695",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a424d03a-ad81-49de-96b9-72e90bc267bf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        500
+      ],
+      "id": "64fe122f-addd-4845-800b-14c33b9f837e",
+      "name": "Webhook",
+      "webhookId": "a424d03a-ad81-49de-96b9-72e90bc267bf",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "66b64a5f-6f83-4339-a9f8-49bd461c3dec",
+              "leftValue": "={{ $json.body.value }}",
+              "rightValue": "TRUE",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        500
+      ],
+      "id": "79d0d0ce-11ad-41bd-9ff7-867e6961b745",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.range.columnStart }}",
+                    "rightValue": 6,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "47d73929-0ce9-4de8-a993-2a27532d336b",
+                    "leftValue": "={{ $json.body.range.columnStart }}",
+                    "rightValue": 8,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c91464e3-719a-416d-ac35-2d885ae9c3cb",
+                    "leftValue": "={{ $json.body.range.columnStart }}",
+                    "rightValue": 10,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e7b8d74a-3520-40e8-b3ef-2288d29760d1",
+                    "leftValue": "={{ $json.body.range.columnStart }}",
+                    "rightValue": 4,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        420,
+        500
+      ],
+      "id": "4f70abc6-3e59-4163-be8c-0e60e96aba90",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "=jccatliff@gmail.com",
+        "subject": "=RE:{{ $('Webhook').item.json.body.rowValues[0]['2'] }} Next Steps | Test",
+        "emailType": "text",
+        "message": "=Hey {{ $('Webhook').item.json.body.rowValues[0]['0'] }},\n\nThanks for finishing our onboarding. Everything looks great. The next steps are to complete a video editing test. Please submit your results here:\nhttps://jonocatliff.app.n8n.cloud/form-test/a70513cc-101c-47a9-92fa-1109916b4419\n\n//Here are the requirements\n1. Make sure to upload your results to Google Drive\n2. Make sure to set the link to public so I can view it\n\nPlease enter in the code:\n{{ $('Webhook').item.json.body.rowValues[0]['18'] }}\n\nBest,\nJono",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        260
+      ],
+      "id": "df9693ee-6594-40f8-8335-d9ba0c10355d",
+      "name": "Gmail1",
+      "webhookId": "bfd3564f-d46f-42ca-9fc5-1b95dfd22161",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wbC6ZP26bgrevwNw",
+          "name": "Jono n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Onboarding Form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Google Drive Test Results Link",
+              "placeholder": "Please add in a Google Drive Link"
+            },
+            {
+              "fieldLabel": "Code",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        740
+      ],
+      "id": "5d33c030-9b2f-4db2-bffe-35cb0ccb97e6",
+      "name": "On form submission1",
+      "webhookId": "a70513cc-101c-47a9-92fa-1109916b4419",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg",
+          "mode": "list",
+          "cachedResultName": "n8n Recruitment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Code": "={{ $json.Code }}",
+            "Test Complete": "TRUE",
+            "Test Link": "={{ $json['Google Drive Test Results Link'] }}"
+          },
+          "matchingColumns": [
+            "Code"
+          ],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job",
+              "displayName": "Job",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rejected",
+              "displayName": "Rejected",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Questions",
+              "displayName": "Questions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Screening",
+              "displayName": "Screening",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Test Complete",
+              "displayName": "Test Complete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Test Approved",
+              "displayName": "Test Approved",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Interview Scheduled",
+              "displayName": "Interview Scheduled",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hire",
+              "displayName": "Hire",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Indeed Email",
+              "displayName": "Indeed Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Resume",
+              "displayName": "Resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Portfolio Link",
+              "displayName": "Portfolio Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Years Of Experience",
+              "displayName": "Years Of Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Expected Salary",
+              "displayName": "Expected Salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date Added",
+              "displayName": "Date Added",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Code",
+              "displayName": "Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Test Link",
+              "displayName": "Test Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        740
+      ],
+      "id": "b6575e89-561b-402c-9c66-a954b11873aa",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        420,
+        740
+      ],
+      "id": "0d259658-3b2f-4526-a626-31680bd6ca49",
+      "name": "Slack",
+      "webhookId": "a990fd04-1480-401b-9a5b-4be95156417a",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        420,
+        240
+      ],
+      "id": "bb03fae3-e40d-4b46-9d94-a851e8121353",
+      "name": "Slack1",
+      "webhookId": "a990fd04-1480-401b-9a5b-4be95156417a",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sendTo": "=jccatliff@gmail.com",
+        "subject": "=RE:{{ $('Webhook').item.json.body.rowValues[0]['2'] }} Next Steps | Test",
+        "emailType": "text",
+        "message": "=Hey {{ $('Webhook').item.json.body.rowValues[0]['0'] }},\n\nThanks for inquiring with our position. Unfortunately, it's not the right fit at this time. All the best,\n\nJono",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        820
+      ],
+      "id": "a239dbcb-7438-4f95-9365-dd388adfae36",
+      "name": "Gmail2",
+      "webhookId": "bfd3564f-d46f-42ca-9fc5-1b95dfd22161",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wbC6ZP26bgrevwNw",
+          "name": "Jono n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=jccatliff@gmail.com",
+        "subject": "=RE:{{ $('Webhook').item.json.body.rowValues[0]['2'] }} Next Steps | Test",
+        "emailType": "text",
+        "message": "=Hey {{ $('Webhook').item.json.body.rowValues[0]['0'] }},\n\nThanks for finishing our test. The results look great. The next step is to schedule an interview. Here's my calendar:\nhttps://cal.com/jono-catliff-vegjw5/15min?code={{ $('Webhook').item.json.body.rowValues[0]['18'] }}\n\nBest,\nJono",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        400
+      ],
+      "id": "5d947591-2e43-4be2-8e20-b79b70e39e39",
+      "name": "Gmail3",
+      "webhookId": "bfd3564f-d46f-42ca-9fc5-1b95dfd22161",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wbC6ZP26bgrevwNw",
+          "name": "Jono n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "BOOKING_CREATED"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.calTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        940
+      ],
+      "id": "6a609f9d-80e2-487c-8a8e-6951599383b3",
+      "name": "Cal.com Trigger",
+      "webhookId": "ce5a7424-b7f6-454d-a828-bd88a3e83dfe",
+      "credentials": {
+        "calApi": {
+          "id": "ed3h62lk1Lhau7V6",
+          "name": "Cal account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg",
+          "mode": "list",
+          "cachedResultName": "n8n Recruitment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Code": "={{ $json.userFieldsResponses.code.value }}",
+            "Interview Scheduled": "TRUE"
+          },
+          "matchingColumns": [
+            "Code"
+          ],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job",
+              "displayName": "Job",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rejected",
+              "displayName": "Rejected",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Questions",
+              "displayName": "Questions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Screening",
+              "displayName": "Screening",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Test Complete",
+              "displayName": "Test Complete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Test Approved",
+              "displayName": "Test Approved",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Interview Scheduled",
+              "displayName": "Interview Scheduled",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hire",
+              "displayName": "Hire",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Indeed Email",
+              "displayName": "Indeed Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Resume",
+              "displayName": "Resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Portfolio Link",
+              "displayName": "Portfolio Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Years Of Experience",
+              "displayName": "Years Of Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Expected Salary",
+              "displayName": "Expected Salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date Added",
+              "displayName": "Date Added",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Code",
+              "displayName": "Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Test Link",
+              "displayName": "Test Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        940
+      ],
+      "id": "a5a4702b-3688-463e-9212-d4bd8cd704cb",
+      "name": "Google Sheets3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "channel",
+        "operation": "invite",
+        "channelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        800,
+        660
+      ],
+      "id": "f1fa58f1-b6a4-4a67-b718-6cd32bd8c46f",
+      "name": "Slack2",
+      "webhookId": "40984144-b13d-4d2a-ab33-2350b8524c42",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        420,
+        940
+      ],
+      "id": "ff54dae5-c0ad-4aff-a3b0-f1ff4112e60e",
+      "name": "Slack3",
+      "webhookId": "a990fd04-1480-401b-9a5b-4be95156417a",
+      "disabled": true
+    }
+  ],
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "id": "195f24dde1909574",
+          "threadId": "195f24dde1909574",
+          "labelIds": [
+            "IMPORTANT",
+            "Label_8146554356844738775",
+            "CATEGORY_UPDATES",
+            "INBOX"
+          ],
+          "sizeEstimate": 45954,
+          "headers": {
+            "delivered-to": "Delivered-To: jonocatliff@gmail.com",
+            "received": "Received: from [10.90.10.220] ([10.90.10.220])\r\n\tby i-04a7f047d9da505e8.mta1vrest.sd.prd.sparkpost (ecelerity 4.8.0.74368 r(msys-ecelerity:tags/4.8.0.17)) with REST\r\n\tid 7E/C8-15802-02C1CE76; Tue, 01 Apr 2025 17:02:24 +0000",
+            "x-google-smtp-source": "X-Google-Smtp-Source: AGHT+IH70YsBmG3FbutDIrYBspT1xQdGiBe6aleD6SfD+kupumlZrp7rgUufva4ye3pGPwlTwZT3",
+            "x-received": "X-Received: by 2002:a05:690c:740a:b0:6fb:9663:a5f with SMTP id 00721157ae682-70257345fedmr183368847b3.38.1743526944506;\r\n        Tue, 01 Apr 2025 10:02:24 -0700 (PDT)",
+            "arc-seal": "ARC-Seal: i=1; a=rsa-sha256; t=1743526944; cv=none;\r\n        d=google.com; s=arc-20240605;\r\n        b=Ay3hc7a+hRaE5WCQ/FZcCg4UiWHTWBCSSQpEVq+iF305y5qJLadxJSEZBjNGjRPmBR\r\n         HaghNlU4XklNYIQ1w9cljG7NgJiRvBV9CZeOHIr5XyR1vXY+GLh9SxYDMQ16p19mdqsz\r\n         VvYL51KGXupVfemrKaqs38j7RtBeoprnbEknfYy7Pj4pCEzCjpLByYDHjMyLxlD+3ROg\r\n         /sPSaBxyo0/W+vOWW6W1diMFu/+EZ/3+k4wkz4pg5cUvsIH08e9Si/ZBwvLTqN/10Icv\r\n         YAjFNNd8hb8+PZHxqClBOr0AmQHupmRd49qU+uQub3/T+UAA68RQjXGloFn7uJIUaZrz\r\n         PIOw==",
+            "arc-message-signature": "ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\r\n        h=feedback-id:subject:from:message-id:mime-version:date:to\r\n         :dkim-signature;\r\n        bh=5TuABFlsivauIrIqV4nJvveROI0Rk5iNUmI1/xmZ7qg=;\r\n        fh=O66UyHjksM7dhUU7zUUJhJ5N6Ifh0p7wbE3gjfSCbZ8=;\r\n        b=HgAex2lp3rxIOj74d/D8yON4N1U82oLPFwgspRH8vVAlnK1oUSdQbWxIADv6pGw9Yw\r\n         8B3Xeyfg5NwiKZQ+vHT2l+spql0kDFFZ80m6LlDFiZyziClmXhH+4M0B3tbX7tQSrGCv\r\n         imiVLwzq/4mD4NX6/VY6gTRpywSAvWJAMWmQjWYzihmWnfl8qCY6mdGKS+/ANROO9PjS\r\n         t86idfXgc9LB/FdU7QqYujc3F/SOU2KKDnY+rkSNv2blCgB+78K4VRuJlLYeYZIC5ZeK\r\n         pg3Y/vnQUznhGf8wZnnB1Vxa1mXNUy76dceGZY6L6NOdtOZGrEQZgEMDHxfz7zsmk+Mi\r\n         QA/Q==;\r\n        dara=google.com",
+            "arc-authentication-results": "ARC-Authentication-Results: i=1; mx.google.com;\r\n       dkim=pass header.i=@indeedemail.com header.s=sp2210 header.b=Uwqbsqtu;\r\n       spf=pass (google.com: domain of msprvs1=20186oej4tbyo=bounces-294276@bounces.indeed.com designates 156.70.22.252 as permitted sender) smtp.mailfrom=\"msprvs1=20186oeJ4TbYo=bounces-294276@bounces.indeed.com\";\r\n       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=indeedemail.com",
+            "return-path": "Return-Path: <msprvs1=20186oeJ4TbYo=bounces-294276@bounces.indeed.com>",
+            "received-spf": "Received-SPF: pass (google.com: domain of msprvs1=20186oej4tbyo=bounces-294276@bounces.indeed.com designates 156.70.22.252 as permitted sender) client-ip=156.70.22.252;",
+            "authentication-results": "Authentication-Results: mx.google.com;\r\n       dkim=pass header.i=@indeedemail.com header.s=sp2210 header.b=Uwqbsqtu;\r\n       spf=pass (google.com: domain of msprvs1=20186oej4tbyo=bounces-294276@bounces.indeed.com designates 156.70.22.252 as permitted sender) smtp.mailfrom=\"msprvs1=20186oeJ4TbYo=bounces-294276@bounces.indeed.com\";\r\n       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=indeedemail.com",
+            "x-msfbl": "X-MSFBL: Sm8u66ZKpn5ve5htxM71Ab1DcYgVbni3t6QpXF+IZMc=|eyJtZXNzYWdlX2lkIjo\r\n\tiNjdlYjIwMWNlYzY3ZmVhYzBjZTciLCJzdWJhY2NvdW50X2lkIjoiMCIsImN1c3R\r\n\tvbWVyX2lkIjoiMjk0Mjc2IiwiciI6Impvbm9jYXRsaWZmQGdtYWlsLmNvbSIsInR\r\n\tlbmFudF9pZCI6InNwYyJ9",
+            "dkim-signature": "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=indeedemail.com;\r\n\ts=sp2210; t=1743526944; i=@indeedemail.com;\r\n\tbh=5TuABFlsivauIrIqV4nJvveROI0Rk5iNUmI1/xmZ7qg=;\r\n\th=To:Date:Content-Type:Message-ID:From:Subject:From:To:Cc:Subject;\r\n\tb=Uwqbsqtubriw17Y0RxseT7iw6xB2ZQVOIq/BPK2IzoZ3bE6MQuU9263gDUJhWbQF2\r\n\t cAZme9d+KA7YPRCCLeBHuYl+dyrOKnWsmX7mdFQFQCYJCj2+gojB6SFu8mZPBugsTy\r\n\t huXE9XG40DC66YlK1+NAU8IFy2YfgCRYP18+j608mcHRYE8HFZDCx7XNJ5j/JS0sGC\r\n\t eohRZmAqRx56TeGWJLz1bqzsm53V5Deiq0Pcsw5eb4IKn+j/9gL2bfWpSV5BgpuxIQ\r\n\t rjuukenmgpys0uqEAJAEX6KrFhraQd0BwV9IM6oHW4oKume8oxhVuhECx3Ci3dozc0\r\n\t RCyB/5HUzvodA==",
+            "to": "To: <jonocatliff@gmail.com>",
+            "date": "Date: Tue, 01 Apr 2025 17:02:24 +0000",
+            "content-type": "Content-Type: multipart/alternative; boundary=\"_----EG795m8feLvtFxY614D8Hg===_6D/C8-15802-02C1CE76\"",
+            "mime-version": "MIME-Version: 1.0",
+            "x-indeed-fbl": "X-Indeed-FBL: :2:ede00d8b79bcbcd166d51ec3e3f3dc85644169645443d914",
+            "x-indeed-tk": "X-Indeed-TK: 1inp4rn8vl3f3801",
+            "x-indeed-content-type": "X-Indeed-Content-Type: MessagingEmployerNoAccountIdNotification",
+            "message-id": "Message-ID: <1inp4rn8vl3f3801@indeed.com>",
+            "from": "From: \"Grace-Elyse Pelzer\" <conversation-freelancevideoeditor-b0z8m@indeedemail.com>",
+            "x-indeed-client-app": "X-Indeed-Client-App: RavenEmailDaemon",
+            "subject": "Subject: Freelance Video Editor - Grace-Elyse Pelzer applied on Indeed",
+            "x-campaign-id": "x-campaign-id: MessagingEmployerNoAccountIdNotification",
+            "feedback-id": "Feedback-ID: MessagingEmployerNoAccountIdNotification:RavenEmailDaemon:Indeed"
+          },
+          "html": "<!-- SET TABLE WRAPPER -->\n\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" lang=\"en\" xml:lang=\"en\">\n <head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <!--[if !mso]><!-->\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n  <!--<![endif]-->\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title></title>\n\n  <!--[if !mso]><!-->\n  <style type=\"text/css\">\n    @import url('https://prod.statics.indeed.com/ds/assets/typography/indeedsans/v1/indeedsans.css');\n  </style>\n  <!--<![endif]-->\n  \n  <!--[if !mso]><!-->\n  <style type=\"text/css\">\n     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');\n  </style>\n  <!--<![endif]-->\n\n  <style type=\"text/css\">\n  /* iOS BLUE LINKS */\n\n  a[x-apple-data-detectors] {\n   color: inherit !important;\n   font-size: inherit !important;\n   font-family: inherit !important;\n   font-weight: inherit !important;\n   line-height: inherit !important;\n  }\n\n  /* Samsung blue Links */\n  #MessageViewBody a {\n    color: inherit;\n    text-decoration: none;\n    font-size: inherit;\n    font-family: inherit;\n    font-weight: inherit;\n    line-height: inherit;\n  }\n\n  /* Samsung center email */\n  #MessageViewBody {\n    Margin: 0 auto !important;\n  }\n  </style>\n  <style type=\"text/css\">\n  a,\n  body,\n  table,\n  td,\n  th {\n   -webkit-text-size-adjust: 100%;\n   -ms-text-size-adjust: 100%;\n   box-sizing: border-box !important;\n  }\n\n  table,\n  td {\n   mso-table-lspace: 0;\n   mso-table-rspace: 0;\n  }\n\n  img {\n   -ms-interpolation-mode: bicubic;\n   border: 0;\n   height: auto;\n   line-height: 100%;\n   outline: 0;\n   text-decoration: none;\n  }\n\n  body {\n   height: 100%!important;\n   margin: 0!important;\n   padding: 0!important;\n   width: 100%!important;\n  }\n\n  sup {\n   *vertical-align: baseline;\n   *position: relative;\n   *bottom: .75em;\n   font-size: 0.65em;\n   line-height: 0;\n  }\n\n  p {\n   margin-top: 8px;\n   margin-bottom: 16px;\n   /* This helps with paragraph spacing in Yahoo! */\n  }\n\n  .primary-button:hover {\n    background-color: #003a9b !important;\n  }\n\n  .secondary-button:hover {\n    background-color: #f7f6f5 !important;\n  }\n\n  .tertiary-button:hover {\n    background-color: #f7f6f5 !important;\n  }\n\n  .destructive-button:hover {\n    background-color: #f7f6f5 !important;\n  }\n\n  .standard-text-link:hover {\n      color: #003a9b !important;\n  }\n\n.neutral-text-link:hover {\n      color: #424242 !important;\n  }\n\n.inverse-text-link:hover {\n      color: #f3f2f1 !important;\n  }\n\n.strong-text-link:hover {\n      color: #424242 !important;\n  }\n\n  @media only print and (max-width: 600px) {\n   body {\n    max-width: 320px;\n   }\n  }\n\n  @media all and (max-width: 600px) {\n    .outerContainer { width: 100% !important } .innerContainer { padding-left: 0\n!important; padding-right: 0 !important } .fullWidth { width: 100% !important;\ndisplay: block } u~div #full-wrap { min-width: 100vw } h1.hero-h1 { font-size:\n36px !important; line-height: 45px !important; -webkit-text-size-adjust: none\n!important } h1.hero-h1_variable { font-size: 130% !important; line-height: 135%\n!important; -webkit-text-size-adjust: none !important } h2.body-h2 { font-size:\n24px !important; line-height: 30px !important; -webkit-text-size-adjust: none\n!important } h3.body-h3 { font-size: 20px !important; line-height: 24px\n!important; -webkit-text-size-adjust: none !important } h3.body-h3-link {\nfont-size: 20px !important; line-height: 24px !important;\n-webkit-text-size-adjust: none !important } h4.body-h4-link { font-size: 14px\n!important; line-height: 18px !important; -webkit-text-size-adjust: none\n!important } h1.h1-xl {font-size:44px!important;line-height:55px!important;-webkit-text-size-adjust:none!important} h1.h1-lg {font-size:36px!important;line-height:45px!important;-webkit-text-size-adjust:none!important} h1.h1-md {font-size:28px!important;line-height:35px!important;-webkit-text-size-adjust:none!important} h1.h1-sm {font-size:24px!important;line-height:30px!important;-webkit-text-size-adjust:none!important} h1.h1-xs {font-size:20px!important;line-height:28px!important;-webkit-text-size-adjust:none!important} h2.h2-xl {font-size:28px!important;line-height:35px!important;-webkit-text-size-adjust:none!important} h2.h2-lg {font-size:24px!important;line-height:30px!important;-webkit-text-size-adjust:none!important} h2.h2-md {font-size:20px!important;line-height:28px!important;-webkit-text-size-adjust:none!important} h2.h2-sm, h2.h2-xs {font-size:16px!important;line-height:24px!important;-webkit-text-size-adjust:none!important} h3.h3-xl, h3.h3-link-xl {font-size:24px!important;line-height:30px!important;-webkit-text-size-adjust:none!important} h3.h3-lg, h3.h3-link-lg {font-size:20px!important;line-height:28px!important;-webkit-text-size-adjust:none!important} h3.h3-md, h3.h3-link-md {font-size:16px!important;line-height:24px!important;-webkit-text-size-adjust:none!important} h3.h3-sm, h3.h3-xs, h3.h3-link-sm, h3.h3-link-xs {font-weight:normal!important;font-size:16px!important;line-height:24px!important;-webkit-text-size-adjust:none!important} p.body-p-lg { font-size: 36px !important; line-height: 43px\n!important; -webkit-text-size-adjust: none !important } p.body-p-sm { font-size:\n14px !important; line-height: 22px !important; -webkit-text-size-adjust: none\n!important } p.body-p-xs { font-size: 12px !important; line-height: 20px\n!important; -webkit-text-size-adjust: none !important } .ph-0 { padding-left:\n0px !important; padding-right: 0px !important } .p-0 { padding: 0px !important }\n.pt-0 { padding-top: 0px !important } .pr-0 { padding-right: 0px !important }\n.pb-0 { padding-bottom: 0px !important } .pl-0 { padding-left: 0px !important }\n.pb-4 { padding-bottom: 4px !important } .pt-4 { padding-top: 4px !important }\n.ph-8 { padding-left: 8px !important; padding-right: 8px !important } .pb-8 {\npadding-bottom: 8px !important } .ptb-8 { padding-top: 8px !important;\npadding-bottom: 8px !important } .pt-8 { padding-top: 8px !important } .pl-8 {\npadding-left: 8px !important } .pl-10 { padding-left: 10px !important } .pr-8 {\npadding-right: 8px !important } .pb-12 { padding-bottom: 12px !important } .ph-15 { padding-left: 15px !important;\npadding-right: 15px !important } .pr-15 { padding-right: 15px !important }\n.pl-15 { padding-left: 15px !important } .pb-15 { padding-bottom: 15px\n!important } .ph-16 { padding-left: 16px !important; padding-right: 16px\n!important } .pt-16 { padding-top: 16px !important } .pr-16 { padding-right:\n16px !important } .pb-16 { padding-bottom: 16px !important } .pl-16 {\npadding-left: 16px !important } .p-16 { padding-top: 16px !important;\npadding-right: 16px !important; padding-bottom: 16px !important; padding-left:\n16px !important } .pt-20 { padding-top: 20px !important } .ph-20 { padding-left:\n20px !important; padding-right: 20px !important } .p-20 { padding-top: 20px\n!important; padding-right: 20px !important; padding-bottom: 20px !important;\npadding-left: 20px !important } .pt-24 { padding-top: 24px !important } .pr-24 {\npadding-right: 24px !important } .pb-24 { padding-bottom: 24px !important }\n.pl-24 { padding-left: 24px !important } .p-24 { padding-top: 24px !important;\npadding-right: 24px !important; padding-bottom: 24px !important; padding-left:\n24px !important } .ph-24 { padding-right: 24px !important; padding-left: 24px\n!important } .pb-27 { padding-bottom: 27px !important } .ph-30 { padding-left:\n30px !important; padding-right: 30px !important } .pt-30 { padding-top: 30px\n!important } .pb-30 { padding-bottom: 30px !important } .pt-32 { padding-top: 32px !important }\n.pb-32 { padding-bottom: 32px !important } .ph-32 { padding-left: 32px !important; padding-right: 32px\n!important; } .pt-36 { padding-top: 36px !important } .pr-36 { padding-right:\n36px !important } .pb-36 { padding-bottom: 36px !important } .pl-36 {\npadding-left: 36px !important } .pt-37 { padding-top: 37px !important } .pt-38 {\npadding-top: 38px !important; } .pt-40 { padding-top: 40px !important } .pb-40 {\npadding-bottom: 40px !important } .show { display: block !important; max-height:\nnone !important; overflow: visible !important } .hide { display: none !important\n} .hide-bg { background-image: none !important } .bt-1 { border-top: 1px solid\n#f6f6f6 !important } .bt-0 { border-top: 0px solid #fff !important } .bt-15 {\nborder-top: 15px solid #fff !important } .bb-5 { border-bottom: 5px solid\n#f6f6f6 !important } .br-0 { border-right: none !important } .bgcolor-m {\nbackground-color: #f6f6f6 !important } .bgcolor-white-m { background-color:\n#ffffff !important } .width-100 { width: 100% !important } .width-70 { width: 70% !important } .width-50 { width: 50% !important } .center { margin: 0 auto !important } .center-align-text {\ntext-align: center !important } .left-align-text { text-align: left !important }\n.stack { display: block !important } .table { display: table !important }\n.cta.stack a { width: 100% !important } .height-580 { height: 300px !important;\nbackground-position: bottom !important } .no-border{ border:none !important;\nborder-radius: 0 !important; } .h24 {height: 24px !important;} .h16 {height: 16px !important;} .jobCardLabels {margin: 0 0 4px !important; width: 100% !important; display: block !important;} .radius8 { border-radius: 8px !important;}\n.eml_BasicTable_HideOnMobile { display: none!important;}\n    /* Custom CSS After this line */\n    \n  }\n  \n  @media only screen and (min-width: 600px) {\n    .eml_BasicTable_MobileShow {\n        display: none !important;\n    }\n  }\n\n  \n\n  \n   [style*='Noto Sans'] {\n     \tfont-family: 'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif !important;\n      }\n  </style>\n  <!--[if (gte mso 9)|(IE)]>\n    <style type=\"text/css\">\n    table {\n    border-collapse: collapse;\n    border-spacing: 0; }\n    </style>\n    <![endif]-->\n  <!--[if gte mso 9]>\n      <xml>\n        <o:OfficeDocumentSettings>\n        <o:AllowPNG/>\n        <o:PixelsPerInch>96</o:PixelsPerInch>\n        </o:OfficeDocumentSettings>\n      </xFreeml>\n    <![endif]-->\n  <!--[if gte mso 9]>\n    <style>\n     li {\n     text-indent: -1em; /* Normalise space between bullets and text */\n     }\n    </style>\n    <![endif]-->\n </head>\n <body class=\"darkmode-bg-weak\" text=\"#2d2d2d\" alink=\"#2557a7\" link=\"#2557a7\" vlink=\"#2557a7\" bgcolor=\"#f3f2f1\" style=\"margin:0;padding:0;\">\n   <!-- PREHEADER COMPONENT -->\n   \t<div style=\"display:none;max-height:0px;overflow:hidden\">New message from Grace-Elyse Pelzer</div><div style=\"display:none;max-height:0px;overflow:hidden\">&#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; &#847; &zwnj; &nbsp; &#8199; &shy; </div>\n\n   <!-- END PREHEADER -->\n   <!-- HEADER PATTERN -->\n                 \t<table align=\"center\" class=\"full-wrap darkmode-bg-weak\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#f3f2f1\" width=\"100%\" role=\"presentation\"><tr><td class=\"pt-0\" style=\"padding:15px 0 0\" align=\"center\" valign=\"top\"><!--[if (gt mso 9)|(IE)]>\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"\n                    bgcolor=\"#ffffff\" style=\"width:600px;\" role=\"presentation\">\n                        <tr>\n                            <td align=\"left\" valign=\"top\">\n        <![endif]-->\n<table align=\"center\" class=\"outerContainer darkmode-bg-base\" style=\"max-width:600px\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#ffffff\" width=\"100%\" role=\"presentation\"><tr><td align=\"center\" valign=\"top\"><table class=\"darkmode-bg-base\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" align=\"left\" bgcolor=\"#ffffff\" width=\"100%\" role=\"presentation\"><tr><td class=\"pr-24 pl-10\" style=\"padding:0 56px 0 42px\" align=\"center\" valign=\"top\"><table cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" align=\"left\" width=\"100%\" role=\"presentation\"><tr><td style=\"padding:0px\" align=\"center\" valign=\"top\"><table cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" align=\"left\" width=\"100%\" role=\"presentation\"><tr><td class=\"darkmode-logo-padding\" align=\"left\" valign=\"middle\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQQUsDMRCF_4rk4Ml2LQjKQvBQPVnXgy0eS0imu-NmkpBMWEvpfzfNXjzW43vve29gTiKLVgzMIbVNM03TEp0BMEvtqRkwwrPmHwmk0C7eISXVo-tfKVh_hPgCB5Utd57xgFoxeneLCc2_-HGSV4GZaZ98jhrK_Izt651UIwKDmebL1dCKgsLeXb8eojRx7jqWCRmq4GMAadGNVVmvJaGZMS93n-JOkGhPQlvU43aIPvdDeSnHDCWa3bJQrI3v_c2mDC1qK6gIjrdjSS7KJ17_gXfdW_fx1ZWEL8QKXXiI7jHRt6an-5U4n38BN52YYLsBAAA/T4JOsRQEmlVSK3AxIwiYHMdF3AN5TdtZ5LFr3REceHA\"><img class=\"darkmode-logo-hide\" src=\"https://prod.statics.indeed.com/eml/assets/images/logo/ForEmployers_US_en_color_horizontal_whitebg.png\" style=\"font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;color:#004fcb;font-size:20px;display:block;width:auto;height:52px;max-height:52px;\" width=\"auto\" height=\"52\" alt=\"Indeed For Employers\"/><!--[if !mso]><!-->\n    <img class=\"darkmode-logo-show\" src=\"https://prod.statics.indeed.com/eml/assets/images/logo/ForEmployers_US_en_white_horizontal.png\" style=\"font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;color:#004fcb;font-size:20px;display:none;width:auto;height:23px;max-height:23px;\" width=\"auto\" height=\"23\" alt=\"Indeed For Employers\"/>\n     <!--<![endif]-->\n</a></td><td align=\"right\" valign=\"middle\" style=\"padding:0px\"><table align=\"right\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" role=\"presentation\"><tr><td align=\"center\" valign=\"bottom\" style=\"padding:16px 0px\" class=\"hide\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:14px;font-weight:normal;line-height:21px;margin:0;padding:0;direction:ltr;;white-space:nowrap\" class=\"darkmode-t-base\"><a class=\"darkmode-ta-primary\" href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQT0sDMRDFv4rk0JNtLQjKQvCggiiuB1s8lphMd6ebSUIyQUvpdzfNKnhsb_Pe-80fZi-yaETPHFIznwMF63cQ0wydATAz7Wm-9Z_pTvO3BFJop6-QkurQdY-_8ANsVLbcesYNasXo3QQTmrP44UueBGamdfI5apB_x67rnlQjAoOZxs3V0IqCws6dPj1EaeLY61gmZKiCdwGkRTdUZb2WhGbEvFy9T3orwa1LUaW4FCSavdAW9bDso89dX_7MMUOJRrcMLNZz-e7FEygDcVr7gorgeDmU7Kh84vt_-Kp9ad8-2pLwkVigC9fR3STaarq9WojD4QfRcJMM0gEAAA/a2g84RBdXmZrzRxe5T6y52NMfvx31hChS5OnPYkBIh8\" style=\"color:#004fcb;text-decoration:underline\"><span style=\"text-decoration:underline\">Jobs</span></a></p></td><td align=\"center\" valign=\"bottom\" style=\"padding:16px 0px 16px 16px\" class=\"hide\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:14px;font-weight:normal;line-height:21px;margin:0;padding:0;direction:ltr;;white-space:nowrap\" class=\"darkmode-t-base\"><a class=\"darkmode-ta-primary\" href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQQUsDMRCF_4rk0JNtLQjKQvBQBUFcD7Z4XEIy3R03mYRkgpbS_26ateCx3vLe-95MmIPIohEDc0jNcgkuWL-HmBZIBsAstHdLrcigUQzpQfO3BKfQzl8hJdUj9U-_lUfYqWy59Yw71IrR0wwTmn_x45e8CMzsuuRz1CDPX-7qnlQjBwazmzZXQysXFPZ0-fQQpYlTl1gmZKiC9wGkRRqrsl5Lh2bCvNy-zwYrgbryqFJcCyeag9AW9bgZos_9UK7NMUOJJrcMLNb6fOOrZ1AG4ryWg4pAvBkLcFI-8fpPZ9u-tG8fbUn4RKyQwm2ku-Q-tbu_WYnj8QePktfZ3QEAAA/-y8mOUjmDIl7on3nf2etnPFdzC7G0_-_we2X_XHbrZ0\" style=\"color:#004fcb;text-decoration:underline\"><span style=\"text-decoration:underline\">Candidates</span></a></p></td><td align=\"right\" valign=\"bottom\" style=\"padding:16px 0px 16px 16px\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:14px;font-weight:normal;line-height:21px;margin:0;padding:0;direction:ltr;;white-space:nowrap\" class=\"darkmode-t-base\"><a class=\"darkmode-ta-primary\" href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQQUsDMRCF_0rJoSfbtSAoheBBBVFcBVs8lphMd8fNJCGZoKX0v5tmFTzWW95735sZshdZLEXPHNKyaYCC9TuIaY7OAJi59tSEa81fEkihnT1BSqpD1939kLewVdly6xm3qBWjd1NMaP7FD5_yJDAzbZLPUYP8vXRT96QaERjMNG6uhlYUFHbu9OkhShPHrmOZkKEK3gWQFt1QlfVaEpoR83L9Ou2tBLcpjyrFmSCx3AttUQ-rPvrc9eWTOWYo0eiWgcV68YknD_59cg_KQJzVblARHK-Gkh9VQW7-VNbtY_v81paEj8QCXbiI7jLRh6ar84U4HL4BUnuEadMBAAA/r26EzAmWux9Ni7ek9lVy59y6BrNusbgNY5OY7SmcQy4\" style=\"color:#004fcb;text-decoration:underline\"><span style=\"text-decoration:underline\">Post a Job</span></a></p></td></tr></table></td></tr></table></td></tr></table></td></tr></table></td></tr></table><!--[if (gt mso 9)|(IE)]>\n        </td></tr></table>\n        <![endif]-->\n</td></tr></table>\n     \n       <!-- END HEADER PATTERN -->\n           <!-- MULTIPATTERN VARIABLE -->\n        <table class=\"full-wrap darkmode-bg-weak\" style=\"min-width:100%\" align=\"center\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#f3f2f1\" width=\"100%\" role=\"presentation\"><tr><td align=\"center\" valign=\"top\"><!--[if (gt mso 9)|(IE)]>\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"\n                bgcolor=\"#ffffff\" class=\"darkmode-bg-base\" style=\"width:600px;\" role=\"presentation\">\n                    <tr>\n                        <td align=\"center\" valign=\"top\">\n        <![endif]-->\n<table class=\"outerContainer\" style=\"max-width:600px;width:600px;border-top:1px solid #e4e2e0\" align=\"center\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#ffffff\" width=\"100%\" role=\"presentation\"><tr><td align=\"center\" valign=\"top\"><table class=\"innerContainer\" style=\"max-width:600px\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" align=\"left\" bgcolor=\"#ffffff\" width=\"100%\" role=\"presentation\"><tr><td class=\"ph-24\" style=\"padding:48px 56px 16px\" align=\"center\" valign=\"top\"><table style=\"min-width:100%\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" align=\"left\" width=\"100%\" role=\"presentation\">\n\n\n\n\n\n<tr><td align='left' style='padding:8px 0px'>\n<h1 class=\"    darkmode-t-strong\n h1-sm\" style=\"color:#2d2d2d;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:28px;font-weight:bold;line-height:35px;margin:0;padding:0;direction:ltr;\">New message from Grace-Elyse Pelzer</h1>\n</td></tr>\n\n\n\n\n\n\n\n\n\n\n\n<tr><td align='left' style='padding:8px 0px;'>\n<p style=\"color:#2D2D2D;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:20px;font-weight:normal;line-height:24px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\"><strong>Freelance Video Editor · Remote</strong></p>\n</td></tr>\n\n\n\n\n\n\n\n</table></td></tr></table></td></tr></table><!--[if (gt mso 9)|(IE)]>\n        </td></tr></table>\n        <![endif]-->\n</td></tr></table><table class=\"full-wrap darkmode-bg-weak\" style=\"min-width:100%\" align=\"center\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#f3f2f1\" width=\"100%\" role=\"presentation\"><tr><td align=\"center\" valign=\"top\"><!--[if (gt mso 9)|(IE)]>\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"\n                bgcolor=\"#ffffff\" class=\"darkmode-bg-base\" style=\"width:600px;\" role=\"presentation\">\n                    <tr>\n                        <td align=\"center\" valign=\"top\">\n        <![endif]-->\n<table class=\"outerContainer\" style=\"max-width:600px;width:600px;border-top:0\" align=\"center\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#ffffff\" width=\"100%\" role=\"presentation\"><tr><td align=\"center\" valign=\"top\"><table class=\"innerContainer\" style=\"max-width:600px\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" align=\"left\" bgcolor=\"#ffffff\" width=\"100%\" role=\"presentation\"><tr><td class=\"ph-24\" style=\"padding:16px 56px 24px\" align=\"center\" valign=\"top\"><table style=\"min-width:100%\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" align=\"left\" width=\"100%\" role=\"presentation\">                                        <tr><td align='left' valign='top' class='ph-24' style='border-collapse: separate; border-left: 4px solid #d4d2d0;padding:8px 20px 24px;direction:ltr;'><table align=\"center\" class=\"tableWrapper\" style=\"\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" width=\"100%\" role=\"presentation\">\n\n\n\n<tr><td align='left' style='padding:8px 0px;'>\n<p style=\"color:#2D2D2D;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:16px;font-weight:normal;line-height:24px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\">https://www.figma.com/slides/uiOLPZrHydSykF2xPosoKW/portfolio-slide-deck?node-id=39-13&t=iC02IlTzLtnSPwqq-1</p>\n</td></tr>\n\n\n\n\n\n\n\n</table></td></tr>\n    </table></td></tr></table></td></tr></table><!--[if (gt mso 9)|(IE)]>\n        </td></tr></table>\n        <![endif]-->\n</td></tr></table>\n        <!-- END MULTIPATTERN VARIABLE -->\n      <!-- FOOTER PATTERN -->\n                        \n\n\n\n<table class=\"full-wrap darkmode-bg-weak\" style=\"min-width:100%\" align=\"center\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#f3f2f1\" width=\"100%\" role=\"presentation\"><tr><td align=\"center\" valign=\"top\"><!--[if (gt mso 9)|(IE)]>\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"\n                bgcolor=\"#f3f2f1\" style=\"width:600px;\" role=\"presentation\">\n                    <tr>\n                        <td align=\"center\" valign=\"top\">\n        <![endif]-->\n<table class=\"outerContainer\" style=\"max-width:600px;width:600px\" align=\"center\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#f3f2f1\" width=\"100%\" role=\"presentation\"><tr><td style=\"padding:32px 56px 0\" class=\"ph-24 pt-16\" align=\"center\" valign=\"top\"><table align=\"left\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" width=\"100%\" role=\"presentation\"><tr><td class=\"pb-12\" style=\"padding-bottom:24px;border-bottom:1px solid #e4e2e0\" align=\"center\" valign=\"top\"><table align=\"left\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" width=\"100%\" role=\"presentation\"><tr><th class=\"stack fullWidth\" style=\"width:197px;vertical-align:top;font-weight:normal;text-align:left\"><table align=\"left\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" width=\"100%\" role=\"presentation\"><tr><td class=\"pr-0\" align=\"left\" style=\"padding-right:24px\" valign=\"top\"><h2 class=\"darkmode-t-strong\" style=\"color:#2d2d2d;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:14px;font-weight:bold;line-height:21px;margin:0;padding:0;direction:ltr;\">Engage candidates from anywhere</h2></td></tr><tr><td align=\"left\" class=\"pr-0\" style=\"padding:4px 24px 0 0\" valign=\"top\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:12px;font-weight:normal;line-height:18px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\">Download the free app.</p></td></tr></table></th><th class=\"stack fullWidth\" style=\"vertical-align:top;font-weight:normal;text-align:left\"><table align=\"left\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" width=\"100%\" role=\"presentation\"><tr><td class=\"pt-24\" align=\"left\" style=\"padding:0\" valign=\"top\"><table align=\"left\" style=\"display:inline-block\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" role=\"presentation\"><tr><td class=\"pr-16 pb-12\" align=\"left\" valign=\"top\" style=\"padding-right:12px\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_02Myw6CMBBFf6XpWkASX2FnfGxQNBHiWnEilbbTlCFKCP_uEDcu7uK-Ti9bmciKyDVJFIFxGjvwgcG70hCiBa1sHRqIYlWk0cdoNV90KCfSyKSXpVZlnVce22fFGPItcPVLOwccbfFtNd4ea-cES4O4EHoQB8aK3fEsArFHJPD8czcPlvKab6PDhjZ_pCJLs9M144bGRaysm3m7bMyrNKtpLIfhC96WY1rMAAAA/VnibK2icfB4ne4csyBlMGVWmhoYIrggpiZ2gvel9QZY\"><img src=\"https://prod.statics.indeed.com/eml/assets/images/badges/App_Store_Badge_en.png\" height=\"40\" style=\"max-height:40px;height:40px\" alt=\"Download on the App Store\"/></a></td></tr></table><table align=\"left\" class=\"pb-12\" style=\"display:inline-block\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" role=\"presentation\"><tr><td align=\"left\" valign=\"top\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_02Myw6CMBREf6XpWqgkvsLO-FqgyALjGvEGKre9TSlRQvh3S9y4nDMzZ-Adj3ntnGljIUAZpB5soOghEULSgFI3oQIRyVsiPgrlctUTn3HF44GXKMsmry11Ve01znbgqx_tDXi0p7dGKp5bY9iJqEJgGRY9O3stO1wyFrAjkQPrf6awoF3e-NuUqHW7P9MtTdLrPfWNmxaR1GZh9bpVr1Jt5hEfxy_tR7j8zAAAAA/5aUUuzJTll4tOym2DtjnU90g5rYBqsOJQpNV-_4iUrY\"><img src=\"https://prod.statics.indeed.com/eml/assets/images/badges/Google_Play_Badge_en.png\" height=\"40\" style=\"max-height:40px;height:40px\" alt=\"Get it on Google Play\"/></a></td></tr></table></td></tr></table></th></tr></table></td></tr></table></td></tr></table><!--[if (gt mso 9)|(IE)]>\n        </td></tr></table>\n        <![endif]-->\n</td></tr></table>\n\n\n\t  \t\t\t<table class=\"full-wrap darkmode-bg-weak\" style=\"min-width:100%\" align=\"center\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#f3f2f1\" width=\"100%\" role=\"presentation\"><tr><td align=\"center\" valign=\"top\"><!--[if (gt mso 9)|(IE)]>\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"\n                bgcolor=\"#f3f2f1\" style=\"width:600px;\" role=\"presentation\">\n                    <tr>\n                        <td align=\"center\" valign=\"top\">\n        <![endif]-->\n<table class=\"outerContainer\" style=\"max-width:600px;width:600px\" align=\"center\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" bgcolor=\"#f3f2f1\" width=\"100%\" role=\"presentation\"><tr><td style=\"padding:32px 56px\" class=\"p-24\" align=\"center\" valign=\"top\"><table align=\"left\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" width=\"100%\" role=\"presentation\"><tr><td align=\"left\" style=\"padding:0px\" valign=\"top\"><table align=\"left\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" width=\"100%\" role=\"presentation\"><tr><td align=\"left\" style=\"padding:0px 0px 24px;border-bottom:1px solid #e4e2e0\" valign=\"top\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:12px;font-weight:normal;line-height:18px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\"><b>This message is part of a thread. Your reply will be sent to multiple recipients. To see the current list of recipients, sign in to Indeed or contact your account administrator to create an Indeed account.</b> <br aria-hidden=\"true\" /> <b>By replying or using an indeedemail.com address, you acknowledge that the email conversation: 1) will be collected and stored as part of the corresponding Indeed Messaging thread and 2) will be processed and analyzed according to Indeed's <a href=\"https://hrtechprivacy.com/brands/indeed#Cookies\">Cookie Policy</a>, <a href=\"https://hrtechprivacy.com/brands/indeed#Indeeds-Privacy-Policy\">Privacy Policy</a>, and <a href=\"https://www.indeed.com/legal\">Terms of Service</a>, including to improve Indeed services.</b></p></td></tr></table><table align=\"left\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" width=\"100%\" role=\"presentation\"><tr><td align=\"left\" style=\"padding:24px 0px 0px\" class=\"fullWidth pb-24\"><table align=\"left\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" width=\"100%\" role=\"presentation\"><tr><td align=\"left\" style=\"padding:0px 0px 12px\" valign=\"top\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQQUsDMRCF_0sOnmxrQVAWggfrQcT1YIvHEpLp7riZJCQT1lL6302Ti8d6fO998wbeSWTRiZE5pG61mud5ic4AmKX29KT5RwIptIt3SEkN6IYXCtYfIW7goLLl3jMeUCtG724wofkXP83yKjAz7ZPPUUOpb9i-_kk1IjCYqX2uhlYUFA7u-vYQpYnt1rFMyFAFHwNIi26qynotCU3DvNx9iltBojsJbVFP2zH6PIxlTY4ZStTc0lCs1zrqop4EFcHxdir2RfnEz3_IXf_Wf3z1JeELsUYX7qN7SPSt6fFuLc7nXxp-0wmzAQAA/jjRTohFXqyd9OE9-Dax7oItAQtwLeLhFG-xZXO8n7Ww\"><img src=\"https://prod.statics.indeed.com/eml/assets/images/logo/indeed_en_color.png\" alt=\"Indeed home\" width=\"80\" style=\"font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;color:#004fcb;font-size:20px\"/></a></td></tr><tr><td style=\"padding:0px\" class=\"fullWidth pb-16\" align=\"left\" valign=\"top\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:12px;font-weight:normal;line-height:18px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\">&copy; 2025 Indeed, Inc. <br/>200 West 6th Street, Floor 36, Austin, TX 78701</p><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:12px;font-weight:normal;line-height:18px;margin:12px 0 0;padding:0;direction:ltr;\" class=\"darkmode-t-base\">Indeed processes and analyzes your activity in this email.</p></td></tr></table></td><td align=\"left\" style=\"padding:24px 0px 0px\" class=\"fullWidth left-align-text pt-20 pb-36\" valign=\"top\"><table align=\"right\" class=\"fullWidth\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" role=\"presentation\"><tr><td align=\"right\" valign=\"top\" style=\"padding:0px 8px 0px  0px\" class=\"pl-0\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_02MywrCMBQF_-WutbEgKFkqCCLEhS2ua3pr0pgHeRCk9N9N0YXLMzOcCRJQEDG6QAnJOVdDx_Fhraq41eRsesR-sP6QgjQYAoEVaKAT8JfkqhHepqcoD9EnLOpL3w4LOv2O1u2tGNd5NLFRRSzLhnj8a1t2Ydc7KyYuRS2N23qzC3rker-pYZ4_C9YFmKkAAAA/ETvUBh19Z4scXTCY3X8USKKNI057hMF7didhuB-55xM\" style=\"color:#004fcb;text-decoration:underline;font-size:12px\"><img src=\"https://prod.statics.indeed.com/eml/assets/images/icons/Facebook_black_whitebg.png\" alt=\"Facebook\" width=\"24\"/></a></td><td align=\"left\" valign=\"bottom\" style=\"padding:0px 8px 0px\" class=\"fullWidth left-align-text\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_02MywrCMBBF_2XW2lgQlGxdiVAXtriOaWximweZCUFK_90UEVzecw53hgQcNFFAzljOuTIOSQxR2Ep6y4zrleqfPj4SGqcQGWzAAp9BTkaOrY4-DbpcUEyqqC99B1XQ-fe07W5FBRGVo3YsZl0e6fQXd82lud6bYmgtauPCProD2pe0x10Ny_IB5hk5HKsAAAA/ISLBSCg6eSSWLrIpTZfeBYKDBr1xBgn0jM_Sqw7jFq4\" style=\"color:#004fcb;text-decoration:underline;font-size:12px\"><img src=\"https://prod.statics.indeed.com/eml/assets/images/icons/Instagram_black_whitebg.png\" alt=\"Instagram\" width=\"24\"/></a></td></tr></table></td></tr></table></td></tr><tr><td align=\"left\" class=\"\" style=\"padding:24px 0px 0px\" valign=\"top\"><table align=\"left\" cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" role=\"presentation\"><tr role=\"list\"><th align=\"left\" style=\"padding:0 8px 0 0;border-right:1px solid #595959\" class=\"fullWidth br-0\" role=\"listitem\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:16px;font-weight:normal;line-height:18px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQQUsDMRCF_0sOnmxrQVAWggfrQcT1YIvHEpLp7riZJCQT1lL6302Ti8d6fO998wbeSWTRiZE5pG61mud5ic4AmKX29KT5RwIptIt3SEkN6IYXCtYfIW7goLLl3jMeUCtG724wofkXP83yKjAz7ZPPUUOpb9i-_kk1IjCYqX2uhlYUFA7u-vYQpYnt1rFMyFAFHwNIi26qynotCU3DvNx9iltBojsJbVFP2zH6PIxlTY4ZStTc0lCs1zrqop4EFcHxdir2RfnEz3_IXf_Wf3z1JeELsUYX7qN7SPSt6fFuLc7nXxp-0wmzAQAA/jjRTohFXqyd9OE9-Dax7oItAQtwLeLhFG-xZXO8n7Ww\" style=\"color:#004fcb;text-decoration:underline;font-size:12px\">Indeed</a></p></th><th align=\"left\" style=\"padding:0 8px;border-right:1px solid #595959\" class=\"fullWidth pt-24 br-0 pl-0\" role=\"listitem\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:16px;font-weight:normal;line-height:18px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQT0sDMRDFv4rk4Mm6FgRlIXionsS1YIvHEpPpZtz8I5moS-l3N00uHuvxvfd7b2AOLLOeaaKQ-q7TkUDqEPFLyPlaett9ROFU6tApAPUg6YeDFWgWL5CSGNGNTzYYP0N8hL3IhgZPuEcpCL27xITqX_z0zc8CM9ld8jlKKPMN29U7qUYWFGbbLldDChsEju789RC5iq3riCckqILmANygm6oyXnKLqmGeb9_YFbOsPzBpUE4bHX0edXkvxQwlam5ZKNa6_fhi7Ys5L2o1iAiONlOJT8onWv1pbIfn4fV9KAmdiCW6cBvdXbKf0t7fLNnx-Avdf_dOzAEAAA/PLw90iesVYs8oaFbLmY5dXRpDCV-qdsq_FYlTAItVcI\" style=\"color:#004fcb;text-decoration:underline;font-size:12px\">Privacy Policy</a></p></th><th align=\"left\" style=\"padding:0 8px;border-right:1px solid #595959\" class=\"fullWidth pt-24 br-0 pl-0\" role=\"listitem\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:16px;font-weight:normal;line-height:18px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQQUsDMRCF_0uEnmzXgqAsBA_qSVwP3cVjCdnp7riZJCQT1lL6302zCB7rbd5737wJOYkkajEy-1hX1TzPG7Q9QL_RjioDgzJPmr8lkEKzfocY1YB2eCVv3BHCCxxUMtw4xgNqxejsCiP2_-KnWV4FJqZ9dCloyPULti93YokIeky0XC6GVuQVDvb6dh9kH5ZdyzIiQxF89CAN2qko47Qk7BfMyW63Go0Euyrzze_LorgVJOqT0Ab11I7BpWHMP80hQY4WN_dmq4VAcd3tsu1VAMvtlN2LcpGf_4Bd89Z8fDY54QuxRevvg32I9KXp8W4rzucfRujwXs4BAAA/liV6FgU18TKAwV_rETPgM4jNdyyWcSMX_-Z3c6KAN0k\" style=\"color:#004fcb;text-decoration:underline;font-size:12px\">Terms</a></p></th><th align=\"left\" style=\"padding:0 8px;border-right:none\" class=\"fullWidth pt-24 br-0 pl-0\" role=\"listitem\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:16px;font-weight:normal;line-height:18px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQT0vEMBDFv0sOe3JbC4JSCB5UEMR66BaPJaSz6dj8I5mgZdnvbtoqeFyP773fzDzmxBKr2UjkY12WaAeAoTBzEZGgkM6UYLx2M4Q2ee8CVWUs7yV9cTAC9f4VYhQKrXr6wR7hKJKmxhEeUQpCZ3cYcfgXP33yi8BEpo8uBQn8t2a_3olrZGDAZLbLqyGF8QKVvXy7D3wI26wlvjxlFTR74BrttCrtJDc4bJjjXbvTwqokVK5l-65lV8yw-sSkRjkdxuCSGvPTKSTI0ebmhdl6Bu3364AXASwdpmwuykV6-MN1zUvz9t7khBaiQutvgr2N5kOau-uKnc_faLyPDtgBAAA/oPQSSLgPfcXR3ZcdO81P440TX45wI16kbTlWfq9Biy4\" style=\"color:#004fcb;text-decoration:underline;font-size:12px\">Help</a></p></th></tr></table></td></tr><tr><td align=\"left\" style=\"padding:24px 0 0\" valign=\"top\"><p style=\"color:#595959;font-family:'Indeed Sans', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:12px;font-weight:normal;line-height:18px;margin:0;padding:0;direction:ltr;\" class=\"darkmode-t-base\"><a href=\"https://cts.indeed.com/v1/H4sIAAAAAAAA_5WQT0sDMRDFv0rJoSfbtSAoheChehJXoV3EUwmT6e64-UcycS2l39109-KxHt97v3nDzElksRYdc0jrqhqGYUlOI-oleFsZbJWpAIJaaJcegX8kWkVm8YopqZZc-2yD8UeMT3hQ2XDtmQ4Eism7OSXS_-L7QV4FZrb75HMELPUTth_3pDGyqCnbafNogLJBUeuubw9R6jjNOpaJGEfBx4DSkOtHZTxIS3rCvGy2885IdOJGWLE-CTAE_a6LPrddeTHHjCWa3NJTrM9yw-w90reC42zTeQJMi2ZbqKAiOt71Bboon3jzZ66pX-q3j7okfCFW5MJddPfJfoF9uF2J8_kXGOuC6dYBAAA/43HdDqEjnhWg9xBuDX14zzRdQQE0KO1T9wsNzXHuf0U\" style=\"color:#004fcb;text-decoration:underline;font-size:12px\">Your Privacy Choices <img src=\"https://dpuk71x9wlmkf.cloudfront.net/mt/20221121161629/ccpa-icons_privacyoptions123x59.png\" alt=\"\" width=\"20\" style=\"width:20px\"/></a></p></td></tr></table></td></tr></table><!--[if (gt mso 9)|(IE)]>\n        </td></tr></table>\n        <![endif]-->\n</td></tr></table>\n\t\n\n       <!-- END FOOTER COMPONENT -->\n  \n<img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://engage.indeed.com/q/RScB5rBTMNpjmxWF6Xy7GA~~/AAR9hBA~/qBGgJbeL4WDFemfAsvmYy3w_wz1wJAZiN_EyDMwmBYzl4Pb--v3qc3Shw0kWj5v60xeNofVsen3IQQJVOA3udg~~\">\n</body>\n</html>",
+          "text": "New message from Grace-Elyse Pelzer\nFreelance Video Editor : Remote\n\n====================\n\nhttps://www.figma.com/slides/uiOLPZrHydSykF2xPosoKW/portfolio-slide-deck?node-id=39-13&t=iC02IlTzLtnSPwqq-1\n\n====================\n\nThis message is part of a thread with multiple recipients. Log into Indeed to see the current list of recipients.",
+          "textAsHtml": "<p>New message from Grace-Elyse Pelzer<br/>Freelance Video Editor : Remote</p><p>====================</p><p><a href=\"https://www.figma.com/slides/uiOLPZrHydSykF2xPosoKW/portfolio-slide-deck?node-id=39-13&t=iC02IlTzLtnSPwqq-1\">https://www.figma.com/slides/uiOLPZrHydSykF2xPosoKW/portfolio-slide-deck?node-id=39-13&t=iC02IlTzLtnSPwqq-1</a></p><p>====================</p><p>This message is part of a thread with multiple recipients. Log into Indeed to see the current list of recipients.</p>",
+          "subject": "Freelance Video Editor - Grace-Elyse Pelzer applied on Indeed",
+          "date": "2025-04-01T17:02:24.000Z",
+          "to": {
+            "value": [
+              {
+                "address": "jonocatliff@gmail.com",
+                "name": ""
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><a href=\"mailto:jonocatliff@gmail.com\" class=\"mp_address_email\">jonocatliff@gmail.com</a></span>",
+            "text": "jonocatliff@gmail.com"
+          },
+          "from": {
+            "value": [
+              {
+                "address": "conversation-freelancevideoeditor-b0z8m@indeedemail.com",
+                "name": "Grace-Elyse Pelzer"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Grace-Elyse Pelzer</span> &lt;<a href=\"mailto:conversation-freelancevideoeditor-b0z8m@indeedemail.com\" class=\"mp_address_email\">conversation-freelancevideoeditor-b0z8m@indeedemail.com</a>&gt;</span>",
+            "text": "\"Grace-Elyse Pelzer\" <conversation-freelancevideoeditor-b0z8m@indeedemail.com>"
+          },
+          "messageId": "<1inp4rn8vl3f3801@indeed.com>"
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "jonocatliff.app.n8n.cloud",
+            "user-agent": "Mozilla/5.0 (compatible; Google-Apps-Script; beanserver; +https://script.google.com; id: UAEmdDd8nyKJ6yDt9cINTS7-93QEPBN6iiQ)",
+            "content-length": "553",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "107.178.203.98",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "929a99cb4303089d-SEA",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "107.178.203.98, 108.162.245.219",
+            "x-forwarded-host": "jonocatliff.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-32-7487c6b997-s5rnt",
+            "x-is-trusted": "yes",
+            "x-real-ip": "107.178.203.98"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "spreadsheetId": "1qYAl0JNiMlbgxPzeGomCmsVfkbo-wHsWMWzeSoLlQTg",
+            "spreadsheetName": "n8n Recruitment",
+            "sheetId": 0,
+            "sheetName": "Sheet1",
+            "rangeA1Notation": "F3",
+            "range": {
+              "columnEnd": 6,
+              "columnStart": 8,
+              "rowEnd": 3,
+              "rowStart": 3
+            },
+            "value": "TRUE",
+            "user": {
+              "email": "jonocatliff@gmail.com",
+              "nickname": "jonocatliff"
+            },
+            "rowValues": [
+              {
+                "0": "Jono",
+                "1": "Catliff",
+                "2": "Freelance Video Editor",
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": "",
+                "7": "",
+                "8": "",
+                "9": "",
+                "10": "",
+                "11": "jccatliff@gmail.com",
+                "12": "",
+                "13": 1,
+                "14": 1,
+                "15": 1,
+                "16": "",
+                "17": "2025-04-01T00:00:00.000-04:00",
+                "18": 923415010473
+              }
+            ]
+          },
+          "webhookUrl": "https://jonocatliff.app.n8n.cloud/webhook-test/a424d03a-ad81-49de-96b9-72e90bc267bf",
+          "executionMode": "test"
+        }
+      }
+    ],
+    "On form submission1": [
+      {
+        "json": {
+          "Google Drive Test Results Link": "drive.google.com/my-test",
+          "Code": "923415010473",
+          "submittedAt": "2025-04-01T15:54:52.343-04:00",
+          "formMode": "test"
+        }
+      }
+    ],
+    "Cal.com Trigger": [
+      {
+        "json": {
+          "triggerEvent": "BOOKING_CREATED",
+          "createdAt": "2025-04-01T20:08:26.550Z",
+          "bookerUrl": "https://cal.com",
+          "title": "15 Min Meeting between Jono Catliff and Jono Catliff",
+          "startTime": "2025-04-02T13:00:00Z",
+          "endTime": "2025-04-02T13:15:00Z",
+          "additionalNotes": "",
+          "type": "15min",
+          "description": "",
+          "eventTypeId": 2189717,
+          "hideCalendarNotes": false,
+          "hideCalendarEventDetails": false,
+          "schedulingType": null,
+          "seatsPerTimeSlot": null,
+          "seatsShowAttendees": true,
+          "seatsShowAvailabilityCount": true,
+          "organizer": {
+            "id": 1460312,
+            "name": "Jono Catliff",
+            "email": "jccatliff@gmail.com",
+            "username": "jono-catliff-vegjw5",
+            "timeZone": "America/Toronto",
+            "language": {
+              "locale": "en"
+            },
+            "timeFormat": "h:mma",
+            "utcOffset": -240
+          },
+          "attendees": [
+            {
+              "email": "jccatliff@gmail.com",
+              "name": "Jono Catliff",
+              "firstName": "",
+              "lastName": "",
+              "timeZone": "America/Toronto",
+              "language": {
+                "locale": "en"
+              },
+              "utcOffset": -240
+            }
+          ],
+          "customInputs": {},
+          "responses": {
+            "name": {
+              "label": "your_name",
+              "value": "Jono Catliff",
+              "isHidden": false
+            },
+            "email": {
+              "label": "email_address",
+              "value": "jccatliff@gmail.com",
+              "isHidden": false
+            },
+            "location": {
+              "label": "location",
+              "value": {
+                "optionValue": "",
+                "value": "integrations:daily"
+              },
+              "isHidden": false
+            },
+            "title": {
+              "label": "what_is_this_meeting_about",
+              "isHidden": true
+            },
+            "notes": {
+              "label": "additional_notes",
+              "isHidden": false
+            },
+            "guests": {
+              "label": "additional_guests",
+              "value": [],
+              "isHidden": false
+            },
+            "rescheduleReason": {
+              "label": "reason_for_reschedule",
+              "isHidden": false
+            },
+            "code": {
+              "label": "Code",
+              "value": "923415010473",
+              "isHidden": false
+            }
+          },
+          "userFieldsResponses": {
+            "code": {
+              "label": "Code",
+              "value": "923415010473",
+              "isHidden": false
+            }
+          },
+          "location": "integrations:daily",
+          "destinationCalendar": [
+            {
+              "id": 543569,
+              "integration": "google_calendar",
+              "externalId": "jccatliff@gmail.com",
+              "primaryEmail": "jccatliff@gmail.com",
+              "userId": 1460312,
+              "eventTypeId": null,
+              "credentialId": 895090,
+              "delegationCredentialId": null,
+              "domainWideDelegationCredentialId": null
+            }
+          ],
+          "iCalUID": "q1ntWX7LHVV5SjiPNPUTnE@Cal.com",
+          "iCalSequence": 0,
+          "requiresConfirmation": false,
+          "oneTimePassword": null,
+          "uid": "q1ntWX7LHVV5SjiPNPUTnE",
+          "conferenceData": {
+            "createRequest": {
+              "requestId": "2db644eb-37a5-581a-99fa-ebe6ce513834"
+            }
+          },
+          "videoCallData": {
+            "type": "daily_video",
+            "id": "t5Ut4kQADONGv6meRIBP",
+            "password": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyIjoidDVVdDRrUUFET05HdjZtZVJJQlAiLCJleHAiOjE3NDQ4MDkzMDAsIm8iOnRydWUsImVydWkiOmZhbHNlLCJkIjoiYmJkOThhNzEtMTljOS00YmIxLWE1YzUtY2FmMWVjNWJkMTA1IiwiaWF0IjoxNzQzNTM4MTA1fQ.AToiwSnb5EkB3gL2Rvh_5IUOCx_0G_mHd9N1wPtdDKA",
+            "url": "https://meetco.daily.co/t5Ut4kQADONGv6meRIBP"
+          },
+          "appsStatus": [
+            {
+              "appName": "daily-video",
+              "type": "daily_video",
+              "success": 1,
+              "failures": 0,
+              "errors": []
+            },
+            {
+              "appName": "google-calendar",
+              "type": "google_calendar",
+              "success": 1,
+              "failures": 0,
+              "errors": [],
+              "warnings": []
+            }
+          ],
+          "eventTitle": "15 Min Meeting",
+          "eventDescription": "",
+          "price": 0,
+          "currency": "usd",
+          "length": 15,
+          "bookingId": 6943659,
+          "metadata": {
+            "videoCallUrl": "https://app.cal.com/video/q1ntWX7LHVV5SjiPNPUTnE"
+          },
+          "status": "ACCEPTED"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Slack1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cal.com Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets3": {
+      "main": [
+        [
+          {
+            "node": "Slack3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9b44f255-fce4-48bc-b2fd-4b3e6fd8e22f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "Pp6PQ0h74y2aZCgN",
+  "tags": []
+}

@@ -1,0 +1,122 @@
+{
+  "name": "3. Generate Mermaid Code",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        0
+      ],
+      "id": "65eba4ff-f4be-4ad3-ade9-4df85c750372",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent Mermaid.js code writer.",
+              "role": "system"
+            },
+            {
+              "content": "=Your task is to take as input an Upwork job description and return as output a Mermaid diagram that I can visualize using a subsequent Mermaid.js tool.\n\nOutput your results in plaintext using Mermaid code formatting. Don't output anything but the Mermaid diagram code.\n\nHere's an example of what your output should look like:\n\ngraph TD;\n    A-->B;\n    A-->C;\n    B-->D;\n    C-->D;\n\nRules:\n- You only output flowcharts. Nothing else. No sequence diagrams, no Gantt charts—only flowcharts.\n- Do not output any accessory formatting information, like ```mermaid.\n- Your first character should be g."
+            },
+            {
+              "content": "={{ $json.query }}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        -20,
+        0
+      ],
+      "id": "8a66a5a0-8a8f-413a-b74f-2e929e9081f6",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d47590b5-3683-4afe-bc27-a25fb94a32d5",
+              "name": "mermaidCode",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        0
+      ],
+      "id": "118f2798-fb90-43a8-be75-d58344216c79",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bcd6da0c-6d99-47b2-b6ad-7ae4db2c0cce",
+  "meta": {
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "bqM8byTJULziq4qT",
+  "tags": [
+    {
+      "createdAt": "2025-01-23T18:12:52.273Z",
+      "updatedAt": "2025-01-23T18:12:52.273Z",
+      "id": "l8MPK4ZirgwFWMno",
+      "name": "N8N Course"
+    }
+  ]
+}

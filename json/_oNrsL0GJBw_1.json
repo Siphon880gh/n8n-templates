@@ -1,0 +1,817 @@
+{
+  "name": "RE Assistant - Inbox (vid)",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "9013498866",
+        "space": "90133655586",
+        "folderless": true,
+        "list": "901309224514",
+        "filters": {
+          "statuses": [
+            "offer accepted",
+            "Closed",
+            "offer made"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        60
+      ],
+      "id": "df3a3466-1c79-4411-82e9-061c86d3fa2e",
+      "name": "Get Projects (Status: Offer Accepted)",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "SokbGwvfXAzEZAfj",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "={{ $json.custom_fields[0].value[0].id }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -1220,
+        60
+      ],
+      "id": "63a3d542-dbd2-4d86-acc2-364899f7961f",
+      "name": "Get Clients Info",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "SokbGwvfXAzEZAfj",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23,
+              "triggerAtMinute": 59
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1660,
+        60
+      ],
+      "id": "dd494a7e-fdb9-41b8-b91d-69f31784ac7b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0916dcb2-ad85-49bf-9b1a-e055869c787e",
+              "name": "Project name",
+              "value": "={{ $('Get Projects (Status: Offer Accepted)').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "b58eecea-07a9-4bf8-90b4-340c464d9e2b",
+              "name": "Project status",
+              "value": "={{ $('Get Projects (Status: Offer Accepted)').item.json.status.status }}",
+              "type": "string"
+            },
+            {
+              "id": "883e25c7-e937-46c5-80e8-6aa8fd34ca72",
+              "name": "Client name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "3973c25e-e741-4004-8375-56fa57bf94cf",
+              "name": "Client email",
+              "value": "={{ $json.custom_fields[1].value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1000,
+        60
+      ],
+      "id": "77017cfb-133b-4919-8b66-3d0b39ba36ad",
+      "name": "Project + Client info"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "simple": false,
+        "filters": {
+          "receivedAfter": "={{$now.startOf('day')}}",
+          "sender": "={{ $json['Client email'] }}"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -780,
+        60
+      ],
+      "id": "74715edd-ca8a-4029-b36d-af30ec2722c6",
+      "name": "Get Yesterday Emails",
+      "webhookId": "e80066f7-4cb2-4732-ac5c-cb3430a1c2a8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xi2stVKTs6MEEliC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "**Run once a day**",
+        "height": 280,
+        "width": 220,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1720,
+        -20
+      ],
+      "id": "659ef836-6ac0-4f92-999f-d0dc6b1e63a9",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $('Get Yesterday Emails').item.json.id }}",
+        "simple": false,
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -120,
+        60
+      ],
+      "id": "5cbc7ca9-4db3-4cb7-a21b-1e697d7de0fd",
+      "name": "Download Attachments",
+      "webhookId": "088104c0-7bcc-43d7-b421-154628ec55df",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xi2stVKTs6MEEliC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $('Project + Client info').item.json['Project name'] }}",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1BBO9_RkueeTHz7rPgo9cHY4_nsJqP_26",
+            "mode": "list",
+            "cachedResultName": "RE Deals",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1BBO9_RkueeTHz7rPgo9cHY4_nsJqP_26"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -320,
+        60
+      ],
+      "id": "ecb11490-1041-449d-91ab-fe681ccc5039",
+      "name": "Find Folder",
+      "executeOnce": false,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tcQTtcknCiecyI7b",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "=data",
+        "name": "={{ Object.values($input.item.binary)[0].fileName }} {{ $now.format('dd/LL hh:mm') }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Find Folder').first().json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        340,
+        0
+      ],
+      "id": "f0b92b5e-9074-4f58-b1c4-bf91fdb455f3",
+      "name": "Upload to Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tcQTtcknCiecyI7b",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Initialize an empty array to hold the transformed output\nconst output = [];\n\n// Loop through all input items provided by the n8n node\nfor (const item of $input.all()) {\n  \n  // Loop through all keys in the binary property of the item\n  for (const key in item.binary) {\n    \n    // Check if the key is a direct property of item.binary (not inherited)\n    if (item.binary.hasOwnProperty(key)) {\n      \n      // Push a new item to the output array\n      // It keeps the JSON data as is, and wraps the current binary file under the 'data' key\n      output.push({\n        json: item.json, // Keep the same JSON data\n        binary: {\n          data: item.binary[key] // Set the current binary item under the 'data' key\n        }\n      });\n    }\n  }\n}\n\n// Return the transformed array so the next n8n node can use it\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        60
+      ],
+      "id": "49ff273b-00a4-4a9c-a87b-5e890c90d540",
+      "name": "Split Out Attachments"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1240,
+        460
+      ],
+      "id": "142e5c73-9ac8-41e9-9c7e-25975876e408",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "m8UPq7cBTQihWph9",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        600,
+        240
+      ],
+      "id": "a3ea518f-a191-4db0-bedc-41a8de05178b",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "content": "labelID doesn't match the name. Easiest way to find it is to see output of the node Applying it"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        280
+      ],
+      "id": "ca424dcc-1410-4450-830f-ce1a5207d525",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Get emails\n with attachments for active projects",
+        "height": 340,
+        "width": 1120,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1500,
+        -80
+      ],
+      "id": "dc03d479-8b94-4f5e-8e35-47052c4cd8dc",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Upload Attachments",
+        "height": 240,
+        "width": 600,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        -80
+      ],
+      "id": "9d818549-6627-4bd6-ac24-9883d94ca5e9",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Update CRM",
+        "height": 240,
+        "width": 1860,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        180
+      ],
+      "id": "690de798-6777-4059-9506-159f77891344",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_329095254510255077"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        520
+      ],
+      "id": "14ea6044-248f-4c3d-946c-d60815572ab5",
+      "name": "Add label",
+      "webhookId": "acf63dca-8e0f-4a3c-b104-0532f80641e0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xi2stVKTs6MEEliC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ab9339aa-5c4e-4029-be31-43cda770fc2f",
+              "leftValue": "={{$('Get Yesterday Emails').item.binary}}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c32de129-0ec4-4977-a22c-4eb985bc456b",
+              "leftValue": "={{ $('Get Yesterday Emails').item.json.labelIds.toString() }}",
+              "rightValue": "Label_329095254510255077",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -560,
+        60
+      ],
+      "id": "f3618157-01dc-4f12-9608-d7682cb75896",
+      "name": "Has attachment and hasn't been reviewed?"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "id": "={{ $('Get Projects (Status: Offer Accepted)').first().json.id }}",
+        "updateFields": {
+          "content": "=Signing Date: {{ $json.output.Date }}\nClosing Date: {{ $json.output['Completion Date'] }}\nSeller: {{ $json.output['Seller name'] }}\nProperty Address: {{ $json.output.Address }}"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1860,
+        240
+      ],
+      "id": "15d0d97a-d35d-4455-a628-0be64ac87a96",
+      "name": "Update Project Record",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "SokbGwvfXAzEZAfj",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Mark as processed",
+        "height": 240,
+        "width": 1860,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        440
+      ],
+      "id": "68726afa-3dae-450e-990c-fc03c5d838b3",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# Split Out\nSplit out attachments",
+        "height": 300,
+        "width": 200,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        40,
+        -80
+      ],
+      "id": "6c765333-477f-4149-b0b1-b3e068b27868",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ac2c6836-e2e9-4b99-9c53-4cda2c5ddd28",
+              "leftValue": "={{ Object.values($input.item.binary)[0].fileExtension }} ",
+              "rightValue": "pdf",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        340,
+        240
+      ],
+      "id": "68c294af-5f6b-4489-a8a3-da6ee4c5df79",
+      "name": "Is it PDF ?"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "documentIntent",
+              "description": "Intent of the document",
+              "required": true
+            },
+            {
+              "name": "documentName",
+              "description": "Name of the document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        840,
+        240
+      ],
+      "id": "a4bb204d-04d0-4ad4-8fbf-ab33feacb985",
+      "name": "Extract Document Name"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c191ea6e-4369-42ea-855a-148e1389fe6f",
+              "leftValue": "={{ $json.output.documentName.toLowerCase() }} - {{ $json.output.documentIntent.toLowerCase() }}",
+              "rightValue": "agreement of purchase and sale",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1220,
+        240
+      ],
+      "id": "8d1ae377-f6d4-4f66-acfb-d03c1df43ecd",
+      "name": "if APS?"
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Extract from File').item.json.text }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Date",
+              "type": "date",
+              "description": " Agreement of Purchase and Sale dated ",
+              "required": true
+            },
+            {
+              "name": "Seller name",
+              "description": "Seller name"
+            },
+            {
+              "name": "Address",
+              "description": "Property Address",
+              "required": true
+            },
+            {
+              "name": "Price",
+              "description": "Purchase price as a number $199,000.00"
+            },
+            {
+              "name": "Completion Date",
+              "description": "Completion Date"
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "You are an expert extraction algorithm.\nOnly extract relevant information from the text.\nIf you do not know the value of an attribute asked to extract, you may omit the attribute's value or answer n/a."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        240
+      ],
+      "id": "b140d803-dff4-4c85-b5f6-dcc7eadbf078",
+      "name": "Extract Data"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Projects (Status: Offer Accepted)": {
+      "main": [
+        [
+          {
+            "node": "Get Clients Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Clients Info": {
+      "main": [
+        [
+          {
+            "node": "Project + Client info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Projects (Status: Offer Accepted)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project + Client info": {
+      "main": [
+        [
+          {
+            "node": "Get Yesterday Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Yesterday Emails": {
+      "main": [
+        [
+          {
+            "node": "Has attachment and hasn't been reviewed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Attachments": {
+      "main": [
+        [
+          {
+            "node": "Split Out Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Folder": {
+      "main": [
+        [
+          {
+            "node": "Download Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Attachments": {
+      "main": [
+        [
+          {
+            "node": "Upload to Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Add label",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Is it PDF ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Extract Document Name",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Extract Document Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has attachment and hasn't been reviewed?": {
+      "main": [
+        [
+          {
+            "node": "Find Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is it PDF ?": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Document Name": {
+      "main": [
+        [
+          {
+            "node": "if APS?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if APS?": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Data": {
+      "main": [
+        [
+          {
+            "node": "Update Project Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cb232f24-53c6-4ab2-9fc4-cadf8681821e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "605a683b81a6e587f4e29323845487f54ca9ffb48ef0a7180153d72d510ddc13"
+  },
+  "id": "wOvTVr6WGGLSAjMu",
+  "tags": []
+}

@@ -1,0 +1,1571 @@
+{
+  "name": "Process CV with AI",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 10,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "filters": {
+          "q": "test cv",
+          "readStatus": "read"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1000,
+        600
+      ],
+      "id": "d4130b96-c290-44a9-8e15-aa34217d6a3c",
+      "name": "Get new emails",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {
+          "dataPropertyAttachmentsPrefixName": "attachment_",
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -220,
+        600
+      ],
+      "id": "fcb591f8-7a74-413a-8252-55f8ef8feb0b",
+      "name": "Get email details + attachments",
+      "webhookId": "9007d684-e87d-428e-b3ce-2fd971f87bb8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": "={{ $node['Loop Over Attachments'].context[\"done\"] }}"
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -40,
+        600
+      ],
+      "id": "2192635f-1847-4d48-85b5-940ec0c6d405",
+      "name": "Loop Over Attachments"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "={{ $binary.attachment_1?.fileExtension ==\"pdf\"? \"attachment_1\" : \"attachment_0\"}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        340,
+        700
+      ],
+      "id": "a56c53ba-9dfd-41c3-8fb3-c707468dff09",
+      "name": "Extract text from PDF"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64aa7dc2-c038-448a-89d7-f3ba6c4e7338",
+              "leftValue": "={{ $binary.attachment_0?.fileExtension==\"pdf\" || $binary.attachment_1?.fileExtension ==\"pdf\"}}",
+              "rightValue": "pdf",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        800
+      ],
+      "id": "66690703-3538-407d-8d97-9ee4d94aac29",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        160,
+        120
+      ],
+      "id": "f04ca572-27c3-4604-90e4-5680de984324",
+      "name": "Aggregate Attachments"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app3cZmmA42yHlILW",
+          "mode": "list",
+          "cachedResultName": "Shop",
+          "cachedResultUrl": "https://airtable.com/app3cZmmA42yHlILW"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblibdvsVBXeyVyEa",
+          "mode": "list",
+          "cachedResultName": "Jobs",
+          "cachedResultUrl": "https://airtable.com/app3cZmmA42yHlILW/tblibdvsVBXeyVyEa"
+        },
+        "filterByFormula": "Status='Open'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        120
+      ],
+      "id": "57a44d97-c90b-4c89-8070-a778cdedba71",
+      "name": "Get list of Jobs",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xZwG0YpqsxpWrzVM",
+          "name": "Mark Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Job Title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        680,
+        120
+      ],
+      "id": "b5dea0eb-3e70-46e5-b7b0-812f0404e56f",
+      "name": "Aggregate Jobs"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"model\": \"gpt-4o-mini\",\n    \"messages\": [\n      {\n        \"role\": \"system\",\n        \"content\": \"You are reviewing applications for any role at our company. You need to read the candidate's resume and deduce which role they are applying for. Just provide the role you determined as a result and nothing else. Use subject of email OR resume description to understand the role. \\n\\n IMPORTANT Use context of message to understand if it is reply that should be skipped or new email/reply with resume text. We want to skip all not valuable replies.\"\n      },\n      {\n        \"role\": \"user\",\n        \"content\": \"Subject - {{ JSON.stringify($('Get email details + attachments').item.json.headers.subject).slice(1, -1) }}\\n\\nText of resume/message: {{ JSON.stringify($('Aggregate Attachments').item.json.text.join('\\n\\n')).slice(1, -1) }}\"\n      }],\n  \"response_format\":{ \"type\": \"json_schema\", \"json_schema\":  {\n  \"name\": \"choose_option\",\n  \"schema\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"selected_option\": {\n        \"type\": \"string\",\n        \"enum\": [\n          {{ $('Aggregate Jobs').item.json['Job Title'].map(x=>JSON.stringify(x)).join(',') }},\"None of listed roles\"\n        ],\n        \"description\": \"The chosen option from the list of available options.\"\n      },\n\"email_type\": {\n        \"type\": \"string\",\n        \"enum\": [\n         \"New email/reply\",\"Reply - skip\"\n        ],\n        \"description\": \"The chosen option from the list of available options.\"\n      }\n    },\n    \"required\": [\n      \"selected_option\",\"email_type\"\n    ],\n    \"additionalProperties\": false\n  },\n  \"strict\": true\n}\n\n }\n  }",
+        "options": {}
+      },
+      "id": "fc09ec4a-7496-4624-94f0-eca6ae2eebea",
+      "name": "OpenAI - Match with Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        860,
+        120
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "zJhr5piyEwVnWtaI",
+          "name": "OpenAi club"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get email details + attachments').item.json.from.value[0].address }}",
+        "subject": "=About your application {{ JSON.parse($('OpenAI - Match with Job').item.json.choices[0].message.content).selected_option }}",
+        "emailType": "text",
+        "message": "=Hello\nThank you for your application.\n\nSorry, after reviewing your CV, we feel that you are not a good fit for the position of {{ JSON.parse($('OpenAI - Match with Job').item.json.choices[0].message.content).select_option }} in our company.\n\n{{ JSON.parse($('OpenAI - Score Resume').item.json.choices[0].message.content).reason }}\n\nAnyway, thanks for your interest and good luck.\nBest regards",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1700,
+        200
+      ],
+      "id": "ad756235-9fa2-4b95-b98e-42bd49364a88",
+      "name": "Send email - Fail",
+      "webhookId": "fa2c05c2-ac1b-4832-b3bd-e2b0fbfbbf10",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get email details + attachments').item.json.from.value[0].address }}",
+        "subject": "=About your application {{ JSON.parse($('OpenAI - Match with Job').item.json.choices[0].message.content).selected_option }}",
+        "emailType": "text",
+        "message": "={{ $json.message.content }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2400,
+        200
+      ],
+      "id": "2e7b2ff4-19ab-4778-bc33-50bd6d6a7c36",
+      "name": "Send email - Success",
+      "webhookId": "fa2c05c2-ac1b-4832-b3bd-e2b0fbfbbf10",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ JSON.parse($('OpenAI - Score Resume').item.json.choices[0].message.content).name }}({{ $('Get email details + attachments').item.json.from.value[0].name }})  just applied for a position in our company for the role of {{ JSON.parse($('OpenAI - Match with Job').item.json.choices[0].message.content).selected_option }}.\n\nWe want to talk to this person! \n\nHere's why:\n\nWrite an email on behalf of our HR Manager <name>, asking to schedule an appointment with the link to his calendar: <calendar_link>\n\nUse the assessment we made of the person's suitability for the role to include a very positive detail that impressed us in their CV.\n\nJust provide the BODY of the email and nothing else.\n\nVERY IMPORTANT Do not attempt to use link tags.\nIMPORTANT Don't provide subject."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        2060,
+        0
+      ],
+      "id": "ec4e04cc-efef-407f-89c7-e88db607e5d6",
+      "name": "Create email",
+      "credentials": {
+        "openAiApi": {
+          "id": "zJhr5piyEwVnWtaI",
+          "name": "OpenAi club"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"model\": \"gpt-4o-mini\",\n    \"messages\": [\n      {\n        \"role\": \"system\",\n        \"content\": \"You are a specialized recruiter working in our company and you must evaluate CVs, prioritizing experience in the area of the function.  You'll be assessing for the role {{ JSON.parse($('OpenAI - Match with Job').item.json.choices[0].message.content).selected_option }}  Use the evaluation criteria indicated here to score the CV on a scale of 1 to 100. \\n\\nIMPORTANT Politely return 1 to 2 sentences to the candidate on why you are or are not suitable if the score is below 68. A direct address to the candidate with praise for their abilities should be used.\\n\\n{{ JSON.stringify($('Get list of Jobs').all().find(x=>x.json['Job Title']==JSON.parse($('OpenAI - Match with Job').item.json.choices[0].message.content).selected_option).json.Instructions).slice(1,-1) }}\"\n      },\n      {\n        \"role\": \"user\",\n        \"content\": \"Name from email - {{ $('Get email details + attachments').item.json.from.value[0].name }}\\n\\n{{ JSON.stringify($('Aggregate Attachments').item.json.text.join('\\n\\n')).slice(1,-1) }}\"\n      }],\n  \"response_format\":{ \"type\": \"json_schema\", \"json_schema\":  {\n  \"name\": \"score_schema\",\n  \"schema\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"score\": {\n        \"type\": \"number\",\n        \"description\": \"The score returned as a numerical value.\"\n      },\n\"name\": {\n        \"type\": \"string\",\n        \"description\": \"Candidate name\"\n      }\n,\n\"reason\": {\n        \"type\": [\"string\",\"null\"],\n        \"description\": \"Polite 1-2 sentences addressed to candidate why they suit or not.\"\n      }\n    },\n    \"required\": [\n      \"score\",\"name\",\"reason\"\n    ],\n    \"additionalProperties\": false\n  },\n  \"strict\": true\n}\n\n }\n  }",
+        "options": {}
+      },
+      "id": "18a09d7a-2c66-4819-adca-082fd62dfc86",
+      "name": "OpenAI - Score Resume",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1400,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "zJhr5piyEwVnWtaI",
+          "name": "OpenAi club"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Get email details + attachments').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1880,
+        320
+      ],
+      "id": "ead8490a-218c-4d3c-8d63-c6530394f720",
+      "name": "Mark as Read",
+      "webhookId": "f3973b1a-b68c-4bd5-8355-e98f54a0b8fe",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Get email details + attachments').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2580,
+        320
+      ],
+      "id": "8dbb2107-c486-49a2-8dbb-4148aa01516a",
+      "name": "Mark as Read1",
+      "webhookId": "f3973b1a-b68c-4bd5-8355-e98f54a0b8fe",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b4a7f99d-0b24-4416-90f9-b77f923cf430",
+              "leftValue": "={{ JSON.parse($json.choices[0].message.content).selected_option }}",
+              "rightValue": "=None of listed roles",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "eb37768f-9951-41e7-866f-ee3d069ab1b5",
+              "leftValue": "={{ JSON.parse($json.choices[0].message.content).email_type }}",
+              "rightValue": "Reply - skip",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        120
+      ],
+      "id": "1b8318b9-1317-4ac8-917e-d3d1c91fb9a2",
+      "name": "Job not found"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b4a7f99d-0b24-4416-90f9-b77f923cf430",
+              "leftValue": "={{ $('Get list of Jobs').all().find(x=>x.json['Job Title']==JSON.parse($('OpenAI - Match with Job').item.json.choices[0].message.content).selected_option).json.Instructions  }}",
+              "rightValue": "=None of listed",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1220,
+        60
+      ],
+      "id": "a6e2c0cc-9b69-47b7-b89b-6a4f7769c82a",
+      "name": "Instructions not found"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b4a7f99d-0b24-4416-90f9-b77f923cf430",
+              "leftValue": "={{ JSON.parse($json.choices[0].message.content).score }}",
+              "rightValue": 68,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        0
+      ],
+      "id": "a3fcab84-3b32-412c-a747-bc96a4b19cbc",
+      "name": "If score >70"
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Get email details + attachments').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        -80
+      ],
+      "id": "562d20ee-9aee-4cff-9191-032b988ba7a1",
+      "name": "Mark as Read2",
+      "webhookId": "f3973b1a-b68c-4bd5-8355-e98f54a0b8fe",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get email details + attachments').item.json.from.value[0].address }}",
+        "subject": "=About your application",
+        "emailType": "text",
+        "message": "=Thank you for applying for our open position.\n\nUnfortunately, we were unable to process your document.\nPlease send us 1 attached file - PDF with copied text (not image PDF) or include your CV as text in the body of the email.\nGoogle Drive links in the body will not be processed.\n\nBest regards",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        -80
+      ],
+      "id": "1d363774-2bed-4d15-bb26-84dae322ec9c",
+      "name": "Send email - Resend",
+      "webhookId": "fa2c05c2-ac1b-4832-b3bd-e2b0fbfbbf10",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b4a7f99d-0b24-4416-90f9-b77f923cf430",
+              "leftValue": "={{ $('Aggregate Attachments').item.json.text.join()}}",
+              "rightValue": "=None of listed",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "bdc03ab7-ce3b-4d84-aaf6-d3f415065834",
+              "leftValue": "={{ $('Get email details + attachments').item.binary.attachment_0.fileExtension.includes('doc') }}",
+              "rightValue": "pdf",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "d7562cf6-aeeb-4a63-9452-bf303d66eb59",
+              "leftValue": "={{ $('Aggregate Attachments').item.json.text.join()}}",
+              "rightValue": "https://drive.google.com/file",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        340,
+        120
+      ],
+      "id": "7f1506b2-bd70-4f0b-983d-e24d0ea58f4e",
+      "name": "Couldn't process"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -440,
+        600
+      ],
+      "id": "cda4ba0c-bc67-4447-9d0c-d2fad95d0d84",
+      "name": "Loop Over Emails"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        600
+      ],
+      "id": "1ec4d09a-1846-42e5-9bd2-e7dc71b00470",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "51e8871a-7f12-4ef2-afe4-48db43a3e661",
+              "name": "text",
+              "value": "={{ $json.text ?? $('Get email details + attachments').item.json.text}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        820
+      ],
+      "id": "e06676f5-9c2c-4108-b813-ffa2f376276f",
+      "name": "Set Text"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "filters": {
+          "q": "subject:Test CV",
+          "readStatus": "read"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -660,
+        600
+      ],
+      "id": "3a5c8e7b-9e05-47a5-83cd-cebec88d9823",
+      "name": "Get all Message",
+      "webhookId": "442f1c0a-a896-427f-bbc1-15ce355068bd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Triggered with new messages but process all messages - avoid possible jam bcs of scheduling",
+        "height": 80,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1000,
+        820
+      ],
+      "typeVersion": 1,
+      "id": "3bd7e606-6206-4a45-87ab-e26e3fe3a170",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### If pdf - extract text. If not pdf - use text from email",
+        "height": 80,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        220,
+        1060
+      ],
+      "typeVersion": 1,
+      "id": "d51a0e0a-67c7-4d8e-a21f-0db745d9b31e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### Loop through multiple attachments - but process only first 2",
+        "height": 80,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -240,
+        780
+      ],
+      "typeVersion": 1,
+      "id": "a4cedc0b-c828-45b0-a63a-5d0035687104",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### Send message if won't be able to process files - if file is doc, if file attached in Body, if pdf is image and text empty",
+        "height": 80,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        500,
+        -200
+      ],
+      "typeVersion": 1,
+      "id": "8058fe7e-8319-4bbc-8471-41e510d47a89",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "### Get list of jobs with requirements and instructions",
+        "height": 80,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        520,
+        280
+      ],
+      "typeVersion": 1,
+      "id": "27cd9b7e-9e91-4ec2-a7ed-e89f6a1562bb",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "### Instructions for Job wasn't added yet",
+        "height": 80,
+        "width": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        -40
+      ],
+      "typeVersion": 1,
+      "id": "583c75fa-3995-4b32-9501-d081dfc0ae13",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "### Match CV text with job",
+        "height": 80,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        860,
+        300
+      ],
+      "typeVersion": 1,
+      "id": "f36e7a7b-991e-4042-8d40-38733ecd6a84",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "### Score resume using instructions, requirement, CV text and create personalized decline",
+        "height": 100,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1400,
+        -140
+      ],
+      "typeVersion": 1,
+      "id": "e9b91103-bf5c-4126-a712-70f2073dba3d",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "### Create personalized approval email",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2060,
+        -120
+      ],
+      "typeVersion": 1,
+      "id": "ba8b891a-3415-4b0e-b021-ac05f985ecfd",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"model\": \"gpt-4o-mini\",\n    \"messages\": [\n      {\n        \"role\": \"system\",\n        \"content\": \"Parse the following resume text into structured JSON format according to the specified schema. Ensure that all required fields are included, even if they are null, by using union types where needed. Focus on accurately extracting key details and grouping them into relevant sections like personal information. 1. Personal Information: Extract name, title, location, email, phone number, relocation preference, and any sponsorship needs for employment.Each section should match the JSON schema exactly, with null values for missing information. Return the output in the JSON format as defined, using the specified structure and required fields.\"\n      },\n      {\n        \"role\": \"user\",\n        \"content\": {{ JSON.stringify($('Couldn\\'t process').item.json.text[0])}}\n      }\n    ],\n  \"response_format\":{ \"type\": \"json_schema\", \"json_schema\":  {\n  \"name\": \"resume_data\",\n  \"description\": \"Structured data parsed from a resume\",\n  \"strict\": true,\n  \"schema\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"personal_info\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"name\": { \"type\": [\"string\", \"null\"] },\n          \"title\": { \"type\": [\"string\", \"null\"], \"description\": \"Current position or role\" },\n          \"location\": { \"type\": [\"string\", \"null\"] },\n          \"email\": { \"type\": [\"string\", \"null\"] },\n\"summary\": { \"type\": [\"string\", \"null\"],\"description\": \"Generate short summary for 2-3 sentences\" },\n\"years_experience\": { \"type\": [\"integer\", \"null\"],\"description\": \"Total years of working experience\" },\n          \"phone\": { \"type\": [\"string\", \"null\"] }\n  \n        },\n        \"required\": [\"name\", \"title\", \"email\", \"phone\", \"location\", \"summary\",\"years_experience\"],\n        \"additionalProperties\": false\n      }\n    },\n    \"required\": [\"personal_info\"],\n    \"additionalProperties\": false\n  }\n}\n\n\n }\n  }",
+        "options": {}
+      },
+      "id": "05472a02-b4a5-44bb-a8bb-6764efb594d6",
+      "name": "OpenAI - Analyze resume",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1800,
+        -400
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "SphXAX7rlwRLkiox",
+          "name": "Test club key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app3cZmmA42yHlILW",
+          "mode": "list",
+          "cachedResultName": "Shop",
+          "cachedResultUrl": "https://airtable.com/app3cZmmA42yHlILW"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblC6hASOAVl6UE4I",
+          "mode": "list",
+          "cachedResultName": "CVs",
+          "cachedResultUrl": "https://airtable.com/app3cZmmA42yHlILW/tblC6hASOAVl6UE4I"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ JSON.parse($json.choices[0].message.content).personal_info.name }}",
+            "Status": "New",
+            "Email": "={{ JSON.parse($json.choices[0].message.content).personal_info.email }}",
+            "Phone": "={{ JSON.parse($json.choices[0].message.content).personal_info.phone }}",
+            "Location": "={{ JSON.parse($json.choices[0].message.content).personal_info.location }}",
+            "Summary": "={{ JSON.parse($json.choices[0].message.content).personal_info.summary }}",
+            "Work Experience": "={{ JSON.parse($json.choices[0].message.content).personal_info.years_experience }}",
+            "Score": "={{ JSON.parse($('OpenAI - Score Resume').item.json.choices[0].message.content).score }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New",
+                  "value": "New"
+                },
+                {
+                  "name": "Processed",
+                  "value": "Processed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "File",
+              "displayName": "File",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Work Experience",
+              "displayName": "Work Experience",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2000,
+        -400
+      ],
+      "id": "1381f80f-6b93-440c-8d81-94779e8568ec",
+      "name": "Create CV",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xZwG0YpqsxpWrzVM",
+          "name": "Mark Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $('Loop Over Emails').item.json.id }}",
+        "simple": false,
+        "options": {
+          "dataPropertyAttachmentsPrefixName": "attachment_",
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2200,
+        -400
+      ],
+      "id": "830bcae9-8324-4f4e-a83f-b450a441056c",
+      "name": "Get email attachment",
+      "webhookId": "9007d684-e87d-428e-b3ce-2fd971f87bb8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z4066pvkfjJctqzr",
+          "name": "Gmail account Info@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://content.airtable.com/v0/app3cZmmA42yHlILW/{{ $('Create CV').item.json.id }}/File/uploadAttachment",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"contentType\": \"application/pdf\",\n    \"file\": \"{{ $input.item.binary.attachment_0.data }}\",\n    \"filename\": \"{{ $input.item.binary.attachment_0.fileName }}\"\n  }",
+        "options": {}
+      },
+      "id": "0c57c928-282d-498d-b302-9a4788d706f6",
+      "name": "Upload file to Airtable",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2440,
+        -400
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xZwG0YpqsxpWrzVM",
+          "name": "Mark Airtable account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "### Parse CV with AI and save it in Airtable with original file. Uploads only first attachment",
+        "height": 80,
+        "width": 700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1840,
+        -520
+      ],
+      "typeVersion": 1,
+      "id": "80d36672-7d29-4a78-b4fd-3fc87fd768ea",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "### Change URL - provide app ID, Table ID and column name (attachment type)",
+        "height": 80,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2380,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "920692fb-0afe-4861-a791-5f2aa6ee34f1",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "### Change prompt - provide HR manager name, calendly link",
+        "height": 80,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2400,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "e8b6aa41-93c1-41ee-9875-b30e96b5f93c",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "### Create Airtable table or remap data",
+        "height": 80,
+        "width": 180,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1960,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "91b5a34d-996d-4e45-a6a8-48d0b4ca6d59",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "### Change prompt or JSON schema if needed",
+        "height": 80,
+        "width": 180,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1760,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "8378a7c6-df00-4524-98ca-e75383694d96",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "### Create table with jobs and instructions in Airtable",
+        "height": 80,
+        "width": 260,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        520,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "424ca395-9f22-4679-ba9c-7e80f64c730c",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "content": "### Change prompt if needed",
+        "height": 80,
+        "width": 150,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1400,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "971925cb-d5ba-4059-9826-325e6cc57622",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "content": "### Change message if needed",
+        "height": 80,
+        "width": 160,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        300,
+        -60
+      ],
+      "typeVersion": 1,
+      "id": "989ff22f-bb10-436e-93d2-0b8dcd9135ae",
+      "name": "Sticky Note18"
+    },
+    {
+      "parameters": {
+        "content": "### Change message if needed",
+        "height": 80,
+        "width": 160,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2560,
+        200
+      ],
+      "typeVersion": 1,
+      "id": "c09ef889-5f23-4160-b908-1b39fa2e455b",
+      "name": "Sticky Note19"
+    },
+    {
+      "parameters": {
+        "content": "### Change message if needed",
+        "height": 80,
+        "width": 170,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1860,
+        200
+      ],
+      "typeVersion": 1,
+      "id": "40356960-6961-49e7-a55f-0d094f7422b9",
+      "name": "Sticky Note15"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get new emails": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get email details + attachments": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Attachments": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract text from PDF": {
+      "main": [
+        [
+          {
+            "node": "Set Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Extract text from PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Attachments": {
+      "main": [
+        [
+          {
+            "node": "Couldn't process",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get list of Jobs": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Jobs": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Match with Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Match with Job": {
+      "main": [
+        [
+          {
+            "node": "Job not found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email - Fail": {
+      "main": [
+        [
+          {
+            "node": "Mark as Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email - Success": {
+      "main": [
+        [
+          {
+            "node": "Mark as Read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create email": {
+      "main": [
+        [
+          {
+            "node": "Send email - Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Score Resume": {
+      "main": [
+        [
+          {
+            "node": "If score >70",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Read": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Read1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job not found": {
+      "main": [
+        [
+          {
+            "node": "Instructions not found",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instructions not found": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Score Resume",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If score >70": {
+      "main": [
+        [
+          {
+            "node": "Create email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "OpenAI - Analyze resume",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send email - Fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Read2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email - Resend": {
+      "main": [
+        [
+          {
+            "node": "Mark as Read2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Couldn't process": {
+      "main": [
+        [
+          {
+            "node": "Send email - Resend",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get list of Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Emails": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get email details + attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Get all Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Text": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all Message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Analyze resume": {
+      "main": [
+        [
+          {
+            "node": "Create CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create CV": {
+      "main": [
+        [
+          {
+            "node": "Get email attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get email attachment": {
+      "main": [
+        [
+          {
+            "node": "Upload file to Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "04ad5ffb-b24a-46e7-b299-c0dc13d5992b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a2a7715680b8313f7cb4676321c5baa46680adfb913072f089f2766f42e43bd"
+  },
+  "id": "Nb5CmoRill2HfE8L",
+  "tags": [
+    {
+      "createdAt": "2024-11-14T15:30:35.836Z",
+      "updatedAt": "2024-11-14T15:30:35.836Z",
+      "id": "HrnqkmhNNezXBFbh",
+      "name": "N8N Template"
+    }
+  ]
+}

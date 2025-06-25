@@ -1,0 +1,484 @@
+{
+  "name": "VEO 3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        -420
+      ],
+      "id": "52c80264-9f9c-4686-9690-ba73ad2f2478",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1580,
+        -220
+      ],
+      "id": "57797f07-8d8e-4980-a7a5-94b8997abb55",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "LBP73LBvcXqvnmLg",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Sp-dVo6JeOFHaIpBn3Y31A6EWjaZt_o5xKoYVLKC4lM",
+          "mode": "list",
+          "cachedResultName": "VEO 3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sp-dVo6JeOFHaIpBn3Y31A6EWjaZt_o5xKoYVLKC4lM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1282258672,
+          "mode": "list",
+          "cachedResultName": "Bigfoot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sp-dVo6JeOFHaIpBn3Y31A6EWjaZt_o5xKoYVLKC4lM/edit#gid=1282258672"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "New"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1360,
+        -420
+      ],
+      "id": "f0c66c82-9f81-4f30-89ac-17f385de19cb",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "j5sey3Cup5uPVwwn",
+          "name": "BAIA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Short Scenario Description: \n{{ $json.Context }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an expert at writing cinematic, humorous video prompts for Google's Veo 3 model, specifically in a hyper-realistic, vlog-style format featuring mythological, historical, or fictional characters acting like modern-day influencers.\n\nFor any short scenario description you receive (e.g. \"Bigfoot tries to start a fitness influencer career\"), your job is to generate a fully detailed Veo 3-ready prompt, and return it in the following structured \n\nJSON format:\n{\n  \"title\": \"A short, funny, attention-grabbing title (max 60 characters)\",\n  \"post_caption\": \"A humorous caption for social media with emojis and hashtags (max 250 characters)\",\n  \"prompt\": \"Create a cinematic first-person selfie video shot from the phone/camera's perspective showing [character description and behavior].\\n\\n[CHARACTER NAME] (tone):\\n\"[Line of dialog]\"\\n\\n[Optional second line of dialog]\\n\\nTime of Day: [lighting and time details]\\nLens/POV: [how it's shot and framed from camera's perspective]\\nAudio (implied): [natural ambient sounds if relevant]\\nBackground: [setting details]\\nCamera Movement: [movement style, if any]\"\n}\n\n\nGuidelines:\n\nSubject – Describe the character visually: posture, body/fur/skin, expression, and how they appear facing the camera/phone.\nContext/Setting – Describe the setting and lighting (realistic forest, ancient ruins, desert, etc.).\nAction – What the character is doing (vlogging, giving advice, reacting to something).\nDialog – One or two dry, ironic, or sarcastic lines that fit in 8 seconds.\nCamera Style – Always first-person POV from the phone/camera looking at the character.\nAudio (implied) – Natural sounds if useful (wind, birds, water, footsteps).\nLens and Framing – Describe composition from camera's perspective (character chest-up, close-up, wide shot).\nCamera Movement – Natural handheld sway, zoom, pan, or fully static from the device's perspective.\n\nRules:\n\nCRITICAL: All selfie videos must be shot from first-person POV - the camera/phone's perspective looking at the character, never third-person view.\nCharacters must never wear modern clothing. Only natural accessories (e.g., vines, leaves, mud, GoPro straps).\nAssume hyper-realistic rendering with cinematic detail.\nKeep the humor dry, deadpan, or ironic. Avoid cartoonish or slapstick tones.\nDo not respond unless a scenario description is provided.\n\nExample Short Scenario Description:\n\nBigfoot complains about being called blurry.\n\nExpected Output:\n{\n  \"title\": \"Bigfoot Clears Up the Blurry Rumors\",\n  \"post_caption\": \"It's not me. It's your camera. 🐾📱 #bigfoot #blurryproof #cryptidtok\",\n  \"prompt\": \"Create a cinematic first-person selfie video shot from a smartphone's perspective showing Bigfoot — massive, shaggy, and clearly visible — looking directly into the camera in a misty forest. He appears annoyed but composed, filling most of the frame.\\n\\nBIGFOOT (deadpan):\\n\\\"I'm not blurry. You just don't know how to focus.\\\"\\n\\nHe pauses, then:\\n\\nBIGFOOT:\\n\\\"Buy a better phone.\\\"\\n\\nTime of Day: Overcast morning, soft natural light\\nLens/POV: First-person selfie perspective from phone camera, character facing directly toward lens\\nAudio (implied): Light breeze, faint birdsong\\nBackground: Dense forest, mossy trees visible behind character\\nCamera Movement: Minimal — casual handheld sway from arm's-length distance\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        -420
+      ],
+      "id": "de722a56-3e1c-4e51-9bb7-a50ec6470a80",
+      "name": "Prompt Agent"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bdb4c198-4df9-41ba-8b83-36c416b62e38",
+              "leftValue": "={{ $input.all().filter(item => item.json.status === \"IN_PROGRESS\" || item.json.status === \"IN_QUEUE\").length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "b9ef78f1-336b-4546-a827-2667842aa1e9",
+              "leftValue": "={{ $runIndex }}",
+              "rightValue": 50,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1740,
+        -80
+      ],
+      "id": "e73c3bf7-f110-43b6-8861-304fef638790",
+      "name": "Is Completed"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.status_url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        -80
+      ],
+      "id": "8977eb5c-92b2-424f-aac3-b41a2cd86429",
+      "name": "Check Video Status",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pFre8eqjl24vRKED",
+          "name": "FAL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/veo3",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.output.prompt }}"
+            },
+            {
+              "name": "aspect_ratio",
+              "value": "9:16"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1180,
+        -80
+      ],
+      "id": "1fc2e5fb-9248-4387-a1a0-a39887c8f4aa",
+      "name": "Generate Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pFre8eqjl24vRKED",
+          "name": "FAL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.response_url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        160
+      ],
+      "id": "0e6ded3f-e1f9-47e8-b4d5-972b834817a0",
+      "name": "Get DL URL",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pFre8eqjl24vRKED",
+          "name": "FAL"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        -80
+      ],
+      "id": "9476470c-8587-4b3b-aaef-b1ea78576224",
+      "name": "Wait Before Next Poll",
+      "webhookId": "6d55d750-b380-45dd-a322-026ba020358d"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sp-dVo6JeOFHaIpBn3Y31A6EWjaZt_o5xKoYVLKC4lM",
+          "mode": "list",
+          "cachedResultName": "VEO 3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sp-dVo6JeOFHaIpBn3Y31A6EWjaZt_o5xKoYVLKC4lM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1282258672,
+          "mode": "list",
+          "cachedResultName": "Bigfoot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sp-dVo6JeOFHaIpBn3Y31A6EWjaZt_o5xKoYVLKC4lM/edit#gid=1282258672"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Generated",
+            "URL": "={{ $json.video.url }}",
+            "Context": "={{ $('Google Sheets').item.json.Context }}",
+            "Title": "={{ $('Prompt Agent').item.json.output.title }}",
+            "Captions": "={{ $('Prompt Agent').item.json.output.post_caption }}"
+          },
+          "matchingColumns": [
+            "Context"
+          ],
+          "schema": [
+            {
+              "id": "Context",
+              "displayName": "Context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Captions",
+              "displayName": "Captions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1380,
+        160
+      ],
+      "id": "81efdd3f-effe-48f4-8ccd-a3ea3ce3fe63",
+      "name": "Update Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "j5sey3Cup5uPVwwn",
+          "name": "BAIA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"title\": \"string (max 60 characters)\",\n  \"post_caption\": \"string (max 250 characters)\",\n  \"prompt\": \"string (full Veo 3 generation prompt starting with 'Create a cinematic handheld selfie-style video...')\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1740,
+        -220
+      ],
+      "id": "77d7ae8c-6a17-499e-8af0-cb1a4a7099d9",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Prompt Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Prompt Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompt Agent": {
+      "main": [
+        [
+          {
+            "node": "Generate Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Completed": {
+      "main": [
+        [
+          {
+            "node": "Get DL URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait Before Next Poll",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Video Status": {
+      "main": [
+        [
+          {
+            "node": "Is Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video": {
+      "main": [
+        [
+          {
+            "node": "Wait Before Next Poll",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Before Next Poll": {
+      "main": [
+        [
+          {
+            "node": "Check Video Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get DL URL": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Prompt Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8ae33dba-250c-48c7-ae79-be28a4b9eeb6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56a551fc42b4df2b9befce9b2500a6d8974a35b78db6e83cf7980aeba4ac62b1"
+  },
+  "id": "Lc1suGK0iTX9mA41",
+  "tags": []
+}

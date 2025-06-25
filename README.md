@@ -29,6 +29,87 @@ The core template data is sourced from [Oleg Melnikov's comprehensive n8n templa
 
 For personalized template recommendations and assistance, visit [Oleg's AI Chat](https://olegfuns.app.n8n.cloud/webhook/cda21b26-b940-4b60-8afa-fd7b8281a96b/chat) where you can get AI-powered suggestions for the perfect n8n template for your needs.
 
+
+## 🖥️ Accessible Dashboard
+
+Weng has made a browsable web interface for the templates
+![](docs/20250625080429.png)
+
+## 💽 More Accessible Templates
+
+Weng has also fetched and downloaded each n8n template file so you can download or view  the template at the web interface. You also have access to the downloader script in case the original database continues to be updated and you want a script to fetch the copies into the web interface as well. The web interface automatically detects the template files which should be named after the ID (see original database for the ID) and then displays a Download or View button.
+
+Downloader script in action:
+- Notice some files are downloaded with suffix `_1`, `_2`, etc. This is because some template_url actually have multiple n8n templates. If you watch the youtube video for that resource, it may have covered multiple workflows OR those workflows work together. Sometimes one workflow executes another workflow.
+![](docs/20250625080035.png)
+
+Example of downloaded n8n template json file:
+![](docs/20250625080111.png)
+
+After the downloader script is done, you should see a report like this in the terminal:
+```
+=== Download Summary ===
+Total downloads: 96
+Total errors: 0
+Files saved to: /Users/wengffung/dev/web/templates/json
+```
+
+## 🆕 Getting Updates, and Re-Enriching Category Column
+
+If the database continue to update beyond June 25th, 2025, you can perform a diff per the ID column to see where the new records are. The original database does not have category column and unless a new category column is added, you can enrich the new records with a category column by using AI. The title column in the original database has stoo many degrees of differences, so that can be thought of as a subcategory column.
+
+Let's use Cursor AI (AI in a code editor)
+
+Keep in mind this enrichment prompt:
+```
+Lets enrich with a category entry at each record. Add a column "category" on the leftmost.
+
+Some categories could be:
+AI Agent Development;Business Process Automation;Content Creation & Video Automation;Data Processing & Analysis;Design & Creative Automation;Marketing & Advertising Automation;Technical Infrastructure & DevOps;Web Scraping & Data Extraction
+
+And of course, add your own category where missing.
+
+Do not parse part of the dataset and then ask the user to review and confirm that the columns are structured as expected. Go ahead and enrich all rows with appropriate categories. 
+```
+
+Keep in mind that the semi-colon separated categories in the prompt can be captured from the most recent dashboard by running Chrome console script. It's good to update the categories if your AI enrichment has caused new categories to crop out:
+```
+var arr = [];
+document.querySelectorAll("#category-filter *").forEach(el=>{
+    if(el.textContent!=="All Categories")
+        arr.push(el.textContent);
+})
+
+console.log(arr.join(";"))
+```
+
+And you will break apart the new records into 25 entries at a time.
+
+Now starting the process of preparing for enrichment and the actual enrichment:
+
+Make csv into columns using Rainbow CSV -> Align CSV...
+![](docs/20250625071649.png)
+
+CMD+OPT Down from the first description
+![](docs/20250625072029.png)
+
+Then all columns description selected. Holding Shift, press End (available on a connected keyboard like Logi MX Keys, not part of normal MacBook Pro laptop keys). Then CMD+X to cut to clipboard
+![](docs/20250625072104.png)
+
+Prompt Cursor AI with the enrichment prompt somewhere above (same section here).
+
+After enrichment, you'll see the new category column:
+![](docs/20250625072335.png)
+
+Paste the cut columns back to the end. To move cursor to the end of each line, run CMD+OPT down to the left of "category" header (so before first character of document). Then when reached final line, press End on keyboard! Finally, paste CMD+V
+
+At last, remove the column view:
+![](docs/20250625071504.png)
+
+
+This is the final data that the dashboard can view:
+![](docs/20250625072527.png)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -129,62 +210,6 @@ The interface uses Tailwind CSS for styling. Modify the classes in `index.php` t
 - **n8n Version**: Tested with self-hosted community n8n version v1.94.1
 - **PHP**: Requires PHP 8.4+ (uses null coalescing operator and other modern PHP features)
 - **Browsers**: Compatible with all modern browsers (Chrome, Firefox, Safari, Edge)
-
-## 🆕 Getting Updates, and Re-Enriching Category Column
-
-If the database continue to update beyond June 25th, 2025, you can perform a diff per the ID column to see where the new records are. The original database does not have category column and unless a new category column is added, you can enrich the new records with a category column by using AI. The title column in the original database has stoo many degrees of differences, so that can be thought of as a subcategory column.
-
-Let's use Cursor AI (AI in a code editor)
-
-Keep in mind this enrichment prompt:
-```
-Lets enrich with a category entry at each record. Add a column "category" on the leftmost.
-
-Some categories could be:
-AI Agent Development;Business Process Automation;Content Creation & Video Automation;Data Processing & Analysis;Design & Creative Automation;Marketing & Advertising Automation;Technical Infrastructure & DevOps;Web Scraping & Data Extraction
-
-And of course, add your own category where missing.
-
-Do not parse part of the dataset and then ask the user to review and confirm that the columns are structured as expected. Go ahead and enrich all rows with appropriate categories. 
-```
-
-Keep in mind that the semi-colon separated categories in the prompt can be captured from the most recent dashboard by running Chrome console script. It's good to update the categories if your AI enrichment has caused new categories to crop out:
-```
-var arr = [];
-document.querySelectorAll("#category-filter *").forEach(el=>{
-    if(el.textContent!=="All Categories")
-        arr.push(el.textContent);
-})
-
-console.log(arr.join(";"))
-```
-
-And you will break apart the new records into 25 entries at a time.
-
-Now starting the process of preparing for enrichment and the actual enrichment:
-
-Make csv into columns using Rainbow CSV -> Align CSV...
-![](docs/20250625071649.png)
-
-CMD+OPT Down from the first description
-![](docs/20250625072029.png)
-
-Then all columns description selected. Holding Shift, press End (available on a connected keyboard like Logi MX Keys, not part of normal MacBook Pro laptop keys). Then CMD+X to cut to clipboard
-![](docs/20250625072104.png)
-
-Prompt Cursor AI with the enrichment prompt somewhere above (same section here).
-
-After enrichment, you'll see the new category column:
-![](docs/20250625072335.png)
-
-Paste the cut columns back to the end. To move cursor to the end of each line, run CMD+OPT down to the left of "category" header (so before first character of document). Then when reached final line, press End on keyboard! Finally, paste CMD+V
-
-At last, remove the column view:
-![](docs/20250625071504.png)
-
-
-This is the final data that the dashboard can view:
-![](docs/20250625072527.png)
 
 ## 👥 Contributors
 

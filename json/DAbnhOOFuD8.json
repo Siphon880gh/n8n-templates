@@ -1,0 +1,229 @@
+{
+  "name": "First agent demo",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e6faeaf3-1f08-4b36-825f-fe1c19f02438",
+      "name": "When chat message received",
+      "webhookId": "b58e5548-1d7c-455d-a045-556bddec9180"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "##Role \nYou are able to send and retrieve emails for me and also search a database with emails.\n\n##Task\nYou will be inputted by a user to either send or retrieve emails. you have 3 tools to be able to achieve this which i will break them down now:\n\nemail list - This tool contains a list with name and emails. each name has an email attached to it and you will use this tool when a user specifies someone they want to send an email to and you need to find their email address. For example a user may say \"send an email to dave saying whats up\" you would use this tool to find dave's emails and then pass that to the send email tool\n\nSend email - this tool can send emails for the user. The inputs will be the recipient, subject line and email body. the user will always provide and email body and if they don't provide a subject line then generate one based on the email body. Also expand on the email body a bit if needed. The email recipient will either be specified to you in the users input or it will be found using the email list tool. A user input for this would look like \"send an email to Lisa saying are you still up for that meeting\"\n\nGet emails - This tool can get emails from a users inbox. when triggered this tool will return the last 50 emails in the user inbox. i want you to find what the user was looking for and output it back to them. For example a user may say \"has Lisa emailed me about the project recently?\" you would then use this tool and see if Lisa emailed with any update on the project"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "83a6384c-d005-4b3b-a633-0f76e2094952",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        140,
+        220
+      ],
+      "id": "fd0bc667-d151-4c9d-9592-f1471d3fbb21",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xX6Qn7dUJHcs40V9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        220
+      ],
+      "id": "5ac33702-ee5b-43ff-a8a9-7a0b22612094",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1dC5PMEgo39Wunqbh5krF21vxgBFybstrvVYtAKhK6lM",
+          "mode": "list",
+          "cachedResultName": "Name with emails",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dC5PMEgo39Wunqbh5krF21vxgBFybstrvVYtAKhK6lM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dC5PMEgo39Wunqbh5krF21vxgBFybstrvVYtAKhK6lM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        380,
+        320
+      ],
+      "id": "d41dd548-a10c-48e8-8a86-c7b9e31d6971",
+      "name": "Names with emails",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tkQ5ewTob0DdThOL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        500,
+        320
+      ],
+      "id": "2bff921d-fef5-43ad-892a-0d42cc7df40d",
+      "name": "send email",
+      "webhookId": "bc8c189f-290b-4cbe-8d8d-15ae738227f4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LnrPa2bag9FoINre",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        620,
+        320
+      ],
+      "id": "dcb59a51-31d7-4d4f-acd1-f7d771647acd",
+      "name": "get emails",
+      "webhookId": "37787c98-124d-4477-ac91-831335810028",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LnrPa2bag9FoINre",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Names with emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6c8e4736-c16d-4926-a4d9-fa21599f80a7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8711ef6aba5ff6781b8ed3c0d9d8ad1fb3b9e4be41f1c9a056c02209236d4a91"
+  },
+  "id": "vq7sxmZobGV8bJ4U",
+  "tags": []
+}

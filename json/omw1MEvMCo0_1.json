@@ -1,0 +1,274 @@
+{
+  "name": "⚙️Get Calendar",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "nateherk88@gmail.com",
+          "mode": "list",
+          "cachedResultName": "nateherk88@gmail.com"
+        },
+        "limit": 10,
+        "options": {
+          "timeMin": "={{ $json.message.content['Requested day'] }}",
+          "timeMax": "={{ $json.message.content['Next day'] }}"
+        }
+      },
+      "id": "62d827f0-c4fc-44d3-b16c-996fc19db4aa",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.1,
+      "position": [
+        1060,
+        340
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "aKTyWSvWPROaIoVO",
+          "name": "Nate's Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4a285a6b-7b2c-4fe5-8380-a6e6f01e82d2",
+              "name": "Event",
+              "value": "={{ $json.summary }}",
+              "type": "string"
+            },
+            {
+              "id": "a2c6c7c1-0658-46b7-a76f-c78d110994cb",
+              "name": "Start Time",
+              "value": "={{ $json.start.dateTime }}",
+              "type": "string"
+            },
+            {
+              "id": "32ce9e73-6b05-4459-ab67-e08ad5dae839",
+              "name": "End Time",
+              "value": "={{ $json.end.dateTime }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "62150c81-9be5-4c0b-b73f-39eaabb27480",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message.content"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9b28eb70-7f89-461d-8ecb-b8068d49eab2",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b075b44e-485a-4843-9f2a-2b629ca9bfeb",
+              "name": "response",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8236d485-d468-4c6d-adfb-58e7d328ae63",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2120,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a calendar assistant and I need you to summarize my day by looking at the events in my calendar. here is an event's details:\n\nEvent name: {{ $json.Event }}\nStart time:{{ $json['Start Time'] }}\nEnd time:{{ $json['End Time'] }}",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a250a49f-10b9-490a-b897-bed896ad7590",
+      "name": "Summarize Calendar",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        1460,
+        340
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "bEw2RFKI3MP4M94t",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "bd7ff7a9-ce3f-4c6e-b74f-9aad2f8424c1",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        520,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to identify what date the user is asking for based on the JSON.query: {{ $json.query }} and today's date: {{$now}}\nYou should return this date in a field called \"Requested day\" and only include the date, we don't care about time.\n\nExample:If the query asks for today, you would return today's date.\nExample: If the query asks for yesterday, you would return the day before today.\nExample: If the query asks for tomorrow, you would return the day after today.\n\nAfter this, please output a field called \"Next day\" which should be the day after the date you have already returned.",
+              "role": "system"
+            },
+            {
+              "content": "="
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "cba7b085-cca1-4b3e-993c-fe7f5d05e0bd",
+      "name": "Find Current Date",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        720,
+        340
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "bEw2RFKI3MP4M94t",
+          "name": "OpenAi account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Calendar": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Summarize Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Calendar": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Find Current Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Current Date": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6d539833-85a9-48ce-983e-aa538c5d4342",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "A2k0Um6Add16DqRz",
+  "tags": []
+}

@@ -1,0 +1,362 @@
+{
+  "name": "Customer Support Waltart",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f6149019-529f-424f-98dd-4fe766017e00",
+      "name": "When chat message received",
+      "webhookId": "15ebecb2-73b4-4aa0-b1a0-4d20210198a6"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "o3-mini-2025-01-31",
+          "mode": "list",
+          "cachedResultName": "o3-mini-2025-01-31"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        220
+      ],
+      "id": "e4b301eb-08e0-4daa-acc5-713b9cc5e07c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ecAwWeJyNBCF7vCD",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        220
+      ],
+      "id": "ee309cc9-8d7b-44e3-9a9f-db627496703c",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1y-gGg-PXWJ4rau2LiVI1A4gOHE1ny5L0h6zIEpAA7X4",
+          "mode": "list",
+          "cachedResultName": "Waltart's Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y-gGg-PXWJ4rau2LiVI1A4gOHE1ny5L0h6zIEpAA7X4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1798755953,
+          "mode": "list",
+          "cachedResultName": "Customers",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y-gGg-PXWJ4rau2LiVI1A4gOHE1ny5L0h6zIEpAA7X4/edit#gid=1798755953"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Id",
+              "lookupValue": "11"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        300,
+        220
+      ],
+      "id": "9411f33b-e3ae-474a-ac16-34b8b5e71d82",
+      "name": "Get Current Customer",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RpUQkcFbQLhNFCyy",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1y-gGg-PXWJ4rau2LiVI1A4gOHE1ny5L0h6zIEpAA7X4",
+          "mode": "list",
+          "cachedResultName": "Waltart's Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y-gGg-PXWJ4rau2LiVI1A4gOHE1ny5L0h6zIEpAA7X4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Customer Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y-gGg-PXWJ4rau2LiVI1A4gOHE1ny5L0h6zIEpAA7X4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "CustomerId",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Value', `This corresponds to the Customer Id`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        220
+      ],
+      "id": "8b3ffb5c-6777-44a8-95d5-2610a10f7ce6",
+      "name": "Get Orders By Customer Id",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RpUQkcFbQLhNFCyy",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1y-gGg-PXWJ4rau2LiVI1A4gOHE1ny5L0h6zIEpAA7X4",
+          "mode": "list",
+          "cachedResultName": "Waltart's Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y-gGg-PXWJ4rau2LiVI1A4gOHE1ny5L0h6zIEpAA7X4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Customer Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y-gGg-PXWJ4rau2LiVI1A4gOHE1ny5L0h6zIEpAA7X4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Id__using_to_match_', `Corresponds to the order id, Always pass this.`, 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', `Corresponds to the status of the order\n\nCan be the following options:\n-Order Received\n-Being Prepared\n-Shipping\n-Delivered\n-Cancelled\n-Refund\n\n`, 'string') }}"
+          },
+          "matchingColumns": [
+            "Id"
+          ],
+          "schema": [
+            {
+              "id": "Id",
+              "displayName": "Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CustomerId",
+              "displayName": "CustomerId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Order Date",
+              "displayName": "Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Delivered Date",
+              "displayName": "Delivered Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        220
+      ],
+      "id": "e458e5b8-6567-4ef4-9b61-5f3caae9f109",
+      "name": "Update Order By Id",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RpUQkcFbQLhNFCyy",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=#Context\nYou are operating within the Waltart customer support system. The chatbot assists users with order-related queries and actions, interacting with a database that includes customer details and order records.\n\n#Your Objective\n\nAct as the customer support agent for Waltart.\nAlways greet the customer with: \"welcome to WalTart\".\nAssist customers with retrieving, inquiring about, and managing their orders.\n\n#Tools\nGet Current Customer: Retrieves the authenticated customer's details.\nGet Orders By Customer Id: Fetches all orders linked to the current customer.\nUpdate Order By Id: Updates the status of a specified order, Always Pass in the Id of the order, along with the status you want to update the order with.\n\n#Instructions\nGreeting: Begin every interaction with \"welcome to WalTart\".\nOrder Retrieval: Use Get Current Customer to identify the user, then Get Orders By Customer Id to list their orders when requested.\nOrder Inquiries: Respond to questions about order status or details by referencing the customer's order data.\nOrder Management: For requests to update order statuses (cancellations or refunds), verify the request against company policies before using Update Order By Id.\nRecord Security: Always ensure that you only access and modify records belonging to the current customer.\n\n#Important \nWhen asked to Update the status of an order, Always make sure to first call the Get Orders By Customer Id, even if the previous messages already contains it, and then check the status to ensure it is still eligibile, and make sure to use the Id of the correct product before updating the order using the Update Order By Id tool.\n\n\n#Rules\nCancellation Policy:\nAn order can only be canceled if it has not yet been shipped.\nIf the order is already shipped, cancellation is not allowed.\n\nRefund Policy:\nA refund is only processed if the item has been delivered.\nRefund requests must be made within 14 days of the purchase date.\n\nData Integrity:\nAlways fetch and work exclusively with records that belong to the current customer.\n\n#Example\nExample 1 – Order Inquiry:\nCustomer: \"Can you tell me my order status?\"\nAgent: Retrieve the current customer's details with Get Current Customer, then fetch orders with Get Orders By Customer Id, and provide the status details.\n\nExample 2 – Order Cancellation Request:\nCustomer: \"I need to cancel my order #12345.\"\nAgent: Verify order #12345 belongs to the current customer and check if it has not been shipped. If eligible, proceed to cancel using Update Order By Id. If not, inform the customer that cancellation isn’t allowed as the order has already been shipped.\n\nExample 3 – Refund Request:\nCustomer: \"I want a refund for my order #67890.\"\nAgent: Ensure that order #67890 is delivered and that the request is within 14 days of the purchase. If both conditions are met, process the refund via Update Order By Id. Otherwise, explain why the refund cannot be processed.\n\n\nThe Current Date is {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "946d2a95-1e63-4ccd-9633-63f0d47269a0",
+      "name": "WalTart Customer Support"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "WalTart Customer Support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "WalTart Customer Support",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "WalTart Customer Support",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Current Customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "WalTart Customer Support",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Orders By Customer Id": {
+      "ai_tool": [
+        [
+          {
+            "node": "WalTart Customer Support",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Order By Id": {
+      "ai_tool": [
+        [
+          {
+            "node": "WalTart Customer Support",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d9840aa8-5ef6-4aa3-b4ce-7a3aeda94322",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f3130526459e1309ac4588328f0c877843a975ce87cb56510970ea4653bdfb74"
+  },
+  "id": "5hVq6UzCgSOLG3fI",
+  "tags": []
+}

@@ -1,0 +1,465 @@
+{
+  "name": "Design Editor/Revisor (AI Graphic Designer)",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "imagePrompt"
+            },
+            {
+              "name": "resolution"
+            },
+            {
+              "name": "imageType"
+            },
+            {
+              "name": "fileName"
+            },
+            {
+              "name": "previousImageUrl"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -80,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image[]",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "=This is the former image. The client wants these revisions: {{ $('When Executed by Another Workflow').item.json.imagePrompt }}. Make them without materially changing anything that is not explicitly asked for (including backgrounds if relevant etc)."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        60
+      ],
+      "id": "c6367bcd-ff07-4174-b3d1-dd2474d3b168",
+      "name": "Generate Image Using GPT Image 1",
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "YouTube_Feb 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $if($json.previousImageUrl, $json.previousImageUrl, $json.webViewLink) }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        800,
+        60
+      ],
+      "id": "0a9233f1-ad2f-4a1f-b1cc-07fe5935560e",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {
+          "mimeType": "image/png"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1240,
+        60
+      ],
+      "id": "f981a0ef-dc65-4f1b-8a77-de4751f1c44b",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('When Executed by Another Workflow').item.json.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1460,
+        60
+      ],
+      "id": "0c65476b-b5d7-4e36-916f-4ad7410a230d",
+      "name": "Google Drive2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        60
+      ],
+      "id": "946fe0d1-2992-4432-b2ac-2c60d5e585f1",
+      "name": "Google Drive3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc5839f6-8d08-405e-bf8e-fc038e1bb121",
+              "name": "webViewLink",
+              "value": "={{ $('Google Drive2').item.json.webViewLink }}",
+              "type": "string"
+            },
+            {
+              "id": "0808c18a-075d-4d90-bbec-55a505512d30",
+              "name": "initialPrompt",
+              "value": "={{ $('When Executed by Another Workflow').item.json.imagePrompt }}",
+              "type": "string"
+            },
+            {
+              "id": "26209b1c-9d62-48a3-a4a6-290802b2e0c5",
+              "name": "fileName",
+              "value": "={{ $('When Executed by Another Workflow').item.json.fileName }}",
+              "type": "string"
+            },
+            {
+              "id": "2d72a62f-1871-43a4-9c8f-687d0006b31d",
+              "name": "imageType",
+              "value": "={{ $('When Executed by Another Workflow').item.json.imageType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1900,
+        60
+      ],
+      "id": "a1732495-118b-4f03-a731-d038b4f2ad22",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.previousImageUrl }}",
+                    "rightValue": "google",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "c43d6a7d-bf5f-4060-8181-c6ef674c705d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Google"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5bb1f007-a7ab-4aeb-b803-9757ce08070b",
+                    "leftValue": "={{ $json.previousImageUrl }}",
+                    "rightValue": "google",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notContains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Non-Google"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        140,
+        60
+      ],
+      "id": "b85d4a06-af9d-415d-bdfd-04dc15a632c7",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.previousImageUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        135
+      ],
+      "id": "18ee8858-839b-426d-b63e-565997b9cdff",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        580,
+        135
+      ],
+      "id": "cfd33b37-b898-4b02-bcd2-5a757ec7b691",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "imagePrompt": "Make the existing gradient background significantly darker while preserving its funky, vibrant style.",
+          "resolution": "1024x1024",
+          "imageType": "gradient background",
+          "fileName": "funky-dory-darker.png",
+          "previousImageUrl": "https://replicate.delivery/xezq/LkNTAO6E3CYMCRlk31TveL0eT15eAQ5bgCYnixZ3D15vMLrpA/tmp89b5qw3w.png"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Using GPT Image 1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Generate Image Using GPT Image 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "Google Drive3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1090cbbe-a416-4f4f-a8dd-4700e4ae1340",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "xRfWilBLzcDW8L3y",
+  "tags": []
+}

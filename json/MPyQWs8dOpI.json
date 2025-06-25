@@ -1,0 +1,908 @@
+{
+  "name": "Think Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## How it Works\n### The \"think\" tool gives Claude a dedicated space to pause mid-process and reason about its current context, especially after tool outputs. Unlike “extended thinking,” which happens before a response begins, this tool is used during response generation to assess information, verify rules, and plan next steps. It logs internal thoughts without changing external data.\n[Anthropic: Claude Think Tool](https://www.anthropic.com/engineering/claude-think-tool)",
+        "height": 260,
+        "width": 440,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1220,
+        -1320
+      ],
+      "id": "6ac2f33e-cb43-48e3-8d62-95cf2a632395",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## When to Use It\n- **Complex tool chains** where each step depends on previous outputs  \n- **Policy-heavy tasks** that demand consistent rule-checking  \n- **Multi-step reasoning** with high risk for cascading errors  \n- **Scenarios needing validation** of tool results or user inputs before acting",
+        "height": 260,
+        "width": 380,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1540,
+        -800
+      ],
+      "id": "54f5bdcf-bd6c-4a0e-a62c-8098ec694bcd",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## When Not to Use It\n- **Simple, parallel, or single tool calls**  \n- **Tasks with minimal constraints or straightforward instruction following**  \n- **Low-risk, high-frequency requests** where default behavior is sufficient",
+        "height": 260,
+        "width": 300,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -820
+      ],
+      "id": "61199c34-76d9-4c7c-868c-be2cd9ba1b10",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Its Benefits\n- Boosts **accuracy and consistency** in multi-step, policy-driven environments  \n- Enables **transparent, auditable reasoning** for complex decisions  \n- Yields **measurable performance gains**, especially with domain-specific prompting  \n- Adds **minimal implementation overhead** while improving Claude’s reliability",
+        "height": 260,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -1320
+      ],
+      "id": "d12e08cb-542b-47f0-8494-18fdaaeadb00",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "### Best Practices\n- **Use domain-specific prompting**  \n  Include clear, contextual instructions and examples to guide how and when Claude should use the \"think\" tool.\n\n- **Place instructions in the system prompt**  \n  Add detailed thinking guidance (rules, decision checks, workflows) in the system prompt instead of just the tool description for better integration.\n\n- **Encourage checklist-style thinking**  \n  Prompt Claude to verify rule compliance, check data completeness, and plan next actions step-by-step before proceeding.\n\n- **Start with complex scenarios**  \n  Implement and test the tool in areas where Claude currently struggles—especially with policy adherence or multi-step reasoning.\n\n- **Monitor and refine usage**  \n  Review how Claude uses the tool in practice and iterate on prompts to improve reasoning quality and efficiency.",
+        "height": 340,
+        "width": 1160,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        -1320
+      ],
+      "id": "8f0968f8-e3d9-4f55-a3bc-89b477c297ca",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=<Context>\nYou are an assistant responsible for managing email communications, calendar events, and contacts.\n</Context>\n\n<Tools>\n- Use **\"Send\"** to send messages.  \n- Use **\"Get\"** to fetch inbox messages when requested.  \n- Use **\"Get By Sender\"** to fetch inbox messages by a specific sender.  \n- Use **\"Reply\"** to respond — ensure you call **\"Get Emails\"** first to obtain the message ID.  \n- Slack Contacts  \n- CRM Contacts  \n  - Use **\"Create with Attendee\"** when an event includes a participant.  \n  - Use **\"Create\"** for solo events.  \n  - Use **\"Get\"** to fetch calendar schedules when requested.  \n  - Use **\"Remove\"** to delete an event. You must use **\"Get Events\"** first to get the ID of the event to delete.  \n  - Use **\"Update\"** to update an event. You must use **\"Get Events\"** first to get the ID of the event to update.  \n</Tools>\n\n<Using_The_Think_Tool>\nUse the **Think tool** before taking any action — especially if the user’s request is unclear, incomplete, or could lead to mistakes.\n\nUse it to:\n- List the rules that apply to the request\n- Check if all needed information is present\n- Make sure the action follows tool policies\n- Review tool results for accuracy and conflicts\n- **Always check if an event already exists at the requested time**\n- Plan your next step clearly before proceeding\n\n---\n\n### Examples\n\n<think_tool_example_1>\nUser wants to schedule a meeting with “Sarah”\n\n- Has the user provided a date and time?\n- Do we have Sarah’s email, or do we need to fetch it?\n\nRules:\n- Always get contacts from both Slack and CRM unless a source is specified\n- Always check for existing events at the requested time\n\nPlan:\n1. Check for time/date\n2. Fetch Sarah’s contact if needed\n3. Check calendar for conflicts\n4. Ask for missing info\n</think_tool_example_1>\n\n<think_tool_example_2>\nUser wants to send a follow-up email to “John”\n\n- Is this a reply or a new email?\n\nIf replying:\n- Fetch inbox using **Get**\n- Use **Get By Sender** to find the thread\n- Use **Reply** only after getting the message ID\n\nIf new:\n- Ensure name + email is available\n- Fetch contact if missing\n\nPlan:\n1. Clarify if it’s a reply or new email\n2. Retrieve original message if needed\n3. Get contact info if missing\n4. Confirm before sending\n</think_tool_example_2>\n</Using_The_Think_Tool>\n\n\n\n<Notes>\nThe current date and time is: {{ $now }}.  \n- If a duration for an event isn't specified, assume it will be one hour.  \n- If a request is made that goes beyond your capabilities (refer to the tools available to you), acknowledge that it cannot be performed.  \n- Always fetch contacts by calling both Slack and CRM contact tools unless the source is explicitly specified.  \n- Always sign off as \"Mahmut.\"  \n- Always ask for the **date and time** when the user requests to create a calendar event.  \n- Always check if there is **already an event scheduled at the requested time** before creating a new one.  \n- Always get contact information from the contacts agent if the user refers to a person but hasn’t given an email.  \n- Always pass the contact’s **name and email** to the Calendar or Email agent when creating an event or sending a message.  \n- Only take action when the user’s intent is **explicit** (e.g., “Send an email” or “Create a calendar event”).  \n- Use the **Think Tool** when the request is vague, involves multiple steps, or requires clarification. It helps break down the task before proceeding.\n</Notes>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -660,
+        -820
+      ],
+      "id": "8eda8eb5-6e58-4ed7-bd40-eec68fb87bef",
+      "name": "Personal Assistant"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "mahmutktech98@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mahmutktech98@gmail.com"
+        },
+        "eventId": "={{ $fromAI(\"eventId\") }}",
+        "updateFields": {
+          "end": "={{ $fromAI(\"endTime\") }}",
+          "start": "={{ $fromAI(\"startTime\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        -420
+      ],
+      "id": "1f6aa926-1769-410c-86c9-f055e50c0ec1",
+      "name": "Update",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vQ7twqBoColZzqkB",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "mahmutktech98@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mahmutktech98@gmail.com"
+        },
+        "timeMin": "={{ $fromAI(\"dayBefore\",\"the day before the date the user requested\") }}",
+        "timeMax": "={{ $fromAI(\"dayAfter\",\"the day after the date the user requested\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        -420
+      ],
+      "id": "b72a38e7-125f-420d-a6ec-ddabcae4e770",
+      "name": "Get",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vQ7twqBoColZzqkB",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "mahmutktech98@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mahmutktech98@gmail.com"
+        },
+        "eventId": "={{ $fromAI(\"eventId\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        40,
+        -420
+      ],
+      "id": "3047935e-ca72-4f04-9665-3d54197ba1d7",
+      "name": "Remove",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vQ7twqBoColZzqkB",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "mahmutktech98@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mahmutktech98@gmail.com"
+        },
+        "start": "={{ $fromAI(\"eventStart\") }}",
+        "end": "={{ $fromAI(\"eventEnd\") }}",
+        "additionalFields": {
+          "attendees": [],
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -360,
+        -420
+      ],
+      "id": "da2c9c9e-b983-47dd-8447-e539f78aac91",
+      "name": "Create",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vQ7twqBoColZzqkB",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -960,
+        -420
+      ],
+      "id": "8032a349-97f6-4cf3-be6d-9f82654af0b7",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $fromAI(\"id\",\"email id\") }}",
+        "message": "={{ $fromAI(\"emailContent\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -580,
+        -420
+      ],
+      "id": "f960f815-a848-4e2d-9466-966e20615a6b",
+      "name": "Reply",
+      "webhookId": "114785e6-a859-432b-81b4-c490c1c35b1c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EiLpfKi3BQBFOg27",
+          "name": "Oncekod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"email\") }}",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "message": "={{ $fromAI(\"emailContent\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -460,
+        -420
+      ],
+      "id": "8af1a36e-53ec-4265-933f-96d8ca69b35d",
+      "name": "Send",
+      "webhookId": "86c8c4b1-13bb-4ebe-acb9-30e1d7082d55",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EiLpfKi3BQBFOg27",
+          "name": "Oncekod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": "={{ $fromAI(\"limit\",\"number of emails to fetch\") }}",
+        "simple": false,
+        "filters": {
+          "sender": "={{ $fromAI(\"sender\",\"Sender of the email, name or email\") }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -700,
+        -420
+      ],
+      "id": "abfbb7f7-dee8-4fc8-b499-10ddaa0e2b5d",
+      "name": "Get By Sender",
+      "webhookId": "af4b3298-9037-44b0-aa12-2acbfbb5e66f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EiLpfKi3BQBFOg27",
+          "name": "Oncekod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "mahmutktech98@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mahmutktech98@gmail.com"
+        },
+        "start": "={{ $fromAI(\"eventStart\") }}",
+        "end": "={{ $fromAI(\"eventEnd\") }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $fromAI(\"attendeeEmails\", \"can use comma to indicate multiple\") }}"
+          ],
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -200,
+        -420
+      ],
+      "id": "f2c40068-dd6c-40aa-89d5-4e3c3cdd2af7",
+      "name": "Create with Attendee",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vQ7twqBoColZzqkB",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "=Use the tool to think about something. It will not obtain new information or change the database, but just append the thought to the log. Use it when complex reasoning or some cache memory is needed."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        -760
+      ],
+      "id": "21c730c1-a153-48f7-85b0-22f73bd48a1d",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -820,
+        -820
+      ],
+      "id": "ace4fc65-c5db-41c6-ac4d-fc421d5cc2ac",
+      "name": "When chat message received",
+      "webhookId": "09d052db-dffa-4ca6-a877-f188240d172b"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": "={{ $fromAI(\"limit\",\"number of emails to fetch\") }}",
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -820,
+        -420
+      ],
+      "id": "3ed66b5d-10f6-4f44-a2c6-0d3284451f90",
+      "name": "Get Emails",
+      "webhookId": "af4b3298-9037-44b0-aa12-2acbfbb5e66f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EiLpfKi3BQBFOg27",
+          "name": "Oncekod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -980,
+        -620
+      ],
+      "id": "0a5255b9-6758-42ea-a3ed-83166d0d0877",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        980,
+        -620
+      ],
+      "id": "838b55e4-efa7-44cc-96c0-c052c2cb91ee",
+      "name": "LLM2",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=The form fields are:\n\nName: {{ $json['Your Name'] }}\n\nEmail: {{ $json['Your Email'] }}\n\nComplaint: {{ $json['Your Complaint'] }}\n\nSubmitted At: {{ $json.submittedAt }}",
+        "options": {
+          "systemMessage": "=#Context\nYou are a Complaint Handling Agent. When a user submits a complaint through the form, your job is to:\n\nReview the complaint content.\n\nLog all submission details into a Google Sheet.\n\nSend a personalized email response to the user acknowledging the complaint.\n\n#Tools\nYou have access to the following tools:\n\nComplaints Sheet (append: sheet) – Use this to log the complaint details as a new row in the spreadsheet.\n\nSend An Email (send: message) – Use this to send a personalized email reply to the user.\n\n#Rules\nAppend a row to the Google Sheet with the following columns:\n- Name\n- Email\n- Complaint\n- Submitted At\n\nCraft a personalized response email that:\n- Acknowledges receipt of the complaint.\n- Reflects understanding of the specific complaint.\n- Is empathetic and professional.\n- Is addressed to {{ $json['Your Name'] }} and sent to {{ $json['Your Email'] }}.\n\nDo not ask the user to resubmit anything.\nAlways Sign of as \"Customer Support\"\nKeep your message clear, concise, and supportive."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1040,
+        -840
+      ],
+      "id": "68d0b34b-0329-48f3-9112-598f0c85d9c4",
+      "name": "Complaint Agent"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1380,
+        -620
+      ],
+      "id": "f33391d4-e09f-4061-b535-1cb2b90da79a",
+      "name": "Send An Email",
+      "webhookId": "df01cc97-4ec5-4262-b6b5-c247a1587c1f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EiLpfKi3BQBFOg27",
+          "name": "Oncekod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ABOA2bRWMkZLuZuprjXcNo3UAnaaKiuCrygaMKScvb0",
+          "mode": "list",
+          "cachedResultName": "Complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ABOA2bRWMkZLuZuprjXcNo3UAnaaKiuCrygaMKScvb0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ABOA2bRWMkZLuZuprjXcNo3UAnaaKiuCrygaMKScvb0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', ``, 'string') }}",
+            "Complaint": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Complaint', ``, 'string') }}",
+            "Submitted At": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Submitted_At', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Complaint",
+              "displayName": "Complaint",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1240,
+        -620
+      ],
+      "id": "3c2033c5-936c-4b6d-8793-cc864b6646d5",
+      "name": "Complaints Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RpUQkcFbQLhNFCyy",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Complaint Form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Your Name",
+              "placeholder": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Email",
+              "fieldType": "email",
+              "placeholder": "Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Complaint",
+              "fieldType": "textarea",
+              "placeholder": "Complaint Details",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        820,
+        -840
+      ],
+      "id": "7d69cf46-e47c-4dd8-b966-4ef1f0716d04",
+      "name": "Complaint Form Submission",
+      "webhookId": "74302eff-372a-4346-b48b-a5696419fbc1"
+    },
+    {
+      "parameters": {
+        "description": "=Use the tool to think about something. It will not obtain new information or change the database, but just append the thought to the log. Use it when complex reasoning or some cache memory is needed."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -620
+      ],
+      "id": "46c32513-f376-4f9f-b2df-b22e2ffbb0fd",
+      "name": "Think1"
+    },
+    {
+      "parameters": {
+        "name": "CRM_CONTACTS",
+        "description": "=Call this tool to get the CRM CONTACTS",
+        "jsCode": "return `[\n  {\n    firstName: 'John',\n    lastName: 'Doe',\n    email: 'malezlers@gmail.com'\n  },\n  {\n    firstName: 'Jane',\n    lastName: 'Smith',\n    email: 'jane.smith@example.com'\n  },\n  {\n    firstName: 'Alice',\n    lastName: 'Johnson',\n    email: 'alice.johnson@example.com'\n  },\n]`"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        -420
+      ],
+      "id": "3f198671-e804-4a63-bc22-45c93992e459",
+      "name": "Crm Contacts"
+    },
+    {
+      "parameters": {
+        "name": "SLACK_CONTACTS",
+        "description": "=Call this tool to get the SLACK CONTACTS",
+        "jsCode": "return `\n[{\n    firstName: 'Michael',\n    lastName: 'Williams',\n    email: 'michael.williams@example.com'\n  },\n  {\n    firstName: 'Emma',\n    lastName: 'Brown',\n    email: 'emma.brown@example.com'\n  },\n  {\n    firstName: 'Oliver',\n    lastName: 'Davis',\n    email: 'oliver.davis@example.com'\n  }]\n`"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        -420
+      ],
+      "id": "ede5fac4-d2d7-4462-8178-767783ab142c",
+      "name": "Slack Contacts"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-3-7-sonnet-20250219",
+          "cachedResultName": "Claude 3.7 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -1180,
+        -460
+      ],
+      "id": "ab92a062-df37-4cf0-84a1-8e88fa153d94",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "PwuwcK3SurM5266H",
+          "name": "Anthropic account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Update": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get By Sender": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create with Attendee": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Complaint Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send An Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Complaint Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complaints Sheet": {
+      "ai_tool": [
+        [
+          {
+            "node": "Complaint Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complaint Form Submission": {
+      "main": [
+        [
+          {
+            "node": "Complaint Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Complaint Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crm Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
+  },
+  "versionId": "c979519f-5413-422c-b0be-3b3c1b00309e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f3130526459e1309ac4588328f0c877843a975ce87cb56510970ea4653bdfb74"
+  },
+  "id": "ZwZfK4ejrYmRPPZz",
+  "tags": []
+}

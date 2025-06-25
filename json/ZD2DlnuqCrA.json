@@ -1,0 +1,750 @@
+{
+  "name": "Lead Generation + Outreach",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.apify.com/v2/acts/code_crafter~apollo-io-scraper/run-sync-get-dataset-items?token=xxxx",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $json.searchUrl }}\",\n  \"totalRecords\": 100,\n  \"getWorkEmails\": true,\n  \"getPersonalEmails\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        -940
+      ],
+      "id": "2aba58e9-f91f-442e-8c49-7a511b2d30d2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "20335efb-c8c3-430b-99ec-3d21f97d9fa5",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "null",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        780,
+        -940
+      ],
+      "id": "2fe03195-0279-4b21-be78-f522782c860c",
+      "name": "Filter"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -940
+      ],
+      "id": "eee9c9a4-1236-478f-997a-7606d3e7da89",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"firstName\": \"{{ $json.first_name }}\",\n  \"lastName\": \"{{ $json.last_name }}\",\n  \"title\": \"{{ $json.title }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"linkedIn\": \"{{ $json.linkedin_url }}\",\n  \"organization\": \"{{ $json.organization.name }}\",\n  \"organizationLinkedIn\": \"{{ $json.organization.linkedin_url }}\",\n  \"organizationSite\": \"{{ $json.organization.website_url }}\",\n  \"industry\": \"{{ $json.organization.industry }}\",\n  \"companySize\": \"{{ $json.organization.estimated_num_employees }}\",\n  \"keywords\": \"{{ $json.organization.keywords.join(', ') }}\"\n}\n ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        620,
+        -940
+      ],
+      "id": "f8c74655-20ef-4f9b-8bc6-57ef656bcd68",
+      "name": "Map Response"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "15oSfftU0AoEeFHZArJJ-6qGrYn5u41irA6zvp8sYkmU",
+          "mode": "list",
+          "cachedResultName": "Leads Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15oSfftU0AoEeFHZArJJ-6qGrYn5u41irA6zvp8sYkmU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 601601443,
+          "mode": "list",
+          "cachedResultName": "Leads Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15oSfftU0AoEeFHZArJJ-6qGrYn5u41irA6zvp8sYkmU/edit#gid=601601443"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FirstName": "={{ $json.firstName }}",
+            "LastName": "={{ $json.lastName }}",
+            "Title": "={{ $json.title }}",
+            "Email": "={{ $json.email }}",
+            "LinkedIn": "={{ $json.linkedIn }}",
+            "Organization": "={{ $json.organization }}",
+            "OrganizationLinkedIn": "={{ $json.organizationSite }}",
+            "OrganizationSite": "={{ $json.organizationSite }}",
+            "Industry": "={{ $json.industry }}",
+            "CompanySize": "={{ $json.companySize}}",
+            "Keywords": "={{ $json.keywords}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "FirstName",
+              "displayName": "FirstName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LastName",
+              "displayName": "LastName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CompanySize",
+              "displayName": "CompanySize",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn",
+              "displayName": "LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Organization",
+              "displayName": "Organization",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OrganizationLinkedIn",
+              "displayName": "OrganizationLinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OrganizationSite",
+              "displayName": "OrganizationSite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Prepared",
+              "displayName": "Email Prepared",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1180,
+        -940
+      ],
+      "id": "438dadc3-cce1-441c-b210-3e0e050f0790",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RpUQkcFbQLhNFCyy",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca9e3a4f-ddff-455e-adc8-d3ef37e526f6",
+              "name": "searchUrl",
+              "value": "[\"https://app.apollo.io/#/people?sortAscending=false&sortByField=recommendations_score&organizationNumEmployeesRanges[]=1%2C10&contactEmailStatusV2[]=verified&personSeniorities[]=owner&personSeniorities[]=founder&personSeniorities[]=manager&personSeniorities[]=director&organizationIndustryTagIds[]=5567ced173696450cb580000\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        100,
+        -940
+      ],
+      "id": "0a75d93e-6b47-49e6-b214-c5def252c514",
+      "name": "Lead Configuration"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -100,
+        -580
+      ],
+      "id": "8069a9a8-5fa1-4560-95f3-e0576db6a194",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=## Ice Breaker Here\n\nPlease allow me to introduce myself, I'm a former Senior Software Engineer turned Automation Expert, and in just under three months, I've built a YouTube channel with over 5,000 subscribers and a community of 3,000+ members focused on AI-powered automation. I recently launched my own AI agency to provide custom automation solutions as a service.\n\nI'm reaching out because I believe there’s an opportunity to streamline {{$json.Organization}}’s operations by automating time-consuming, repetitive tasks—something that AI-driven automation excels at today.\n\nIn fact, businesses implementing AI-based automation save up to **30 % of employee time** on manual work and see a **25–40 % boost in efficiency** within six months.\n\nHere are a few processes we could explore automating together:\n• Repetitive admin tasks (customer follow-ups, data entry, invoicing)  \n• Lead-generation & outreach workflows  \n• Order management + fulfilment alerts  \n• AI-powered email autoresponders using your own knowledge base (human-in-the-loop optional)\n\nWould you be open to a quick call to explore which workflows we can automate in your business together?",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=### ROLE\nYou are a cold-email copywriter.  \nGoal: produce a SHORT email that (1) feels personal, (2) keeps the core pitch unchanged unless a clear, high-value tweak is obvious.\n\n### VARIABLES  (all arrive via n8n `$json`)\ntitle                = {{$json.Title}}\norganizationName     = {{$json.Organization}}\norganizationSite     = {{$json.OrganizationSite}}\nindustry             = {{$json.Industry}}\nkeywords             = {{$json.Keywords}}      ← comma-separated list\nlinkedIn             = {{$json.LinkedIn}}\norganizationLinkedIn = {{$json.OrganizationLinkedIn}}\n\n### HOW TO PERSONALIZE\n1. **Ice-breaker** (exactly 1 short sentence, max 15 words)  \n   • Must sound **energetic, uplifting, warm, and friendly** (feel-good vibe; exclamation optional).  \n   • Use ONE specific detail: keyword, product line, LinkedIn snippet, or location.  \n   • No filler like “Hope you’re well.”  \n2. **Pitch section MUST remain verbatim** except:  \n   • You may insert ≤ 7 words that tie the pitch to a clear opportunity (e.g., “—especially for niche fragrance brands—”).  \n4. **Tone**: professional, confident, friendly.\n\n### RULES\n- NEVER include Subject lines.  \n- NEVER include greetings.  \n- NEVER include sign-offs (“Best,” etc.).  \n- Start directly from the ice-breaker sentence, then flow into the introduction.  \n- Keep total length ≤ 130 words.  \n- Output plain text only (no markdown).\n- Avoid using em-dashes (—); use commas or periods instead to keep the text human-like.  "
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        280,
+        -580
+      ],
+      "id": "08265ef3-a327-4994-a11c-5d087c38dd43",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        -400
+      ],
+      "id": "fe115969-4873-40d7-8aa7-9175b892a4f3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sHvgFJuDYtk00WM4",
+          "name": "N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "15oSfftU0AoEeFHZArJJ-6qGrYn5u41irA6zvp8sYkmU",
+          "mode": "list",
+          "cachedResultName": "Leads Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15oSfftU0AoEeFHZArJJ-6qGrYn5u41irA6zvp8sYkmU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 601601443,
+          "mode": "list",
+          "cachedResultName": "List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15oSfftU0AoEeFHZArJJ-6qGrYn5u41irA6zvp8sYkmU/edit#gid=601601443"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get Pending Leads').item.json.row_number }}",
+            "Email Prepared": "=Hey {{ $('Get Pending Leads').item.json.FirstName }}!\n\n{{ $json.text }}\n\nBest,\nMahmut"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "FirstName",
+              "displayName": "FirstName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LastName",
+              "displayName": "LastName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CompanySize",
+              "displayName": "CompanySize",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LinkedIn",
+              "displayName": "LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Organization",
+              "displayName": "Organization",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "OrganizationLinkedIn",
+              "displayName": "OrganizationLinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "OrganizationSite",
+              "displayName": "OrganizationSite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Prepared",
+              "displayName": "Email Prepared",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        620,
+        -580
+      ],
+      "id": "e3a149cb-625c-43bf-b740-6b857eb0aca8",
+      "name": "Update Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RpUQkcFbQLhNFCyy",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "15oSfftU0AoEeFHZArJJ-6qGrYn5u41irA6zvp8sYkmU",
+          "mode": "list",
+          "cachedResultName": "Leads Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15oSfftU0AoEeFHZArJJ-6qGrYn5u41irA6zvp8sYkmU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 601601443,
+          "mode": "list",
+          "cachedResultName": "List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15oSfftU0AoEeFHZArJJ-6qGrYn5u41irA6zvp8sYkmU/edit#gid=601601443"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email Prepared"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        100,
+        -580
+      ],
+      "id": "f34cb15d-d83d-45e7-a77c-71c869e89cc3",
+      "name": "Get Pending Leads",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RpUQkcFbQLhNFCyy",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Lead Sourcing",
+        "height": 80,
+        "width": 1200,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -1060
+      ],
+      "id": "59f623b9-601f-4943-94c4-7e646b6d316d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Personalized Email Outreach",
+        "height": 80,
+        "width": 1200,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -700
+      ],
+      "id": "b11a1771-d166-46fe-bbd7-7f9ce794afd7",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "searchUrl",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        280,
+        -940
+      ],
+      "id": "aa904cba-167a-4758-bbed-35ccb2b4b982",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "email",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        980,
+        -940
+      ],
+      "id": "02b0f898-85ec-4e8b-9eba-ad3810bb4368",
+      "name": "Remove Duplicates"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Map Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Lead Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Response": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Configuration": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Leads": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a95d6c32-d36f-45cf-a415-61cfdc92a303",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f3130526459e1309ac4588328f0c877843a975ce87cb56510970ea4653bdfb74"
+  },
+  "id": "FYrOYyvKvWeAEsmM",
+  "tags": []
+}

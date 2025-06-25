@@ -1,0 +1,872 @@
+{
+  "name": "My workflow 72",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "firebase-website-audit",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -900,
+        320
+      ],
+      "id": "de4393ca-c8a3-4031-b720-05fd81cef9fd",
+      "name": "Webhook",
+      "webhookId": "b8847678-668d-4695-88f1-94b3579cf68c"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/misceres~seo-audit-tool/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer apify_api_E8709OqssSMKCJeq5bWcxnUvPbQHa92qrCN9"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"maxRequestsPerCrawl\": 10,\n    \"proxy\": {\n        \"useApifyProxy\": true\n    },\n    \"startUrl\": \"{{ $json.body.url }}\"\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "timeout": 60000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -700,
+        120
+      ],
+      "id": "5664d1a2-fb05-44d4-9515-26c78bddf509",
+      "name": "Run SEO Audit Tool: Sync"
+    },
+    {
+      "parameters": {
+        "maxItems": 4
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        120
+      ],
+      "id": "647c9c71-fc7b-40e3-8560-3966ed10f5b8",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        440,
+        120
+      ],
+      "id": "5599825d-bf80-4bf1-94e6-06c27d7225ef",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "38f3501d-caac-46ee-99b2-0a4bd6620da1",
+              "name": "url",
+              "value": "={{ $json.message.content.url }}",
+              "type": "string"
+            },
+            {
+              "id": "ead57600-049a-4794-aec6-c14435c5449a",
+              "name": "summary",
+              "value": "={{ $json.message.content.summary }}",
+              "type": "array"
+            },
+            {
+              "id": "c3b3517d-dbab-46c5-8366-13272f97ee36",
+              "name": "metrics",
+              "value": "={{ $json.message.content.metrics }}",
+              "type": "object"
+            },
+            {
+              "id": "edee8f96-80e4-48a0-a92b-2baf0aa357af",
+              "name": "details",
+              "value": "={{ $json.message.content.details }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        120
+      ],
+      "id": "858f6d7a-c39e-4616-998d-a2a59e572d92",
+      "name": "Edit Fields",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        120
+      ],
+      "id": "ed0f6ad9-3536-44e6-8bc7-04e141ea1dbe",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a JSON formatter for SEO audit results. Your task is to convert raw audit input into a clean structured JSON with four main keys: url, summary, metrics, and details.\n\nUse the following logic:\n- `url`: Just pass through the page URL.\n- `summary`: Generate a list of human-readable strings based on boolean and count fields:\n  - isH1: \"Has H1\" or \"Has no H1\"\n  - isH1OnlyOne: \"Only one H1 tag\" or \"Does not have only one H1 tag\"\n  - isH2: \"Has H2\" or \"No H2 found\"\n  - isTooEnoughLinks: \"Has enough links\" or \"Too few links\"\n  - notOptimizedImagesCount > 0: \"<count> unoptimized images found\" or \"No unoptimized images\"\n  - isContentEnoughLong: \"Content length is good\" or \"Content is too short\"\n  - isNotIframe: \"No iframe found\" or \"Iframe present\"\n  - robotsFileExists: \"Robots.txt file found\" or \"Robots.txt file not found\"\n  - brokenLinksCount > 0: \"<count> broken links found\" or \"No broken links\"\n  - externalBrokenLinksCount > 0: \"<count> external broken links found\" or \"No external broken links\"\n  - brokenImagesCount > 0: \"<count> broken images found\" or \"No broken images\"\n- `metrics`: Include the following as integers (can be zero):\n  - wordsCount, linksCount, brokenLinksCount, externalBrokenLinksCount, notOptimizedImagesCount\n- `details`: Include the following:\n  - externalBrokenLinks: array of strings (URLs) or \"No external broken links\"\n  - notOptimizedImages: array of strings (URLs) or \"No unoptimized images\"\n  - brokenLinks: array of strings (URLs) or \"No broken links\"\n  - brokenImages: array of strings (URLs) or \"No broken images\"\n\nRespond only with the resulting JSON object.\n",
+              "role": "system"
+            },
+            {
+              "content": "=Here is the Raw data from the Audit:\n\n{{ $('Run SEO Audit Tool: Sync').item.json.toJsonString() }}"
+            },
+            {
+              "content": "=Please output the data in JSON format, using the following structure:\n\n{\n  \"url\": \"\",\n  \"summary\": [],\n  \"metrics\": {\n    \"wordsCount\": 0,\n    \"linksCount\": 0,\n    \"brokenLinksCount\": 0,\n    \"externalBrokenLinksCount\": 0,\n    \"notOptimizedImagesCount\": 0\n  },\n  \"details\": {\n    \"externalBrokenLinks\": \"No external broken links\",\n    \"notOptimizedImages\": \"No unoptimized images\",\n    \"brokenLinks\": \"No broken links\",\n    \"brokenImages\": \"No broken images\"\n  }\n}\n",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -100,
+        120
+      ],
+      "id": "84bde29e-41d9-43a5-88be-0aff3d046708",
+      "name": "Audit",
+      "executeOnce": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "9RWAaaO3Wu3uNVX7",
+          "name": "n8n Jono"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Respond to Firebase Studio",
+        "height": 80,
+        "width": 150
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "04b6bad8-bf36-4f11-944d-f1cf2f13d43f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [...new Map(items.map(i => {\n  const u = i.json.url;\n  const q = u.includes('?') ? '/?' + u.split('?')[1].split('=')[0] : null;\n  const p = (u.match(/^https?:\\/\\/[^\\/]+(\\/[^\\/\\?\\#]*)/)?.[1] || '/');\n  const key = q && p === '/' ? q : p;\n  return [key.toLowerCase(), i];\n})).values()];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        120
+      ],
+      "id": "e19354e9-2726-4adf-93d5-72982b6b5918",
+      "name": "Filtering our similar urls"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        -40
+      ],
+      "id": "497dfe3c-66f9-4e5e-ac10-21c446fd940a",
+      "name": "When clicking ‘Test workflow’",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "\thttps://webhook.site/2c0e4d94-be4c-4c78-b5b0-6a08eaa1e3e7",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        120
+      ],
+      "id": "21fcc642-c571-4f1e-b361-2341ccf83b1a",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {
+    "Run SEO Audit Tool: Sync": [
+      {
+        "json": {
+          "url": "https://www.automatable.co/",
+          "title": "",
+          "isLoaded": true,
+          "isGoogleAnalyticsObject": false,
+          "isGoogleAnalyticsFunc": false,
+          "isCharacterEncode": true,
+          "isMetaDescription": false,
+          "isDoctype": true,
+          "isTitle": false,
+          "isH1": false,
+          "isH1OnlyOne": false,
+          "isH2": true,
+          "linksCount": 34,
+          "isTooEnoughLinks": true,
+          "internalNoFollowLinks": [],
+          "internalNoFollowLinksCount": 0,
+          "notOptimizedImages": [
+            "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+            "https://images.unsplash.com/photo-1485217988980-11786ced9454?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+            "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&fp-x=.4&w=396&h=528&q=80",
+            "https://images.unsplash.com/photo-1670272504528-790c24957dda?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=528&q=80",
+            "https://images.unsplash.com/photo-1670272505284-8faba1c31f7d?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80"
+          ],
+          "notOptimizedImagesCount": 5,
+          "wordsCount": 2526,
+          "isContentEnoughLong": false,
+          "isViewport": true,
+          "isAmp": true,
+          "isNotIframe": true,
+          "pageIsBlocked": false,
+          "robotsFileExists": false,
+          "faviconExists": true,
+          "brokenLinksCount": 0,
+          "brokenLinks": [],
+          "externalBrokenLinksCount": 1,
+          "externalBrokenLinks": [
+            "https://www.linkedin.com/in/jonocatliff/"
+          ],
+          "brokenImages": [],
+          "brokenImagesCount": 0,
+          "jsonLd": {
+            "isJsonLd": false,
+            "jsonLdData": {}
+          },
+          "microdata": {
+            "isMicrodata": false,
+            "microdata": []
+          }
+        }
+      },
+      {
+        "json": {
+          "url": "https://www.automatable.co/book?channel=undefined&v=1",
+          "title": "",
+          "isLoaded": true,
+          "isGoogleAnalyticsObject": false,
+          "isGoogleAnalyticsFunc": false,
+          "isCharacterEncode": true,
+          "isMetaDescription": false,
+          "isDoctype": true,
+          "isTitle": false,
+          "isH1": false,
+          "isH1OnlyOne": false,
+          "isH2": true,
+          "linksCount": 8,
+          "isTooEnoughLinks": true,
+          "internalNoFollowLinks": [],
+          "internalNoFollowLinksCount": 0,
+          "notOptimizedImages": [],
+          "notOptimizedImagesCount": 0,
+          "wordsCount": 197,
+          "isContentEnoughLong": true,
+          "isViewport": true,
+          "isAmp": true,
+          "isNotIframe": true,
+          "pageIsBlocked": false,
+          "robotsFileExists": false,
+          "faviconExists": true,
+          "brokenLinksCount": 0,
+          "brokenLinks": [],
+          "externalBrokenLinksCount": 0,
+          "externalBrokenLinks": [],
+          "brokenImages": [],
+          "brokenImagesCount": 0,
+          "jsonLd": {
+            "isJsonLd": false,
+            "jsonLdData": {}
+          },
+          "microdata": {
+            "isMicrodata": false,
+            "microdata": []
+          }
+        }
+      },
+      {
+        "json": {
+          "url": "https://www.automatable.co/book?channel=undefined&v=undefined",
+          "title": "",
+          "isLoaded": true,
+          "isGoogleAnalyticsObject": false,
+          "isGoogleAnalyticsFunc": false,
+          "isCharacterEncode": true,
+          "isMetaDescription": false,
+          "isDoctype": true,
+          "isTitle": false,
+          "isH1": false,
+          "isH1OnlyOne": false,
+          "isH2": true,
+          "linksCount": 8,
+          "isTooEnoughLinks": true,
+          "internalNoFollowLinks": [],
+          "internalNoFollowLinksCount": 0,
+          "notOptimizedImages": [],
+          "notOptimizedImagesCount": 0,
+          "wordsCount": 197,
+          "isContentEnoughLong": true,
+          "isViewport": true,
+          "isAmp": true,
+          "isNotIframe": true,
+          "pageIsBlocked": false,
+          "robotsFileExists": false,
+          "faviconExists": true,
+          "brokenLinksCount": 0,
+          "brokenLinks": [],
+          "externalBrokenLinksCount": 0,
+          "externalBrokenLinks": [],
+          "brokenImages": [],
+          "brokenImagesCount": 0,
+          "jsonLd": {
+            "isJsonLd": false,
+            "jsonLdData": {}
+          },
+          "microdata": {
+            "isMicrodata": false,
+            "microdata": []
+          }
+        }
+      },
+      {
+        "json": {
+          "url": "https://www.automatable.co/careers",
+          "title": "",
+          "isLoaded": true,
+          "isGoogleAnalyticsObject": false,
+          "isGoogleAnalyticsFunc": false,
+          "isCharacterEncode": true,
+          "isMetaDescription": false,
+          "isDoctype": true,
+          "isTitle": false,
+          "isH1": false,
+          "isH1OnlyOne": false,
+          "isH2": true,
+          "linksCount": 7,
+          "isTooEnoughLinks": true,
+          "internalNoFollowLinks": [],
+          "internalNoFollowLinksCount": 0,
+          "notOptimizedImages": [],
+          "notOptimizedImagesCount": 0,
+          "wordsCount": 43,
+          "isContentEnoughLong": true,
+          "isViewport": true,
+          "isAmp": true,
+          "isNotIframe": false,
+          "pageIsBlocked": false,
+          "robotsFileExists": false,
+          "faviconExists": true,
+          "brokenLinksCount": 0,
+          "brokenLinks": [],
+          "externalBrokenLinksCount": 0,
+          "externalBrokenLinks": [],
+          "brokenImages": [],
+          "brokenImagesCount": 0,
+          "jsonLd": {
+            "isJsonLd": false,
+            "jsonLdData": {}
+          },
+          "microdata": {
+            "isMicrodata": false,
+            "microdata": []
+          }
+        }
+      },
+      {
+        "json": {
+          "url": "https://www.automatable.co/book",
+          "title": "",
+          "isLoaded": true,
+          "isGoogleAnalyticsObject": false,
+          "isGoogleAnalyticsFunc": false,
+          "isCharacterEncode": true,
+          "isMetaDescription": false,
+          "isDoctype": true,
+          "isTitle": false,
+          "isH1": false,
+          "isH1OnlyOne": false,
+          "isH2": true,
+          "linksCount": 8,
+          "isTooEnoughLinks": true,
+          "internalNoFollowLinks": [],
+          "internalNoFollowLinksCount": 0,
+          "notOptimizedImages": [],
+          "notOptimizedImagesCount": 0,
+          "wordsCount": 197,
+          "isContentEnoughLong": true,
+          "isViewport": true,
+          "isAmp": true,
+          "isNotIframe": true,
+          "pageIsBlocked": false,
+          "robotsFileExists": false,
+          "faviconExists": true,
+          "brokenLinksCount": 0,
+          "brokenLinks": [],
+          "externalBrokenLinksCount": 0,
+          "externalBrokenLinks": [],
+          "brokenImages": [],
+          "brokenImagesCount": 0,
+          "jsonLd": {
+            "isJsonLd": false,
+            "jsonLdData": {}
+          },
+          "microdata": {
+            "isMicrodata": false,
+            "microdata": []
+          }
+        }
+      },
+      {
+        "json": {
+          "url": "https://www.automatable.co/?channel=undefined&v=undefined",
+          "title": "",
+          "isLoaded": true,
+          "isGoogleAnalyticsObject": false,
+          "isGoogleAnalyticsFunc": false,
+          "isCharacterEncode": true,
+          "isMetaDescription": false,
+          "isDoctype": true,
+          "isTitle": false,
+          "isH1": false,
+          "isH1OnlyOne": false,
+          "isH2": true,
+          "linksCount": 34,
+          "isTooEnoughLinks": true,
+          "internalNoFollowLinks": [],
+          "internalNoFollowLinksCount": 0,
+          "notOptimizedImages": [
+            "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+            "https://images.unsplash.com/photo-1485217988980-11786ced9454?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+            "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&fp-x=.4&w=396&h=528&q=80",
+            "https://images.unsplash.com/photo-1670272504528-790c24957dda?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=528&q=80",
+            "https://images.unsplash.com/photo-1670272505284-8faba1c31f7d?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80"
+          ],
+          "notOptimizedImagesCount": 5,
+          "wordsCount": 2526,
+          "isContentEnoughLong": false,
+          "isViewport": true,
+          "isAmp": true,
+          "isNotIframe": true,
+          "pageIsBlocked": false,
+          "robotsFileExists": false,
+          "faviconExists": true,
+          "brokenLinksCount": 0,
+          "brokenLinks": [],
+          "externalBrokenLinksCount": 1,
+          "externalBrokenLinks": [
+            "https://www.linkedin.com/in/jonocatliff/"
+          ],
+          "brokenImages": [],
+          "brokenImagesCount": 0,
+          "jsonLd": {
+            "isJsonLd": false,
+            "jsonLdData": {}
+          },
+          "microdata": {
+            "isMicrodata": false,
+            "microdata": []
+          }
+        }
+      },
+      {
+        "json": {
+          "url": "https://www.automatable.co/?channel=undefined&v=1",
+          "title": "",
+          "isLoaded": true,
+          "isGoogleAnalyticsObject": false,
+          "isGoogleAnalyticsFunc": false,
+          "isCharacterEncode": true,
+          "isMetaDescription": false,
+          "isDoctype": true,
+          "isTitle": false,
+          "isH1": false,
+          "isH1OnlyOne": false,
+          "isH2": true,
+          "linksCount": 34,
+          "isTooEnoughLinks": true,
+          "internalNoFollowLinks": [],
+          "internalNoFollowLinksCount": 0,
+          "notOptimizedImages": [
+            "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+            "https://images.unsplash.com/photo-1485217988980-11786ced9454?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+            "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&fp-x=.4&w=396&h=528&q=80",
+            "https://images.unsplash.com/photo-1670272504528-790c24957dda?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=528&q=80",
+            "https://images.unsplash.com/photo-1670272505284-8faba1c31f7d?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80"
+          ],
+          "notOptimizedImagesCount": 5,
+          "wordsCount": 2526,
+          "isContentEnoughLong": false,
+          "isViewport": true,
+          "isAmp": true,
+          "isNotIframe": true,
+          "pageIsBlocked": false,
+          "robotsFileExists": false,
+          "faviconExists": true,
+          "brokenLinksCount": 0,
+          "brokenLinks": [],
+          "externalBrokenLinksCount": 1,
+          "externalBrokenLinks": [
+            "https://www.linkedin.com/in/jonocatliff/"
+          ],
+          "brokenImages": [],
+          "brokenImagesCount": 0,
+          "jsonLd": {
+            "isJsonLd": false,
+            "jsonLdData": {}
+          },
+          "microdata": {
+            "isMicrodata": false,
+            "microdata": []
+          }
+        }
+      }
+    ],
+    "Audit": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "url": "https://www.automatable.co/",
+              "summary": [
+                "Has no H1",
+                "Does not have only one H1 tag",
+                "Has H2",
+                "Has enough links",
+                "5 unoptimized images found",
+                "Content is too short",
+                "No iframe found",
+                "Robots.txt file not found",
+                "No broken links",
+                "1 external broken links found",
+                "No broken images"
+              ],
+              "metrics": {
+                "wordsCount": 2526,
+                "linksCount": 34,
+                "brokenLinksCount": 0,
+                "externalBrokenLinksCount": 1,
+                "notOptimizedImagesCount": 5
+              },
+              "details": {
+                "externalBrokenLinks": [
+                  "https://www.linkedin.com/in/jonocatliff/"
+                ],
+                "notOptimizedImages": [
+                  "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+                  "https://images.unsplash.com/photo-1485217988980-11786ced9454?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+                  "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&fp-x=.4&w=396&h=528&q=80",
+                  "https://images.unsplash.com/photo-1670272504528-790c24957dda?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=528&q=80",
+                  "https://images.unsplash.com/photo-1670272505284-8faba1c31f7d?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80"
+                ],
+                "brokenLinks": "No broken links",
+                "brokenImages": "No broken images"
+              }
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      },
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "url": "https://www.automatable.co/book",
+              "summary": [
+                "Has no H1",
+                "Does not have only one H1 tag",
+                "Has H2",
+                "Has enough links",
+                "No unoptimized images",
+                "Content length is good",
+                "No iframe found",
+                "Robots.txt file not found",
+                "No broken links",
+                "No external broken links",
+                "No broken images"
+              ],
+              "metrics": {
+                "wordsCount": 197,
+                "linksCount": 8,
+                "brokenLinksCount": 0,
+                "externalBrokenLinksCount": 0,
+                "notOptimizedImagesCount": 0
+              },
+              "details": {
+                "externalBrokenLinks": "No external broken links",
+                "notOptimizedImages": "No unoptimized images",
+                "brokenLinks": "No broken links",
+                "brokenImages": "No broken images"
+              }
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      },
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "url": "https://www.automatable.co/careers",
+              "summary": [
+                "Has no H1",
+                "Does not have only one H1 tag",
+                "Has H2",
+                "Has enough links",
+                "No unoptimized images",
+                "Content length is good",
+                "Iframe present",
+                "Robots.txt file not found",
+                "No broken links",
+                "No external broken links",
+                "No broken images"
+              ],
+              "metrics": {
+                "wordsCount": 43,
+                "linksCount": 7,
+                "brokenLinksCount": 0,
+                "externalBrokenLinksCount": 0,
+                "notOptimizedImagesCount": 0
+              },
+              "details": {
+                "externalBrokenLinks": "No external broken links",
+                "notOptimizedImages": "No unoptimized images",
+                "brokenLinks": "No broken links",
+                "brokenImages": "No broken images"
+              }
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      },
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "url": "https://www.automatable.co/?channel=undefined&v=1",
+              "summary": [
+                "Has no H1",
+                "Does not have only one H1 tag",
+                "Has H2",
+                "Has enough links",
+                "5 unoptimized images found",
+                "Content is too short",
+                "No iframe found",
+                "Robots.txt file not found",
+                "No broken links",
+                "1 external broken links found",
+                "No broken images"
+              ],
+              "metrics": {
+                "wordsCount": 2526,
+                "linksCount": 34,
+                "brokenLinksCount": 0,
+                "externalBrokenLinksCount": 1,
+                "notOptimizedImagesCount": 5
+              },
+              "details": {
+                "externalBrokenLinks": [
+                  "https://www.linkedin.com/in/jonocatliff/"
+                ],
+                "notOptimizedImages": [
+                  "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+                  "https://images.unsplash.com/photo-1485217988980-11786ced9454?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80",
+                  "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&fp-x=.4&w=396&h=528&q=80",
+                  "https://images.unsplash.com/photo-1670272504528-790c24957dda?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=528&q=80",
+                  "https://images.unsplash.com/photo-1670272505284-8faba1c31f7d?ixlib=rb-4.0.3&auto=format&fit=crop&h=528&q=80"
+                ],
+                "brokenLinks": "No broken links",
+                "brokenImages": "No broken images"
+              }
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Run SEO Audit Tool: Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run SEO Audit Tool: Sync": {
+      "main": [
+        [
+          {
+            "node": "Filtering our similar urls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Audit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtering our similar urls": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Run SEO Audit Tool: Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f61f74bd-2829-4f43-927b-b9cc1a98be09",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "Xk7mEt7VxsZPyGuh",
+  "tags": []
+}

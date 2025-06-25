@@ -1,0 +1,392 @@
+{
+  "name": "Copywriting Agent (Team)",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        180,
+        0
+      ],
+      "id": "dcb905cb-7090-4220-8c54-846383b564f0",
+      "name": "When chat message received",
+      "webhookId": "fcbd341f-1e5e-4154-9411-0b449d9ac312"
+    },
+    {
+      "parameters": {
+        "name": "Ad_Copy",
+        "description": "Call this tool when the user requests ad copy. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "kIqUsGo0GRe402ZO",
+          "mode": "list",
+          "cachedResultName": "Ad Copywriter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        580,
+        320
+      ],
+      "id": "98ce3835-1e88-4b63-8c13-e0b87fd09c3f",
+      "name": "Ad Copy Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        340,
+        220
+      ],
+      "id": "cdb22d08-56f3-42a8-a9a5-991f83ed96a2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCQSyEofGMlre7us",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "vsl_script_agent",
+        "description": "Call this tool when user requests a VSL script. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "O9s4mb6Uer9HLR3W",
+          "mode": "list",
+          "cachedResultName": "VSL Copywriter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        700,
+        360
+      ],
+      "id": "5cc5c539-31e0-49fb-b407-6c491d07ba90",
+      "name": "vsl_script_agent"
+    },
+    {
+      "parameters": {
+        "name": "ad_script_agent",
+        "description": "Call this tool when the user requests an ad script. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "EmXRhMWe3IeFLMvO",
+          "mode": "list",
+          "cachedResultName": "Ad Script Copywriter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        400
+      ],
+      "id": "4cd3254e-4499-423d-831a-7f0cc25ff401",
+      "name": "ad_script_agent"
+    },
+    {
+      "parameters": {
+        "name": "sales_letter_agent",
+        "description": "Call this tool when the user requests a sales letter. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "kNW4Ms1ZyLgrkJez",
+          "mode": "list",
+          "cachedResultName": "Sales Letter Copywriter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        940,
+        360
+      ],
+      "id": "976208f1-abb5-4e61-af3f-389807260fcc",
+      "name": "sales_letter_agent"
+    },
+    {
+      "parameters": {
+        "name": "cold_email_copywriter",
+        "description": "Call this tool when the user requests cold email sequences. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "5c8thgcBBmTZqCRF",
+          "mode": "list",
+          "cachedResultName": "Cold Email Copywriter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1060,
+        300
+      ],
+      "id": "b3bedf88-b3a1-4bc4-9231-73b20b0c083c",
+      "name": "Cold Email Copywriter"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "1H-4qhZmxQYkzVxGSqksRe7TUHFPJC0X6ExzLUwPciEc",
+        "simple": false,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        0
+      ],
+      "id": "407c5b62-2514-4e8d-929f-d96ef2c98c61",
+      "name": "Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "2rpaEXXlmKXWSRWf",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        460,
+        260
+      ],
+      "id": "e1b78919-7651-4e0b-af39-df044134c5b6",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "name": "compliance_agent",
+        "description": "Call this tool to get a compliance check for any copy outputs from \n\nAd Copywriter\nAd Script Copywriter ",
+        "workflowId": {
+          "__rl": true,
+          "value": "jxcLiaTnxcHpGQnj",
+          "mode": "list",
+          "cachedResultName": "Compliance Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1180,
+        220
+      ],
+      "id": "03bc3f80-e4da-4222-a886-d5fe4adcb423",
+      "name": "Compliance Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "# Overview  \nYou are a **Copy Assistant Agent** responsible for managing and routing user requests to the appropriate specialized copywriting agents based on intent. You are the central coordinator for generating and delivering high-quality, platform-ready marketing copy.  \n\n## Context  \n- You are connected to multiple specialized copywriting tools:  \n  - Ad Copy Agent  \n  - VSL Script Agent  \n  - Ad Script Agent  \n  - Sales Letter Agent  \n  - Cold Email Copywriter  \n- You also interact with an OpenAI Chat Model and a memory system to retain conversational context.  \n- Once copy is generated, your role is to deliver it clearly and accurately to the user, and update a connected Google Doc with the final version.  \n\n## Instructions  \n1. When a user request is received, determine its intent and route it to the correct agent:  \n   - Use the Ad Copy Agent for general ad copy (e.g., Meta, Google, LinkedIn).  \n   - Use the Ad Script Agent for short-form direct-to-camera video ads.  \n   - Use the VSL Script Agent for longer video sales letter scripts.  \n   - Use the Sales Letter Agent for long-form landing or sales pages.  \n   - Use the Cold Email Copywriter for outbound email sequences or campaigns.  \n\n2. After routing the request and receiving the generated output:  \n   - Review for completeness and clarity.  \n   - If a revision is clearly needed (e.g., vague result, broken formatting, incorrect structure), return it to the originating agent with a request for refinement.  \n   - Otherwise, finalize and prepare the output.  \n\n3. Update the connected Google Doc with the approved final version.  \n4. Deliver the output to the user in a clear, clean format.  \n\n5. Use the OpenAI Chat Model to classify request type and ensure the best-fitting agent is used.  \n6. Use memory to retain user preferences, context, and prior outputs for continuity in future tasks.  \n\n## Tools  \n- **OpenAI Chat Model** — For interpreting user intent and guiding routing decisions  \n- **Simple Memory** — For context and continuity  \n- **Copywriting Agents**:  \n  - Ad Copy Agent  \n  - Ad Script Agent  \n  - VSL Script Agent  \n  - Sales Letter Agent  \n  - Cold Email Copywriter  \n- **Google Docs API** — For final output delivery and storage  \n\n## Examples  \n- Input: “Can you write a Facebook ad promoting our webinar?”  \n  - Route to: Ad Copy Agent  \n  - Output to user + update Google Doc  \n\n- Input: “Write me a cold email sequence for LinkedIn outreach”  \n  - Route to: Cold Email Copywriter  \n  - Output to user + update Google Doc  \n\n- Input: “I need a 2-minute VSL for a fitness coaching offer”  \n  - Route to: VSL Script Agent  \n  - Output to user + update Google Doc  \n\n## SOP (Standard Operating Procedure)  \n1. Classify the request using the Chat Model.  \n2. Route to the appropriate copywriting agent.  \n3. On receiving output:  \n   - If revision needed, send feedback to agent and repeat.  \n   - If clear and complete, finalize it.  \n4. Post final version to Google Docs.  \n5. Send approved copy to the user.  \n6. Store and reference memory context for seamless follow-ups.  \n\n## Final Notes  \n- Your job is to ensure each request is handled by the most capable tool, and the user receives accurate, structured, and polished output.  \n- Maintain speed, clarity, and quality at every step.  \n---\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        672,
+        0
+      ],
+      "id": "bb2d48a0-494a-4280-99a2-611bb404132a",
+      "name": "Copy Assistant"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Copy Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ad Copy Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Copy Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Copy Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "vsl_script_agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Copy Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ad_script_agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Copy Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sales_letter_agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Copy Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cold Email Copywriter": {
+      "ai_tool": [
+        [
+          {
+            "node": "Copy Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Copy Assistant",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compliance Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Copy Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy Assistant": {
+      "main": [
+        [
+          {
+            "node": "Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e92571e3-84d8-428c-a6db-5eb34dc7dbef",
+  "meta": {
+    "instanceId": "9da288905fbe9354dea4b543fd7e960ac33b487ac1b02440ad591d7c90022103"
+  },
+  "id": "VRgo00Fm4ZIOpHUy",
+  "tags": []
+}

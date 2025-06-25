@@ -1,0 +1,199 @@
+{
+  "name": "Story Agent #2",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "setting"
+            },
+            {
+              "name": "mainCharacter"
+            },
+            {
+              "name": "adventure"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -540,
+        -180
+      ],
+      "id": "85c4e0f1-3bfe-462c-b7f1-989f6a070245",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Story Details\nSetting: {{ $json.setting }}\nMain Character: {{ $json.mainCharacter }}\nAdventure: {{ $json.adventure }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert story writer. You will recieve details, and your job is to write an exciting story using those details.\n\n## Rules\n- Don't output any questions, use your mind to create a story even if the details are vague.\n- Always output a story that should be roughly 1-2 paragraphs."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        20,
+        -200
+      ],
+      "id": "caf53ffe-99b0-4b03-9ef6-72c559bf2aa7",
+      "name": "Child Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        20
+      ],
+      "id": "791c0efe-e343-4267-9fbf-3883814f3f2b",
+      "name": "Flash 2.0",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DW8owDXDeMHnr1rA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "341950f5-2e2b-4fa6-b043-3ec08504c4d0",
+              "leftValue": "={{ $json.setting }}",
+              "rightValue": "none provided",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "e8591a03-b252-401a-aab4-8294c997479e",
+              "leftValue": "={{ $json.mainCharacter }}",
+              "rightValue": "none provided",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "87d6f24d-eef9-4fd8-b1fa-aeb43578d6ea",
+              "leftValue": "={{ $json.adventure }}",
+              "rightValue": "none provided",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        -180
+      ],
+      "id": "641f06e7-3521-46c5-bcb9-f51fd0d5e21a",
+      "name": "All Parameters Given?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5400925-500a-444a-bba9-203d95f84d29",
+              "name": "response",
+              "value": "Not all information provided. Please make sure to provide a main character, setting, and an adventure.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -140,
+        -80
+      ],
+      "id": "d0c1519e-1ea3-41c6-adb1-067566251664",
+      "name": "Try Again"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "All Parameters Given?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flash 2.0": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Child Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All Parameters Given?": {
+      "main": [
+        [
+          {
+            "node": "Child Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Child Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b01dd889-b5bf-4d8b-b7e2-8fa1737da238",
+  "meta": {
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "z0CvIgZ57tA2Deqg",
+  "tags": []
+}

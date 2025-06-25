@@ -1,0 +1,305 @@
+{
+  "name": "API Calls in n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -40,
+        840
+      ],
+      "id": "750571fe-bc86-41ea-adbf-ba964bce9d90",
+      "name": "When chat message received",
+      "webhookId": "c2425926-c005-4a8e-83d4-96ad757ec96f"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        120,
+        840
+      ],
+      "id": "a93fa776-ef72-40ac-9b38-3ff999a1aa12",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4.1-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        60,
+        1020
+      ],
+      "id": "102998b0-2182-4a04-ba31-d2f18318de72",
+      "name": "GPT 4.1-mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "fpo6OUh9TcHg29jk",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "imperial",
+        "locationSelection": "coordinates",
+        "latitude": "41.8781",
+        "longitude": "-87.6298"
+      },
+      "type": "n8n-nodes-base.openWeatherMap",
+      "typeVersion": 1,
+      "position": [
+        0,
+        540
+      ],
+      "id": "16c4d152-d905-49a5-9013-b476f7f2a4d3",
+      "name": "OpenWeatherMap",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "AoobPcMhq7n8fgfA",
+          "name": "OpenWeatherMap account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "lat",
+              "value": "41.8781"
+            },
+            {
+              "name": "lon",
+              "value": "-87.6298"
+            },
+            {
+              "name": "appid",
+              "value": "13831c48ef7b2aaf25ba7a713292f8f3"
+            },
+            {
+              "name": "units",
+              "value": "imperial"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        540
+      ],
+      "id": "9d67245b-e06f-423f-93ef-91de3879faaa",
+      "name": "OpenWeather HTTP"
+    },
+    {
+      "parameters": {
+        "content": "# Native vs. HTTP",
+        "height": 280,
+        "width": 600,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        440
+      ],
+      "id": "84cdb3ef-9a6c-4c5d-abbe-362ee17f9ed7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# HTTP Requests for Agents\n",
+        "height": 440,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        740
+      ],
+      "id": "17437cee-1245-4ffc-8f43-bc9a13c488cd",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Be precise and concise.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $fromAI(\"searchTerm\") }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        1020
+      ],
+      "id": "3f589560-2991-4c75-863e-1716a42a6cc1",
+      "name": "Web Search",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "w02NtJaxGUBYqlmc",
+          "name": "Perplexity"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $json.query }}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        1300
+      ],
+      "id": "fcc08012-2edf-4b3d-8ee9-7e912aaf16aa",
+      "name": "Tavily",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1Gs5ooRQh4ZYMIK6",
+          "name": "Tavily Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6f7a5a6a-d14e-4e29-b81e-30e24a059c38",
+              "name": "query",
+              "value": "pineapples on pizza",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        20,
+        1300
+      ],
+      "id": "1ed530a2-fe97-4331-8881-4c7d7817be93",
+      "name": "Set"
+    },
+    {
+      "parameters": {
+        "content": "# Variable in Body Request",
+        "height": 280,
+        "width": 600,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        1200
+      ],
+      "id": "9284c7dc-a60a-462b-9fec-14d7deef4d2e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# 🛠 Setup Guide  \n**Author:** [Nate Herk](https://www.youtube.com/@nateherk)\n\nTo connect the APIs and get started playing around, you need to connect the following credentials to the corresponding nodes:\n\n1. **OpenWeather Map** – [https://openweathermap.org/api](https://openweathermap.org/api)  \n   ↳ Make sure to grab your API key and set it in the OpenWeather node.\n\n2. **Perplexity** – [https://www.perplexity.ai/](https://www.perplexity.ai/)  \n   ↳ Generate your API key and configure it under HTTP Request or a custom node.\n\n3. **Tavily** – [https://tavily.com/](https://tavily.com/)  \n   ↳ Sign up, retrieve your API key, and link it to the Tavily Search node or HTTP Request node.\n\nOnce all three are connected, you’re ready to start building and experimenting with workflows!\n",
+        "height": 500,
+        "width": 440
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        440
+      ],
+      "id": "5fea4449-826d-423a-b9fd-f1391239cc12",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 4.1-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "Tavily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1dcc281e-8df2-47ae-937d-502f4f81b0cc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "zcj4Dr1xl9x6KAI7",
+  "tags": []
+}

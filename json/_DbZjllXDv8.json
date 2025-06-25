@@ -1,0 +1,546 @@
+{
+  "name": "LLM Testing",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -380,
+        540
+      ],
+      "id": "5792dafb-f847-492f-869a-d2228f816bd6",
+      "name": "When chat message received",
+      "webhookId": "94b5730d-57ea-4098-aa13-9c262cb21bdc"
+    },
+    {
+      "parameters": {
+        "name": "nvidia",
+        "description": "retrieves data about nvidia earnings report"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        560,
+        180
+      ],
+      "id": "6960ff1b-218f-4ce7-b26f-f1ea2cddb8fb",
+      "name": "nvidia"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "sample",
+          "mode": "list",
+          "cachedResultName": "sample"
+        },
+        "options": {
+          "pineconeNamespace": "nvidia"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        860,
+        180
+      ],
+      "id": "2c0b680b-6f42-44d5-b07a-f27ee7c0d04e",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "kRQGVexSgzWhzJz2",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "nvidia",
+        "description": "retrieves data about nvidia earnings report"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        560,
+        520
+      ],
+      "id": "7e6879d3-de58-45d1-baba-28789fe1b262",
+      "name": "nvidia1"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "sample",
+          "mode": "list",
+          "cachedResultName": "sample"
+        },
+        "options": {
+          "pineconeNamespace": "nvidia"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        860,
+        520
+      ],
+      "id": "d34166ae-c985-422d-994b-bca22c0b416c",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "kRQGVexSgzWhzJz2",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        680
+      ],
+      "id": "87303ce2-7cd0-4568-a395-9b6add58ce33",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        700
+      ],
+      "id": "7d338a2b-c8d5-401c-a094-81ed74e5e014",
+      "name": "GPT-4o",
+      "credentials": {
+        "openAiApi": {
+          "id": "xDyhCbADRbtDk9OJ",
+          "name": "Deepseek V3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        360
+      ],
+      "id": "4c174591-543c-4a72-9f5f-9c6cb1565344",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        360
+      ],
+      "id": "33ad68d1-790f-467e-82be-d15cfebff7e9",
+      "name": "Claude 3.5 Sonnet",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iEsH2oywXIJiWHnM",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview  \nYou are an AI agent responsible for retrieving and summarizing NVIDIA's financial and earnings information.  \n\n## Context  \n- The agent uses the \"nvidia\" tool to access up-to-date data on NVIDIA's financials, including revenue, earnings, and market performance.  \n- Responses should be concise, accurate, and focused on the requested metrics or insights.  \n\n## Instructions  \n1. Identify the specific financial metric or information requested by the user.  \n2. Query the \"nvidia\" tool for the relevant data.  \n3. Summarize the findings in a clear and professional manner.  \n\n## Tools  \n- NVIDIA financials and earnings tool (\"nvidia\").  \n\n## Examples  \n- Input: \"Provide NVIDIA's Q4 earnings report summary.\"  \n- Output: \"NVIDIA's Q4 earnings were $2.5 billion, with a 12% year-over-year growth. Revenue was $8.3 billion.\"  \n\n- Input: \"What was NVIDIA's revenue in the last fiscal year?\"  \n- Output: \"NVIDIA's revenue for the last fiscal year was $33 billion, marking a 20% increase from the previous year.\"  \n\n## SOP (Standard Operating Procedure)  \n1. Parse the user's query to determine the specific financial details required.  \n2. Use the \"nvidia\" tool to retrieve the latest data.  \n3. Cross-check and verify the data for accuracy.  \n4. Provide a concise summary in response to the user's query.  \n\n## Final Notes  \n- Always ensure the data is current and relevant to the query.  \n- Avoid speculation; report only factual information retrieved from the \"nvidia\" tool.  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        180,
+        500
+      ],
+      "id": "b4328a17-373c-462d-bca3-fb9314598177",
+      "name": "GPT-4o Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview  \nYou are an AI agent responsible for retrieving and summarizing NVIDIA's financial and earnings information.  \n\n## Context  \n- The agent uses the \"nvidia\" tool to access up-to-date data on NVIDIA's financials, including revenue, earnings, and market performance.  \n- Responses should be concise, accurate, and focused on the requested metrics or insights.  \n\n## Instructions  \n1. Identify the specific financial metric or information requested by the user.  \n2. Query the \"nvidia\" tool for the relevant data.  \n3. Summarize the findings in a clear and professional manner.  \n\n## Tools  \n- NVIDIA financials and earnings tool (\"nvidia\").  \n\n## Examples  \n- Input: \"Provide NVIDIA's Q4 earnings report summary.\"  \n- Output: \"NVIDIA's Q4 earnings were $2.5 billion, with a 12% year-over-year growth. Revenue was $8.3 billion.\"  \n\n- Input: \"What was NVIDIA's revenue in the last fiscal year?\"  \n- Output: \"NVIDIA's revenue for the last fiscal year was $33 billion, marking a 20% increase from the previous year.\"  \n\n## SOP (Standard Operating Procedure)  \n1. Parse the user's query to determine the specific financial details required.  \n2. Use the \"nvidia\" tool to retrieve the latest data.  \n3. Cross-check and verify the data for accuracy.  \n4. Provide a concise summary in response to the user's query.  \n\n## Final Notes  \n- Always ensure the data is current and relevant to the query.  \n- Avoid speculation; report only factual information retrieved from the \"nvidia\" tool.  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        180,
+        160
+      ],
+      "id": "0ecbf39d-1212-4ee2-857a-bd2da1cab29b",
+      "name": "Claude 3.5 Sonnet Agent"
+    },
+    {
+      "parameters": {
+        "name": "nvidia",
+        "description": "retrieves data about nvidia earnings report"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        560,
+        860
+      ],
+      "id": "a533d282-f346-4830-8da4-f323c9659f61",
+      "name": "nvidia2"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "sample",
+          "mode": "list",
+          "cachedResultName": "sample"
+        },
+        "options": {
+          "pineconeNamespace": "nvidia"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        860,
+        860
+      ],
+      "id": "2717272f-77af-44b2-9bd8-16acf5994227",
+      "name": "Pinecone Vector Store2",
+      "credentials": {
+        "pineconeApi": {
+          "id": "kRQGVexSgzWhzJz2",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        1020
+      ],
+      "id": "738be7f8-3fc5-4603-bd32-e0281b0629d9",
+      "name": "Embeddings OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview  \nYou are an AI agent responsible for retrieving and summarizing NVIDIA's financial and earnings information.  \n\n## Context  \n- The agent uses the \"nvidia\" tool to access up-to-date data on NVIDIA's financials, including revenue, earnings, and market performance.  \n- Responses should be concise, accurate, and focused on the requested metrics or insights.  \n\n## Instructions  \n1. Identify the specific financial metric or information requested by the user.  \n2. Query the \"nvidia\" tool for the relevant data.  \n3. Summarize the findings in a clear and professional manner.  \n\n## Tools  \n- NVIDIA financials and earnings tool (\"nvidia\").  \n\n## Examples  \n- Input: \"Provide NVIDIA's Q4 earnings report summary.\"  \n- Output: \"NVIDIA's Q4 earnings were $2.5 billion, with a 12% year-over-year growth. Revenue was $8.3 billion.\"  \n\n- Input: \"What was NVIDIA's revenue in the last fiscal year?\"  \n- Output: \"NVIDIA's revenue for the last fiscal year was $33 billion, marking a 20% increase from the previous year.\"  \n\n## SOP (Standard Operating Procedure)  \n1. Parse the user's query to determine the specific financial details required.  \n2. Use the \"nvidia\" tool to retrieve the latest data.  \n3. Cross-check and verify the data for accuracy.  \n4. Provide a concise summary in response to the user's query.  \n\n## Final Notes  \n- Always ensure the data is current and relevant to the query.  \n- Avoid speculation; report only factual information retrieved from the \"nvidia\" tool.  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        160,
+        840
+      ],
+      "id": "1db0a232-fb95-4c1a-a900-2f44767ae90a",
+      "name": "GPT-4o Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        1040
+      ],
+      "id": "9f08f95b-0a10-4754-9d1d-60b807680dc9",
+      "name": "Gemini Flash 2.0",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DW8owDXDeMHnr1rA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        620,
+        1040
+      ],
+      "id": "fabe7920-1c92-4ce5-80b1-8cf869d576eb",
+      "name": "Gemini Flash 2.0_",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DW8owDXDeMHnr1rA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        580,
+        700
+      ],
+      "id": "d2e13319-85c0-48c6-b252-c476965410d7",
+      "name": "GPT-4o_",
+      "credentials": {
+        "openAiApi": {
+          "id": "BP9v81AwJlpYGStD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        340
+      ],
+      "id": "bc54a0df-8baa-4db3-9473-52c3e64f9fbf",
+      "name": "Claude 3.5 Sonnet_",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iEsH2oywXIJiWHnM",
+          "name": "Anthropic account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        []
+      ]
+    },
+    "nvidia": {
+      "ai_tool": [
+        [
+          {
+            "node": "Claude 3.5 Sonnet Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "nvidia",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nvidia1": {
+      "ai_tool": [
+        [
+          {
+            "node": "GPT-4o Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "nvidia1",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "GPT-4o Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude 3.5 Sonnet": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Claude 3.5 Sonnet Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nvidia2": {
+      "ai_tool": [
+        [
+          {
+            "node": "GPT-4o Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store2": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "nvidia2",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Flash 2.0": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "GPT-4o Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Flash 2.0_": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "nvidia2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o_": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "nvidia1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude 3.5 Sonnet_": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "nvidia",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ab0ea85a-10b3-46ed-a263-c388de8b5998",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "CgLalQnT5EZXMaMb",
+  "tags": []
+}

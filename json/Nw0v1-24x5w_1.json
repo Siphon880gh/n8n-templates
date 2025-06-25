@@ -1,0 +1,322 @@
+{
+  "name": "MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "20887cad-15fc-41c3-af1b-657bbafb3ea1"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -80
+      ],
+      "id": "e117645a-ddc1-46de-8b9c-7be0b0c03304",
+      "name": "MCP Server Trigger",
+      "webhookId": "20887cad-15fc-41c3-af1b-657bbafb3ea1"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "e65463fc466fd521dc1ecc1964b4d6dbac77710e2a00f0a73b597f41477d9def@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "AI Agent"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        280
+      ],
+      "id": "54118c89-db8a-4e15-8f17-fcb6aa1e59c0",
+      "name": "Create",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vH8czuEshd95ultk",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "e65463fc466fd521dc1ecc1964b4d6dbac77710e2a00f0a73b597f41477d9def@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "AI Agent"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -120,
+        280
+      ],
+      "id": "c1bde685-ad1f-4a88-b139-51fd739285bb",
+      "name": "Search",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vH8czuEshd95ultk",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "e65463fc466fd521dc1ecc1964b4d6dbac77710e2a00f0a73b597f41477d9def@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "AI Agent"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "updateFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        280
+      ],
+      "id": "5ae2476d-bfa6-4af4-b5a8-cfb1cea973a3",
+      "name": "Update",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vH8czuEshd95ultk",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Calendar\n**Google Calendar Tools:** create, search and update.",
+        "height": 240,
+        "width": 440
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        180
+      ],
+      "id": "5a14e1d9-d4e3-4475-b6ff-1f5e8750a6d0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Google Sheets\n**Google Sheets Tools:** create, search and update.",
+        "height": 240,
+        "width": 440,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        180
+      ],
+      "id": "d3647865-58c0-41e3-8a8c-34d288766455",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-lpLGn6Tm8fLyPoh5q5psYiCp6Jo8W9o8Lde3rhFTFY",
+          "mode": "list",
+          "cachedResultName": "n8n MCP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-lpLGn6Tm8fLyPoh5q5psYiCp6Jo8W9o8Lde3rhFTFY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-lpLGn6Tm8fLyPoh5q5psYiCp6Jo8W9o8Lde3rhFTFY/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Name",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        280
+      ],
+      "id": "d93e1e4d-eda6-4a45-88d9-e7aa1a06204c",
+      "name": "Search1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1-lpLGn6Tm8fLyPoh5q5psYiCp6Jo8W9o8Lde3rhFTFY",
+          "mode": "list",
+          "cachedResultName": "n8n MCP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-lpLGn6Tm8fLyPoh5q5psYiCp6Jo8W9o8Lde3rhFTFY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-lpLGn6Tm8fLyPoh5q5psYiCp6Jo8W9o8Lde3rhFTFY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Budget": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Budget', ``, 'string') }}",
+            "Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Date', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        380,
+        280
+      ],
+      "id": "087f6b3e-4075-4906-9fdf-2c7feb3fef4a",
+      "name": "Create Or Update",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oHG2DldApzJrCoBY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search1": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Or Update": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b1526a14-fa82-4115-bf42-d048693fab9e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2017cc6d1e4b956d269a8123bffa72fb7aaa41ad37a73b7c0fb64c7d0e2edae"
+  },
+  "id": "xdxwy4TNcR9WwWu1",
+  "tags": []
+}
