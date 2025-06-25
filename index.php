@@ -70,7 +70,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200" id="table-body">
                         <?php
-                        $csvFile = 'n8n-templates.csv';
+                        $csvFile = 'n8n-templates_enriched.csv';
                         $jsonDir = 'json/';
                         $templates = [];
                         $creators = [];
@@ -81,7 +81,7 @@
                             $headers = fgetcsv($handle); // Get headers
                             
                             while (($data = fgetcsv($handle)) !== FALSE) {
-                                if (count($data) >= 9) { // Ensure we have enough columns
+                                // if (count($data) >= 9) { // Ensure we have enough columns
                                     $template = array_combine($headers, $data);
                                     $templates[] = $template;
                                     
@@ -96,7 +96,7 @@
                                     if (file_exists($jsonFile)) {
                                         $availableDownloads++;
                                     }
-                                }
+                                // }
                             }
                             fclose($handle);
                         }
