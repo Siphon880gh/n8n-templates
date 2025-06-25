@@ -1,6 +1,7 @@
 # n8n Templates Library
 
 By Weng Fei Fung
+
 ![Last Commit](https://img.shields.io/github/last-commit/Siphon880gh/n8n-templates/main)
 <a target="_blank" href="https://github.com/Siphon880gh" rel="nofollow"><img src="https://img.shields.io/badge/GitHub--blue?style=social&logo=GitHub" alt="Github" data-canonical-src="https://img.shields.io/badge/GitHub--blue?style=social&logo=GitHub" style="max-width:8.5ch;"></a>
 <a target="_blank" href="https://www.linkedin.com/in/weng-fung/" rel="nofollow"><img src="https://img.shields.io/badge/LinkedIn-blue?style=flat&logo=linkedin&labelColor=blue" alt="Linked-In" data-canonical-src="https://img.shields.io/badge/LinkedIn-blue?style=flat&amp;logo=linkedin&amp;labelColor=blue" style="max-width:10ch;"></a>
@@ -22,49 +23,6 @@ A beautiful, searchable web interface for browsing and downloading n8n automatio
 ## 🎯 Data Source
 
 The core template data is sourced from [Oleg Melnikov's comprehensive n8n templates collection](https://www.youtube.com/watch?v=yAiCXyGLZ2c), uploaded on June 20th, 2025. This collection contains hundreds of n8n automation workflows covering various use cases and integrations snapshotted on June 25th, 2025.
-
-If the database continue to update beyond June 25th, 2025, you can perform a diff per the ID column to see where the new records are. The original database does not have category column and unless a new category column is added, you can enrich the new records with a category column on ChatGPT o4:
-
-```
-Lets enrich with a category entry at each record. Add a column "category" on the leftmost.
-
-Some categories could be:
-AI Agent Development;Business Process Automation;Content Creation & Video Automation;Data Processing & Analysis;Design & Creative Automation;Marketing & Advertising Automation;Technical Infrastructure & DevOps;Web Scraping & Data Extraction
-
-And of course, add your own category where missing.
-
-Do not parse part of the dataset and then ask the user to review and confirm that the columns are structured as expected. Go ahead and enrich all rows with appropriate categories. 
-
-The output will probably be too long to display all at once here. We can export as a file that I download.
-
-Here is my data:
-"""
-{CSV lines 25 at a time, only two columns name and title}
-"""
-```
-
-Or if using Cursor AI, open the chat from the csv (of 25 ish lines):
-```
-Lets enrich with a category entry at each record. Add a column "category" on the leftmost.
-
-Some categories could be:
-AI Agent Development;Business Process Automation;Content Creation & Video Automation;Data Processing & Analysis;Design & Creative Automation;Marketing & Advertising Automation;Technical Infrastructure & DevOps;Web Scraping & Data Extraction
-
-And of course, add your own category where missing.
-
-Do not parse part of the dataset and then ask the user to review and confirm that the columns are structured as expected. Go ahead and enrich all rows with appropriate categories. 
-```
-
-The categories can be captured from the most recent dashboard by running Chrome console script:
-```
-var arr = [];
-document.querySelectorAll("#category-filter *").forEach(el=>{
-    if(el.textContent!=="All Categories")
-        arr.push(el.textContent);
-})
-
-console.log(arr.join(";"))
-```
 
 
 ### 🤖 AI-Powered Template Recommendations
@@ -171,6 +129,62 @@ The interface uses Tailwind CSS for styling. Modify the classes in `index.php` t
 - **n8n Version**: Tested with self-hosted community n8n version v1.94.1
 - **PHP**: Requires PHP 8.4+ (uses null coalescing operator and other modern PHP features)
 - **Browsers**: Compatible with all modern browsers (Chrome, Firefox, Safari, Edge)
+
+## 🆕 Getting Updates, and Re-Enriching Category Column
+
+If the database continue to update beyond June 25th, 2025, you can perform a diff per the ID column to see where the new records are. The original database does not have category column and unless a new category column is added, you can enrich the new records with a category column by using AI. The title column in the original database has stoo many degrees of differences, so that can be thought of as a subcategory column.
+
+Let's use Cursor AI (AI in a code editor)
+
+Keep in mind this enrichment prompt:
+```
+Lets enrich with a category entry at each record. Add a column "category" on the leftmost.
+
+Some categories could be:
+AI Agent Development;Business Process Automation;Content Creation & Video Automation;Data Processing & Analysis;Design & Creative Automation;Marketing & Advertising Automation;Technical Infrastructure & DevOps;Web Scraping & Data Extraction
+
+And of course, add your own category where missing.
+
+Do not parse part of the dataset and then ask the user to review and confirm that the columns are structured as expected. Go ahead and enrich all rows with appropriate categories. 
+```
+
+Keep in mind that the semi-colon separated categories in the prompt can be captured from the most recent dashboard by running Chrome console script. It's good to update the categories if your AI enrichment has caused new categories to crop out:
+```
+var arr = [];
+document.querySelectorAll("#category-filter *").forEach(el=>{
+    if(el.textContent!=="All Categories")
+        arr.push(el.textContent);
+})
+
+console.log(arr.join(";"))
+```
+
+And you will break apart the new records into 25 entries at a time.
+
+Now starting the process of preparing for enrichment and the actual enrichment:
+
+Make csv into columns using Rainbow CSV -> Align CSV...
+![](docs/20250625071649.png)
+
+CMD+OPT Down from the first description
+![](docs/20250625072029.png)
+
+Then all columns description selected. Holding Shift, press End (available on a connected keyboard like Logi MX Keys, not part of normal MacBook Pro laptop keys). Then CMD+X to cut to clipboard
+![](docs/20250625072104.png)
+
+Prompt Cursor AI with the enrichment prompt somewhere above (same section here).
+
+After enrichment, you'll see the new category column:
+![](docs/20250625072335.png)
+
+Paste the cut columns back to the end. To move cursor to the end of each line, run CMD+OPT down to the left of "category" header (so before first character of document). Then when reached final line, press End on keyboard! Finally, paste CMD+V
+
+At last, remove the column view:
+![](docs/20250625071504.png)
+
+
+This is the final data that the dashboard can view:
+![](docs/20250625072527.png)
 
 ## 👥 Contributors
 
