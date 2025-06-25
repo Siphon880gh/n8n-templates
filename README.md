@@ -90,7 +90,7 @@ Now starting the process of preparing for enrichment and the actual enrichment:
 Make csv into columns using Rainbow CSV -> Align CSV...
 ![](docs/20250625071649.png)
 
-CMD+OPT Down from the first description
+CMD+OPT Down from the description header:
 ![](docs/20250625072029.png)
 
 Then all columns description selected. Holding Shift, press End (available on a connected keyboard like Logi MX Keys, not part of normal MacBook Pro laptop keys). Then CMD+X to cut to clipboard
@@ -104,10 +104,12 @@ After enrichment, you'll see the new category column:
 Paste the cut columns back to the end. To move cursor to the end of each line, run CMD+OPT down to the left of "category" header (so before first character of document). Then when reached final line, press End on keyboard! Finally, paste CMD+V
 
 At last, remove the column view:
+
 ![](docs/20250625071504.png)
 
 
 This is the final data that the dashboard can view:
+
 ![](docs/20250625072527.png)
 
 ## 🚀 Quick Start
