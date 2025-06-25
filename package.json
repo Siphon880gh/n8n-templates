@@ -1,0 +1,22 @@
+{
+  "name": "n8n-template-downloader",
+  "version": "1.0.0",
+  "description": "Downloads n8n templates from Google Drive URLs in CSV file",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "download": "node index.js"
+  },
+  "dependencies": {
+    "csv-parse": "^5.5.2"
+  },
+  "keywords": [
+    "n8n",
+    "templates",
+    "google-drive",
+    "csv",
+    "download"
+  ],
+  "author": "",
+  "license": "MIT"
+} 
