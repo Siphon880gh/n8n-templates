@@ -40,7 +40,7 @@ Weng has made a browsable web interface for the templates
 Weng has also fetched and downloaded each n8n template file so you can download or view  the template at the web interface. You also have access to the downloader script in case the original database continues to be updated and you want a script to fetch the copies into the web interface as well. The web interface automatically detects the template files which should be named after the ID (see original database for the ID) and then displays a Download or View button.
 
 Downloader script in action:
-- Notice some files are downloaded with suffix `_1`, `_2`, etc. This is because some template_url actually have multiple n8n templates. If you watch the youtube video for that resource, it may have covered multiple workflows OR those workflows work together. Sometimes one workflow executes another workflow.
+- Notice some files are downloaded with suffix `_1`, `_2`, etc. This is because some template_url actually have multiple n8n templates. If you watch the youtube video for that resource, it may have covered multiple different types of workflows OR may have covered those workflows as working together (For example, one workflow executes another workflow).
 ![](docs/20250625080035.png)
 
 Example of downloaded n8n template json file:
@@ -56,7 +56,7 @@ Files saved to: /Users/wengffung/dev/web/templates/json
 
 ## 🆕 Getting Updates, and Re-Enriching Category Column
 
-If the database continue to update beyond June 25th, 2025, you can perform a diff per the ID column to see where the new records are. The original database does not have category column and unless a new category column is added, you can enrich the new records with a category column by using AI. The title column in the original database has stoo many degrees of differences, so that can be thought of as a subcategory column.
+If the database continue to update beyond June 25th, 2025, you can perform a diff per the ID column to see where the new records are. The original database does not have category column and unless a new category column is added, you can enrich the new records with a category column by using AI. The "title" column in the original database at first glance looks like a category, but it has too many degrees of differences, so that can be thought of as a subcategory column.
 
 Let's use Cursor AI (AI in a code editor)
 
