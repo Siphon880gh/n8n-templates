@@ -47,7 +47,7 @@ function downloadFile(driveId, filename) {
         
         const request = https.get(downloadUrl, (response) => {
             // Handle redirects
-            if (response.statusCode === 302 || response.statusCode === 301) {
+            if (response.statusCode === 302 || response.statusCode === 301 || response.statusCode === 303) {
                 const redirectUrl = response.headers.location;
                 console.log(`Following redirect for ${filename}`);
                 
