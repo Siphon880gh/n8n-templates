@@ -1,6 +1,32 @@
 <?php
 // PHP version 8.4.7
+session_start();
+
 $csvPath = 'data/n8n-templates_enriched.csv';
+$password = "go";
+
+// Handle login
+$loginError = '';
+if ($_POST['action'] ?? '' === 'login') {
+    $inputPassword = $_POST['password'] ?? '';
+    if ($inputPassword === $password) {
+        $_SESSION['logged_in'] = true;
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        $loginError = 'Invalid password. Please try again.';
+    }
+}
+
+// Handle logout
+if ($_GET['action'] ?? '' === 'logout') {
+    session_destroy();
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+// Check if user is logged in
+$isLoggedIn = $_SESSION['logged_in'] ?? false;
 
 // Suppress deprecation warnings
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
@@ -17,15 +43,100 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gray-50">
+
+<?php if (!$isLoggedIn): ?>
+    <!-- Login Form -->
+    <div class="min-h-screen flex items-center justify-center px-4 py-8">
+        <div class="max-w-md w-full">
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <!-- Login Header -->
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 text-center">
+                    <h1 class="text-2xl font-bold flex items-center justify-center">
+                        <i class="fas fa-lock mr-3"></i>
+                        Login Required
+                    </h1>
+                    <p class="mt-2 text-blue-100">Access n8n Templates Library</p>
+                </div>
+
+                <!-- Login Form -->
+                <div class="p-6">
+                    <?php if (!empty($loginError)): ?>
+                        <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <?php echo htmlspecialchars($loginError); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="POST" action="" class="space-y-4">
+                        <input type="hidden" name="action" value="login">
+                        
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-key mr-1"></i>
+                                Password
+                            </label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                required 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                placeholder="Enter password"
+                                autocomplete="current-password"
+                            >
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Login
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <div class="bg-gray-50 px-6 py-4 text-center text-sm text-gray-600">
+                    <p><i class="fas fa-info-circle mr-1"></i> Enter the correct password to access the templates library</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Focus on password field when page loads
+        $(document).ready(function() {
+            $('#password').focus();
+        });
+
+        // Add some visual feedback for the form
+        $('#password').on('focus', function() {
+            $(this).closest('.max-w-md').addClass('transform scale-[1.02] transition-transform duration-200');
+        }).on('blur', function() {
+            $(this).closest('.max-w-md').removeClass('transform scale-[1.02] transition-transform duration-200');
+        });
+    </script>
+
+<?php else: ?>
+    <!-- Main Content (existing page content) -->
     <div class="container mx-auto px-4 py-8">
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <!-- Header -->
+            <!-- Header with Logout -->
             <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
-                <h1 class="text-3xl font-bold flex items-center">
-                    <i class="fas fa-cogs mr-3"></i>
-                    n8n Templates Library
-                </h1>
-                <p class="mt-2 text-blue-100">Browse and download automation templates</p>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold flex items-center">
+                            <i class="fas fa-cogs mr-3"></i>
+                            n8n Templates Library
+                        </h1>
+                        <p class="mt-2 text-blue-100">Browse and download automation templates</p>
+                    </div>
+                    <a href="?action=logout" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Logout
+                    </a>
+                </div>
             </div>
 
             <!-- Stats -->
@@ -615,5 +726,6 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
             }
         });
     </script>
+<?php endif; ?>
 </body>
 </html>
