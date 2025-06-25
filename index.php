@@ -72,13 +72,43 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                 <table class="w-full" id="templates-table">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Template</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Creator</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header cursor-pointer hover:bg-gray-200 transition-colors" data-column="category">
+                                <div class="flex items-center justify-between">
+                                    <span>Category</span>
+                                    <i class="fas fa-sort text-gray-400 sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header cursor-pointer hover:bg-gray-200 transition-colors" data-column="template">
+                                <div class="flex items-center justify-between">
+                                    <span>Template</span>
+                                    <i class="fas fa-sort text-gray-400 sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header cursor-pointer hover:bg-gray-200 transition-colors" data-column="creator">
+                                <div class="flex items-center justify-between">
+                                    <span>Creator</span>
+                                    <i class="fas fa-sort text-gray-400 sort-icon"></i>
+                                </div>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header cursor-pointer hover:bg-gray-200 transition-colors" data-column="date">
+                                <div class="flex items-center justify-between">
+                                    <span>Date</span>
+                                    <i class="fas fa-sort text-gray-400 sort-icon"></i>
+                                </div>
+                            </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Links</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Download</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">View</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header cursor-pointer hover:bg-gray-200 transition-colors" data-column="download">
+                                <div class="flex items-center justify-center">
+                                    <span>Download</span>
+                                    <i class="fas fa-sort text-gray-400 sort-icon ml-1"></i>
+                                </div>
+                            </th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header cursor-pointer hover:bg-gray-200 transition-colors" data-column="view">
+                                <div class="flex items-center justify-center">
+                                    <span>View</span>
+                                    <i class="fas fa-sort text-gray-400 sort-icon ml-1"></i>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200" id="table-body">
@@ -184,7 +214,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             // Truncate description for display
                             $shortDescription = strlen($description) > 150 ? substr($description, 0, 150) . '...' : $description;
                             
-                            echo '<tr class="hover:bg-gray-50 template-row" data-creator="' . strtolower($creator) . '" data-search="' . strtolower($name . ' ' . $title . ' ' . $description . ' ' . $creator . ' ' . $category) . '" data-category="' . strtolower($category) . '">';
+                            echo '<tr class="hover:bg-gray-50 template-row" data-creator="' . strtolower($creator) . '" data-search="' . strtolower($name . ' ' . $title . ' ' . $description . ' ' . $creator . ' ' . $category) . '" data-category="' . strtolower($category) . '" data-template="' . strtolower($name) . '" data-date="' . htmlspecialchars($formattedDate) . '" data-download="' . ($hasJsonFile ? '1' : '0') . '" data-view="' . ($hasJsonFile ? '1' : '0') . '">';
                             
                             // Category column
                             echo '<td class="px-6 py-4 text-center">';
@@ -386,6 +416,103 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                 }
             );
         });
+        
+        // Sorting functionality
+        let currentSort = { column: null, direction: 'asc' };
+        
+        $('.sortable-header').on('click', function() {
+            const column = $(this).data('column');
+            const $icon = $(this).find('.sort-icon');
+            
+            // Reset all other icons
+            $('.sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort').removeClass('text-blue-600').addClass('text-gray-400');
+            
+            // Determine sort direction
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.direction = 'asc';
+            }
+            currentSort.column = column;
+            
+            // Update icon
+            $icon.removeClass('fa-sort text-gray-400').addClass('text-blue-600');
+            if (currentSort.direction === 'asc') {
+                $icon.addClass('fa-sort-up');
+            } else {
+                $icon.addClass('fa-sort-down');
+            }
+            
+            // Sort the table
+            sortTable(column, currentSort.direction);
+        });
+        
+        function sortTable(column, direction) {
+            const $tbody = $('#table-body');
+            const $rows = $('.template-row').toArray();
+            
+            $rows.sort(function(a, b) {
+                let valueA, valueB;
+                
+                switch(column) {
+                    case 'category':
+                        valueA = $(a).data('category') || '';
+                        valueB = $(b).data('category') || '';
+                        break;
+                    case 'template':
+                        valueA = $(a).data('template') || '';
+                        valueB = $(b).data('template') || '';
+                        break;
+                    case 'creator':
+                        valueA = $(a).data('creator') || '';
+                        valueB = $(b).data('creator') || '';
+                        break;
+                    case 'date':
+                        valueA = $(a).data('date') || '';
+                        valueB = $(b).data('date') || '';
+                        break;
+                    case 'download':
+                        valueA = parseInt($(a).data('download')) || 0;
+                        valueB = parseInt($(b).data('download')) || 0;
+                        break;
+                    case 'view':
+                        valueA = parseInt($(a).data('view')) || 0;
+                        valueB = parseInt($(b).data('view')) || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+                
+                // For download and view columns (boolean values)
+                if (column === 'download' || column === 'view') {
+                    if (direction === 'asc') {
+                        return valueA - valueB;
+                    } else {
+                        return valueB - valueA;
+                    }
+                }
+                
+                // For text columns (alphabetical)
+                if (typeof valueA === 'string' && typeof valueB === 'string') {
+                    if (direction === 'asc') {
+                        return valueA.localeCompare(valueB);
+                    } else {
+                        return valueB.localeCompare(valueA);
+                    }
+                }
+                
+                return 0;
+            });
+            
+            // Clear and re-append sorted rows
+            $tbody.empty();
+            $rows.forEach(function(row) {
+                $tbody.append(row);
+            });
+            
+            // Reapply filtering if any filters are active
+            filterTable();
+        }
         
         // JSON Modal Functions
         let currentJsonContent = '';
