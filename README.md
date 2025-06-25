@@ -10,7 +10,7 @@ A beautiful, searchable web interface for browsing and downloading n8n automatio
 
 ## 🌟 Features
 
-- **🔐 Secure Login System** - Password-protected access to the templates library
+- **🔐 Secure Login System** - Password-protected access to the templates library. There is a switch to enable or disable password-protection at the top of `index.php`.
 - **🔍 Advanced Search & Filtering** - Search by template name, creator, description, or category
 - **📊 Real-time Statistics** - View total templates, available downloads, and unique creators
 - **⬇️ Direct Downloads** - Download JSON workflow files directly
@@ -21,7 +21,42 @@ A beautiful, searchable web interface for browsing and downloading n8n automatio
 
 ## 🎯 Data Source
 
-The core template data is sourced from [Oleg Melnikov's comprehensive n8n templates collection](https://www.youtube.com/watch?v=yAiCXyGLZ2c), uploaded on June 20th, 2025. This collection contains hundreds of n8n automation workflows covering various use cases and integrations.
+The core template data is sourced from [Oleg Melnikov's comprehensive n8n templates collection](https://www.youtube.com/watch?v=yAiCXyGLZ2c), uploaded on June 20th, 2025. This collection contains hundreds of n8n automation workflows covering various use cases and integrations snapshotted on June 25th, 2025.
+
+If the database continue to update beyond June 25th, 2025, you can perform a diff per the ID column to see where the new records are. The original database does not have category column and unless a new category column is added, you can enrich the new records with a category column on ChatGPT o4:
+
+```
+Lets enrich with a category entry at each record. I already added category header:
+
+Some categories could be:
+AI Agent Development;Business Process Automation;Content Creation & Video Automation;Data Processing & Analysis;Design & Creative Automation;Marketing & Advertising Automation;Technical Infrastructure & DevOps;Web Scraping & Data Extraction
+
+And of course, add your own category where missing
+
+Format output as csv code snippet.
+
+Do not stop part way to ask if you are correct. Run through the records entirely.
+
+Do not parse part of the dataset and then ask the user to review and confirm that the columns are structured as expected. Go ahead and enrich all rows with appropriate categories.
+
+Here is my data:
+"""
+{CSV lines 25 at a time}
+"""
+```
+
+The categories can be captured from the most recent dashboard by running Chrome console script:
+```
+var arr = [];
+document.querySelectorAll("#category-filter *").forEach(el=>{
+
+    arr.push(el.textContent);
+
+})
+
+console.log(arr.join(";"))
+```
+
 
 ### 🤖 AI-Powered Template Recommendations
 
@@ -75,20 +110,22 @@ templates/
 
 ## 🔧 Data Processing
 
-The project includes a Node.js script to download template JSON files from Google Drive:
+The project includes a Node.js script to download template JSON files from Google Drive based on n8n-templates_enriched.csv:
 
 ```bash
 # Install dependencies
 npm install
 
 # Run the download script
-node scripts/download.js
+npm run download
 ```
 
-The download script reads the CSV file and downloads JSON files using:
+The download script reads the CSV file and downloads JSON files equivalent to:
 ```bash
 wget -O json/$id.json "https://drive.google.com/uc?export=download&id={google_drive_id}"
 ```
+
+JSON files that are discoverable by their ID column's name will populate Download and View buttons at the dashboard.
 
 ## 💻 Usage
 

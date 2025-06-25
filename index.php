@@ -3,7 +3,7 @@
 session_start();
 
 $csvPath = 'data/n8n-templates_enriched.csv';
-$protectedPage = true;
+$protectedPage = false;
 $password = "go";
 
 
@@ -143,10 +143,13 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             <p><i class="fas fa-robot mr-1"></i> Get AI-powered template recommendations at <a href="https://olegfuns.app.n8n.cloud/webhook/cda21b26-b940-4b60-8afa-fd7b8281a96b/chat" target="_blank" class="text-white hover:text-blue-100 underline">Oleg's AI Chat</a></p>
                         </div>
                     </div>
+                    <?php if($protectedPage) echo '
                     <a href="?action=logout" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-colors flex items-center ml-4">
                         <i class="fas fa-sign-out-alt mr-2"></i>
                         Logout
                     </a>
+                    ';
+                    ?>
                 </div>
             </div>
 
@@ -341,7 +344,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             // Category column
                             echo '<td class="px-6 py-4 text-center">';
                             if (!empty($category)) {
-                                echo '<div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 w-fit text-center">' . $category . '</div>';
+                                echo '<div class="inline-flex md:items-center px-2 py-1 rounded-full text-xs font-medium md:bg-blue-100 md:text-blue-800 w-fit md:text-center">' . $category . '</div>';
                             } else {
                                 echo '<span class="text-xs text-gray-400">No category</span>';
                             }
@@ -355,7 +358,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                 echo '<div class="text-sm text-gray-700 font-medium mt-1">' . $title . '</div>';
                             }
                             if (!empty($shortDescription)) {
-                                echo '<div class="text-xs text-gray-500 mt-2">' . $shortDescription . '</div>';
+                                echo '<div class="text-xs text-gray-500 mt-2 hidden md:block">' . $shortDescription . '</div>';
                             }
                             echo '</div>';
                             echo '</td>';
