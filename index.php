@@ -64,6 +64,7 @@
                 <table class="w-full" id="templates-table">
                     <thead class="bg-gray-100">
                         <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Template</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Creator</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
@@ -83,6 +84,11 @@
                         if (file_exists($csvFile)) {
                             $handle = fopen($csvFile, 'r');
                             $headers = fgetcsv($handle); // Get headers
+                            
+                            // Remove BOM (Bye Orer Mark) from headers if present
+                            if ($headers && !empty($headers[0])) {
+                                $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headers[0]);
+                            }
                             
                             if ($headers === FALSE) {
                                 // Handle case where headers can't be read
@@ -121,7 +127,7 @@
                                         }
                                         
                                         // Collect unique categories for filter
-                                        $category = trim($template['Category'] ?? '');
+                                        $category = trim($template['category'] ?? '');
                                         if (!empty($category) && !in_array($category, $categories)) {
                                             $categories[] = $category;
                                         }
@@ -145,7 +151,7 @@
                             $title = htmlspecialchars($template['title'] ?? '');
                             $description = htmlspecialchars($template['description'] ?? '');
                             $creator = htmlspecialchars($template['creator'] ?? '');
-                            $category = htmlspecialchars($template['Category'] ?? '');
+                            $category = htmlspecialchars($template['category'] ?? '');
                             $youtubeUrl = $template['youtube_url'] ?? '';
                             $templateUrl = $template['template_url'] ?? '';
                             $resourceUrl = $template['resource_url'] ?? '';
@@ -172,15 +178,21 @@
                             
                             echo '<tr class="hover:bg-gray-50 template-row" data-creator="' . strtolower($creator) . '" data-search="' . strtolower($name . ' ' . $title . ' ' . $description . ' ' . $creator . ' ' . $category) . '" data-category="' . strtolower($category) . '">';
                             
+                            // Category column
+                            echo '<td class="px-6 py-4">';
+                            if (!empty($category)) {
+                                echo '<div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 w-fit text-center">' . $category . '</div>';
+                            } else {
+                                echo '<span class="text-xs text-gray-400">No category</span>';
+                            }
+                            echo '</td>';
+                            
                             // Template column
                             echo '<td class="px-6 py-4">';
                             echo '<div class="flex flex-col">';
                             echo '<div class="text-sm font-medium text-gray-900">' . $name . '</div>';
                             if (!empty($title) && $title !== $name) {
                                 echo '<div class="text-sm text-gray-700 font-medium mt-1">' . $title . '</div>';
-                            }
-                            if (!empty($category)) {
-                                echo '<div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1 w-fit">' . $category . '</div>';
                             }
                             if (!empty($shortDescription)) {
                                 echo '<div class="text-xs text-gray-500 mt-2">' . $shortDescription . '</div>';
