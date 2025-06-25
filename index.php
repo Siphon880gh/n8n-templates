@@ -3,7 +3,9 @@
 session_start();
 
 $csvPath = 'data/n8n-templates_enriched.csv';
+$protectedPage = true;
 $password = "go";
+
 
 // Handle login
 $loginError = '';
@@ -44,7 +46,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 </head>
 <body class="bg-gray-50">
 
-<?php if (!$isLoggedIn): ?>
+<?php if ($protectedPage && !$isLoggedIn): ?>
     <!-- Login Form -->
     <div class="min-h-screen flex items-center justify-center px-4 py-8">
         <div class="max-w-md w-full">
