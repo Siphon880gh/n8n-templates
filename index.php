@@ -49,6 +49,9 @@
                         <select id="creator-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                             <option value="">All Creators</option>
                         </select>
+                        <select id="category-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Categories</option>
+                        </select>
                         <button id="clear-filters" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
                             <i class="fas fa-times mr-1"></i> Clear
                         </button>
@@ -74,40 +77,75 @@
                         $jsonDir = 'json/';
                         $templates = [];
                         $creators = [];
+                        $categories = [];
                         $availableDownloads = 0;
 
                         if (file_exists($csvFile)) {
                             $handle = fopen($csvFile, 'r');
                             $headers = fgetcsv($handle); // Get headers
                             
-                            while (($data = fgetcsv($handle)) !== FALSE) {
-                                // if (count($data) >= 9) { // Ensure we have enough columns
+                            if ($headers === FALSE) {
+                                // Handle case where headers can't be read
+                                fclose($handle);
+                            } else {
+                                $headerCount = count($headers);
+                                
+                                while (($data = fgetcsv($handle)) !== FALSE) {
+                                    // Skip empty rows
+                                    if (empty(array_filter($data))) {
+                                        continue;
+                                    }
+                                    
+                                    $dataCount = count($data);
+                                    
+                                    // Make arrays the same length
+                                    if ($dataCount < $headerCount) {
+                                        // Pad data with empty strings if it's shorter
+                                        $data = array_pad($data, $headerCount, '');
+                                    } elseif ($dataCount > $headerCount) {
+                                        // Truncate data if it's longer
+                                        $data = array_slice($data, 0, $headerCount);
+                                    }
+                                    
+                                    // Now safely combine arrays
                                     $template = array_combine($headers, $data);
-                                    $templates[] = $template;
                                     
-                                    // Collect unique creators for filter
-                                    $creator = trim($template['creator'] ?? '');
-                                    if (!empty($creator) && !in_array($creator, $creators)) {
-                                        $creators[] = $creator;
+                                    // Additional validation - ensure we have essential fields
+                                    if ($template && isset($template['id']) && !empty(trim($template['id']))) {
+                                        $templates[] = $template;
+                                        
+                                        // Collect unique creators for filter
+                                        $creator = trim($template['creator'] ?? '');
+                                        if (!empty($creator) && !in_array($creator, $creators)) {
+                                            $creators[] = $creator;
+                                        }
+                                        
+                                        // Collect unique categories for filter
+                                        $category = trim($template['Category'] ?? '');
+                                        if (!empty($category) && !in_array($category, $categories)) {
+                                            $categories[] = $category;
+                                        }
+                                        
+                                        // Check if JSON file exists
+                                        $jsonFile = $jsonDir . ($template['id'] ?? '') . '.json';
+                                        if (file_exists($jsonFile)) {
+                                            $availableDownloads++;
+                                        }
                                     }
-                                    
-                                    // Check if JSON file exists
-                                    $jsonFile = $jsonDir . ($template['id'] ?? '') . '.json';
-                                    if (file_exists($jsonFile)) {
-                                        $availableDownloads++;
-                                    }
-                                // }
+                                }
+                                fclose($handle);
                             }
-                            fclose($handle);
                         }
 
                         sort($creators); // Sort creators alphabetically
+                        sort($categories); // Sort categories alphabetically
 
                         foreach ($templates as $index => $template) {
                             $name = htmlspecialchars($template['name'] ?? '');
                             $title = htmlspecialchars($template['title'] ?? '');
                             $description = htmlspecialchars($template['description'] ?? '');
                             $creator = htmlspecialchars($template['creator'] ?? '');
+                            $category = htmlspecialchars($template['Category'] ?? '');
                             $youtubeUrl = $template['youtube_url'] ?? '';
                             $templateUrl = $template['template_url'] ?? '';
                             $resourceUrl = $template['resource_url'] ?? '';
@@ -132,7 +170,7 @@
                             // Truncate description for display
                             $shortDescription = strlen($description) > 150 ? substr($description, 0, 150) . '...' : $description;
                             
-                            echo '<tr class="hover:bg-gray-50 template-row" data-creator="' . strtolower($creator) . '" data-search="' . strtolower($name . ' ' . $title . ' ' . $description . ' ' . $creator) . '">';
+                            echo '<tr class="hover:bg-gray-50 template-row" data-creator="' . strtolower($creator) . '" data-search="' . strtolower($name . ' ' . $title . ' ' . $description . ' ' . $creator . ' ' . $category) . '" data-category="' . strtolower($category) . '">';
                             
                             // Template column
                             echo '<td class="px-6 py-4">';
@@ -140,6 +178,9 @@
                             echo '<div class="text-sm font-medium text-gray-900">' . $name . '</div>';
                             if (!empty($title) && $title !== $name) {
                                 echo '<div class="text-sm text-gray-700 font-medium mt-1">' . $title . '</div>';
+                            }
+                            if (!empty($category)) {
+                                echo '<div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1 w-fit">' . $category . '</div>';
                             }
                             if (!empty($shortDescription)) {
                                 echo '<div class="text-xs text-gray-500 mt-2">' . $shortDescription . '</div>';
@@ -161,8 +202,13 @@
                                 echo '<i class="fab fa-youtube mr-1"></i> YouTube';
                                 echo '</a>';
                             }
+                            if (!empty($templateUrl)) {
+                                echo '<a href="' . htmlspecialchars($templateUrl) . '" target="_blank" class="inline-flex items-center text-blue-600 hover:text-green-800 text-xs">';
+                                echo '<i class="fas fa-download mr-1"></i> GDrive';
+                                echo '</a>';
+                            }
                             if (!empty($resourceUrl)) {
-                                echo '<a href="' . htmlspecialchars($resourceUrl) . '" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 text-xs">';
+                                echo '<a href="' . htmlspecialchars($resourceUrl) . '" target="_blank" class="inline-flex items-center text-green-600 hover:text-blue-800 text-xs">';
                                 echo '<i class="fas fa-external-link-alt mr-1"></i> Resource';
                                 echo '</a>';
                             }
@@ -214,10 +260,18 @@
                 creatorSelect.append(`<option value="${creator.toLowerCase()}">${creator}</option>`);
             });
             
+            // Populate category filter
+            const categories = <?php echo json_encode($categories); ?>;
+            const categorySelect = $('#category-filter');
+            categories.forEach(category => {
+                categorySelect.append(`<option value="${category.toLowerCase()}">${category}</option>`);
+            });
+            
             // Search functionality
             function filterTable() {
                 const searchTerm = $('#search-input').val().toLowerCase();
                 const creatorFilter = $('#creator-filter').val();
+                const categoryFilter = $('#category-filter').val();
                 
                 $('.template-row').each(function() {
                     const $row = $(this);
@@ -226,8 +280,9 @@
                     
                     const matchesSearch = searchTerm === '' || searchData.includes(searchTerm);
                     const matchesCreator = creatorFilter === '' || creatorData === creatorFilter;
+                    const matchesCategory = categoryFilter === '' || $row.data('category').includes(categoryFilter);
                     
-                    if (matchesSearch && matchesCreator) {
+                    if (matchesSearch && matchesCreator && matchesCategory) {
                         $row.show();
                     } else {
                         $row.hide();
@@ -236,7 +291,7 @@
                 
                 // Update visible count
                 const visibleRows = $('.template-row:visible').length;
-                if (searchTerm || creatorFilter) {
+                if (searchTerm || creatorFilter || categoryFilter) {
                     $('#total-templates').text(`${visibleRows} of ${totalTemplates}`);
                 } else {
                     $('#total-templates').text(totalTemplates);
@@ -245,11 +300,13 @@
             
             $('#search-input').on('input', filterTable);
             $('#creator-filter').on('change', filterTable);
+            $('#category-filter').on('change', filterTable);
             
             // Clear filters
             $('#clear-filters').on('click', function() {
                 $('#search-input').val('');
                 $('#creator-filter').val('');
+                $('#category-filter').val('');
                 filterTable();
             });
             
