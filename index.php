@@ -379,14 +379,17 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             
                             // Template column
                             echo '<td class="px-6 py-4">';
-                            echo '<div class="flex flex-col">';
-                            echo '<div class="text-sm font-medium text-gray-900">' . $name . '</div>';
+                            echo '<div class="flex flex-col cursor-pointer hover:bg-blue-50 p-2 rounded-lg transition-colors" onclick="viewTemplateDetails(\'' . htmlspecialchars(addslashes($id)) . '\')">';
+                            echo '<div class="text-sm font-medium text-gray-900 hover:text-blue-600">' . $name . '</div>';
                             if (!empty($title) && $title !== $name) {
                                 echo '<div class="text-sm text-gray-700 font-medium mt-1">' . $title . '</div>';
                             }
                             if (!empty($shortDescription)) {
                                 echo '<div class="text-xs text-gray-500 mt-2 hidden md:block">' . $shortDescription . '</div>';
                             }
+                            echo '<div class="text-xs text-blue-500 mt-1 opacity-0 hover:opacity-100 transition-opacity">';
+                            echo '<i class="fas fa-eye mr-1"></i>Click to view details';
+                            echo '</div>';
                             echo '</div>';
                             echo '</td>';
                             
@@ -544,7 +547,56 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
         </div>
     </div>
 
+    <!-- Template Details Modal -->
+    <div id="templateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 modal-backdrop">
+        <div class="flex items-center justify-center min-h-screen p-4" onclick="closeTemplateModal()">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-green-600 to-blue-600 text-white p-4 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold flex items-center">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span id="templateModalTitle">Template Details</span>
+                    </h3>
+                    <button onclick="closeTemplateModal()" class="text-white hover:text-gray-200 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Modal Body -->
+                <div class="p-6 overflow-auto max-h-[calc(90vh-140px)]">
+                    <div id="templateDetailsContent">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Template data for modal display
+        const templateData = {
+            <?php
+            foreach ($templates as $index => $template) {
+                $templateId = $template['id'] ?? '';
+                if (!empty($templateId)) {
+                    echo '"' . htmlspecialchars($templateId) . '": {';
+                    echo '"name": "' . htmlspecialchars($template['name'] ?? '') . '",';
+                    echo '"title": "' . htmlspecialchars($template['title'] ?? '') . '",';
+                    echo '"description": "' . htmlspecialchars($template['description'] ?? '') . '",';
+                    echo '"creator": "' . htmlspecialchars($template['creator'] ?? '') . '",';
+                    echo '"category": "' . htmlspecialchars($template['category'] ?? '') . '",';
+                    echo '"youtube_url": "' . htmlspecialchars($template['youtube_url'] ?? '') . '",';
+                    echo '"template_url": "' . htmlspecialchars($template['template_url'] ?? '') . '",';
+                    echo '"resource_url": "' . htmlspecialchars($template['resource_url'] ?? '') . '",';
+                    echo '"date_posted": "' . htmlspecialchars($template['date_posted'] ?? '') . '",';
+                    echo '"id": "' . htmlspecialchars($templateId) . '"';
+                    echo '}';
+                    if ($index < count($templates) - 1) echo ',';
+                }
+            }
+            ?>
+        };
+
         $(document).ready(function() {
             // Populate stats
             const totalTemplates = <?php echo count($templates); ?>;
@@ -819,6 +871,9 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
             if (e.key === 'Escape' && !$('#jsonModal').hasClass('hidden')) {
                 closeJsonModal();
             }
+            if (e.key === 'Escape' && !$('#templateModal').hasClass('hidden')) {
+                closeTemplateModal();
+            }
         });
         
         // Dropdown toggle function for multiple JSON files
@@ -845,6 +900,145 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
         $(document).on('click', function(e) {
             if (!$(e.target).closest('.relative').length) {
                 $('[id^="download-"], [id^="view-"]').addClass('hidden');
+            }
+        });
+
+        // Template Details Modal Functions
+        function viewTemplateDetails(templateId) {
+            const template = templateData[templateId];
+            if (!template) {
+                alert('Template data not found');
+                return;
+            }
+
+            const modal = $('#templateModal');
+            const modalTitle = $('#templateModalTitle');
+            const detailsContent = $('#templateDetailsContent');
+
+            // Set modal title
+            modalTitle.text(template.name || 'Template Details');
+
+            // Format date
+            let formattedDate = 'Not specified';
+            if (template.date_posted) {
+                const date = new Date(template.date_posted);
+                if (!isNaN(date.getTime())) {
+                    formattedDate = date.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                }
+            }
+
+            // Build the content HTML
+            let contentHtml = `
+                <div class="space-y-6">
+                    <!-- Template Header -->
+                    <div class="border-b pb-4">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">${template.name || 'Unnamed Template'}</h2>
+                        ${template.title && template.title !== template.name ? 
+                            `<h3 class="text-lg font-semibold text-gray-700 mb-3">${template.title}</h3>` : ''}
+                        <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                            <div class="flex items-center">
+                                <i class="fas fa-user mr-2 text-blue-500"></i>
+                                <span><strong>Creator:</strong> ${template.creator || 'Unknown'}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-tag mr-2 text-green-500"></i>
+                                <span><strong>Category:</strong> ${template.category || 'Uncategorized'}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar mr-2 text-purple-500"></i>
+                                <span><strong>Date:</strong> ${formattedDate}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    ${template.description ? `
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                                <i class="fas fa-file-text mr-2 text-blue-500"></i>
+                                Description
+                            </h4>
+                            <div class="bg-gray-50 rounded-lg p-4 border">
+                                <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">${template.description}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Links -->
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-link mr-2 text-blue-500"></i>
+                            Related Links
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            ${template.youtube_url ? `
+                                <a href="${template.youtube_url}" target="_blank" 
+                                   class="flex items-center p-3 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors">
+                                    <i class="fab fa-youtube text-red-600 mr-3 text-xl"></i>
+                                    <div>
+                                        <div class="font-medium text-red-800">YouTube Video</div>
+                                        <div class="text-xs text-red-600">Watch tutorial</div>
+                                    </div>
+                                </a>
+                            ` : ''}
+                            ${template.template_url ? `
+                                <a href="${template.template_url}" target="_blank" 
+                                   class="flex items-center p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                                    <i class="fas fa-download text-blue-600 mr-3 text-xl"></i>
+                                    <div>
+                                        <div class="font-medium text-blue-800">Download Template</div>
+                                        <div class="text-xs text-blue-600">Google Drive</div>
+                                    </div>
+                                </a>
+                            ` : ''}
+                            ${template.resource_url ? `
+                                <a href="${template.resource_url}" target="_blank" 
+                                   class="flex items-center p-3 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors">
+                                    <i class="fas fa-external-link-alt text-green-600 mr-3 text-xl"></i>
+                                    <div>
+                                        <div class="font-medium text-green-800">Additional Resource</div>
+                                        <div class="text-xs text-green-600">Learn more</div>
+                                    </div>
+                                </a>
+                            ` : ''}
+                        </div>
+                        ${!template.youtube_url && !template.template_url && !template.resource_url ? 
+                            '<p class="text-gray-500 italic">No external links available</p>' : ''}
+                    </div>
+
+                    <!-- Template ID -->
+                    <div class="pt-4 border-t">
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i class="fas fa-hashtag mr-2"></i>
+                            <span><strong>Template ID:</strong> ${template.id}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            detailsContent.html(contentHtml);
+            modal.removeClass('hidden');
+        }
+
+        function closeTemplateModal() {
+            $('#templateModal').addClass('hidden');
+        }
+
+        // Close template modal when clicking outside
+        $(document).on('click', '#templateModal', function(e) {
+            if (e.target === this) {
+                closeTemplateModal();
+            }
+        });
+
+        // Also handle clicks on the template modal backdrop wrapper
+        $(document).on('click', '#templateModal .modal-backdrop', function(e) {
+            if (e.target === this) {
+                closeTemplateModal();
             }
         });
     </script>
