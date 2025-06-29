@@ -153,6 +153,8 @@ this.elements.downloadBtn.href = `/api/zie619/workflows/${workflow.filename}/dow
 
 ## Starting the Application
 
+### Manual Start (Development)
+
 1. Navigate to the zie619-community/n8n-workflows directory:
    ```bash
    cd zie619-community/n8n-workflows
@@ -165,7 +167,7 @@ this.elements.downloadBtn.href = `/api/zie619/workflows/${workflow.filename}/dow
 
 3. Start the application:
    ```bash
-   python run.py
+   python run.py --port 8001
    ```
    
    Or using the API server directly:
@@ -178,103 +180,6 @@ this.elements.downloadBtn.href = `/api/zie619/workflows/${workflow.filename}/dow
    curl http://127.0.0.1:8001/api/workflows
    ```
 
-## Testing the Reverse Proxy
+### Running Forever (Production)
 
-### 1. Test Main Application Access
-
-Open in web browser:
-```bash
-curl -I https://wengindustries.com/app/n8n-templates/zie619-community/
-```
-Should return 200 OK and serve the static index.html
-
-### 2. Test API Endpoints
-```bash
-# Test workflow listing
-curl https://wengindustries.com/api/zie619/workflows
-
-# Test specific workflow
-curl https://wengindustries.com/api/zie619/workflows/some-workflow.json
-
-# Test download endpoint
-curl -I https://wengindustries.com/api/zie619/workflows/some-workflow.json/download
-```
-
-
-## Troubleshooting
-
-### Common Issues:
-
-1. **404 Not Found on API calls:**
-   - Verify the zie619 application is running on port 8001
-   - Check that API endpoints use `/api/zie619` prefix in the frontend code
-   - Ensure nginx/Apache rewrite rules are correctly configured
-
-2. **CORS Errors:**
-   - Uncomment the CORS headers in the nginx/Apache configuration
-   - Verify the `Access-Control-Allow-Origin` header matches your domain
-
-3. **Static files not loading:**
-   - Check the main location block for `/app/n8n-templates/zie619-community`
-   - Verify the proxy_pass URL is correct
-   - Test direct access to `http://127.0.0.1:8001/` locally
-
-4. **Timeouts:**
-   - Increase the timeout values in proxy configuration
-   - Check application logs for slow queries or operations
-
-### Debugging Commands:
-
-```bash
-# Check if application is running
-netstat -tlnp | grep 8001
-
-# Test local application directly
-curl http://127.0.0.1:8001/api/workflows
-
-# Check nginx/Apache error logs
-tail -f /var/log/nginx/error.log
-tail -f /var/log/apache2/error.log
-
-# Test reverse proxy configuration
-nginx -t  # for nginx
-apachectl configtest  # for Apache
-```
-
-## Security Considerations
-
-1. **Rate Limiting:** Consider implementing rate limiting for API endpoints
-2. **Authentication:** Add authentication if the application contains sensitive data
-3. **HTTPS:** Ensure SSL/TLS is properly configured
-4. **Firewall:** Restrict direct access to port 8001 from external networks
-
-## Performance Optimization
-
-1. **Caching:** Consider enabling caching for static assets and API responses
-2. **Compression:** Enable gzip compression for text-based responses
-3. **Connection Pooling:** Configure proxy connection pooling for better performance
-
-```nginx
-# Example caching configuration for nginx
-location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg)$ {
-    expires 1y;
-    add_header Cache-Control "public, immutable";
-    proxy_pass http://127.0.0.1:8001;
-}
-```
-
-## Monitoring
-
-Monitor the following metrics:
-- Response times for API endpoints
-- Error rates (4xx, 5xx responses)
-- Application server health on port 8001
-- Resource usage (CPU, memory, disk I/O)
-
-## Contact
-
-For issues specific to this reverse proxy setup, check the logs and verify:
-1. Application is running on correct port
-2. API endpoint adjustments are in place
-3. Web server configuration is correct
-4. Network connectivity between proxy and application server
+Refer to [README-zie619-run-forever.md](README-zie619-run-forever.md)
