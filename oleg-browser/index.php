@@ -39,7 +39,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>n8n Templates Library</title>
+    <title>Oleg's Templates Collection</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -131,11 +131,23 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <!-- Header with Logout -->
             <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+                <!-- Breadcrumb Navigation -->
+                <div class="mb-4">
+                    <nav class="flex items-center text-sm">
+                        <a href="../index.php" class="text-blue-100 hover:text-white transition-colors flex items-center">
+                            <i class="fas fa-cogs mr-1"></i>
+                            n8n Templates Portal
+                        </a>
+                        <i class="fas fa-chevron-right mx-2 text-blue-200"></i>
+                        <span class="text-white font-medium">Oleg's</span>
+                    </nav>
+                </div>
+                
                 <div class="flex justify-between items-start">
                     <div class="flex-1">
                         <h1 class="text-3xl font-bold flex items-center">
                             <i class="fas fa-cogs mr-3"></i>
-                            n8n Templates Library
+                            Oleg's Templates Collection
                         </h1>
                         <p class="mt-2 text-blue-100">Browse and download automation templates</p>
                         <div class="mt-3 text-xs text-blue-200 space-y-1">

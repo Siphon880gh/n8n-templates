@@ -43,25 +43,30 @@ The system includes an automated categorization feature that organizes workflows
 ### How Categorization Works
 
 1. **Run the categorization script**
-   ```
-   python create_categories.py
-   ```
+
+```
+python create_categories.py
+```
 
 2. **Service Name Recognition**
-   The script analyzes each workflow JSON filename to identify recognized service names (e.g., "Twilio", "Slack", "Gmail", etc.)
+
+The script analyzes each workflow JSON filename to identify recognized service names (e.g., "Twilio", "Slack", "Gmail", etc.)
 
 3. **Category Mapping**
-   Each recognized service name is matched to its corresponding category using the definitions in `context/def_categories.json`. For example:
-   - Twilio → Communication & Messaging
-   - Gmail → Communication & Messaging  
-   - Airtable → Data Processing & Analysis
-   - Salesforce → CRM & Sales
+
+Each recognized service name is matched to its corresponding category using the definitions in `context/def_categories.json`. For example:
+- Twilio → Communication & Messaging
+- Gmail → Communication & Messaging  
+- Airtable → Data Processing & Analysis
+- Salesforce → CRM & Sales
 
 4. **Search Categories Generation**
-   The script produces a `search_categories.json` file that contains the categorized workflow data
+
+The script produces a `search_categories.json` file that contains the categorized workflow data
 
 5. **Filter Interface**
-   Users can then filter workflows by category in the search interface, making it easier to find workflows for specific use cases
+
+Users can then filter workflows by category in the search interface, making it easier to find workflows for specific use cases
 
 ### Available Categories
 

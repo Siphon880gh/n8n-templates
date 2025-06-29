@@ -107,16 +107,29 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <!-- Header -->
             <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
+                <!-- Breadcrumb Navigation -->
+                <div class="mb-4">
+                    <nav class="flex items-center text-sm">
+                        <a href="../index.php" class="text-purple-100 hover:text-white transition-colors flex items-center">
+                            <i class="fas fa-cogs mr-1"></i>
+                            n8n Templates Portal
+                        </a>
+                        <i class="fas fa-chevron-right mx-2 text-purple-200"></i>
+                        <span class="text-white font-medium">n8n Partners</span>
+                    </nav>
+                </div>
+                
                 <div class="flex justify-between items-start">
                     <div class="flex-1">
                         <h1 class="text-3xl font-bold flex items-center">
                             <i class="fas fa-network-wired mr-3"></i>
                             n8n Partners - Workflow Templates
                         </h1>
-                        <p class="mt-2 text-purple-100">Browse and explore workflow templates by integration and category</p>
-                        <div class="mt-3 text-xs text-purple-200">
-                            <p>Community-driven workflow collection for n8n automation platform</p>
-                        </div>
+                        <p class="mt-2 text-purple-100">Browse and explore workflow templates by integration or category</p>
+                                    <div class="mt-3 text-xs text-purple-200">
+                <p>Workflow collection that integrates n8n with third-party services</p>
+                <p class="mt-1">Made browsable by <a href="https://www.linkedin.com/in/weng-fung/" target="_blank" class="text-purple-100 hover:text-white underline">Weng</a> • Core data from <a href="https://github.com/n8n-io/test-workflows" target="_blank" class="text-purple-100 hover:text-white underline">n8n's test-workflows repo</a></p>
+            </div>
                     </div>
                     <?php if($protectedPage): ?>
                     <a href="?action=logout" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-colors flex items-center ml-4">
