@@ -1,907 +1,907 @@
 [
   {
     "integration": "APITemplate.io",
-    "category": "",
-    "description": ""
+    "category": "Creative Design Automation",
+    "description": "Auto-generate PDFs and Images from reusable templates with an API"
   },
   {
     "integration": "AWS Transcribe",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "Amazon's automatic speech recognition service that converts speech to text with high accuracy"
   },
   {
     "integration": "AWSComprehend",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "Natural language processing service that uses machine learning to find insights and relationships in text"
   },
   {
     "integration": "AWSLambda",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Serverless computing service that runs code without provisioning or managing servers"
   },
   {
     "integration": "AWSRekognition",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "Image and video analysis service that can identify objects, people, text, scenes, and activities"
   },
   {
     "integration": "AWSS3",
-    "category": "",
-    "description": ""
+    "category": "Cloud Storage & File Management",
+    "description": "Scalable object storage service for data backup, archiving, and analytics"
   },
   {
     "integration": "AWSSES",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Cloud-based email sending service for transactional and marketing emails"
   },
   {
     "integration": "AWSSNS",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Fully managed messaging service for both application-to-application and application-to-person communication"
   },
   {
     "integration": "AWSSQS",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Fully managed message queuing service for decoupling and scaling microservices"
   },
   {
     "integration": "ActiveCampaign",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Email marketing, marketing automation, and CRM platform for customer experience automation"
   },
   {
     "integration": "Affinity",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "Relationship intelligence platform that helps manage professional networks and deal flow"
   },
   {
     "integration": "Agent",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "AI agent framework for building autonomous agents that can perform tasks and make decisions"
   },
   {
     "integration": "Airtable",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Cloud collaboration platform that combines the simplicity of a spreadsheet with the power of a database"
   },
   {
     "integration": "Asana",
-    "category": "",
-    "description": ""
+    "category": "Project Management",
+    "description": "Work management platform for teams to organize, track, and manage their projects and tasks"
   },
   {
     "integration": "Automizy",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Email marketing automation platform with drag-and-drop email builder and advanced segmentation"
   },
   {
     "integration": "Autopilot",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Visual marketing automation platform for creating customer journeys and marketing campaigns"
   },
   {
     "integration": "Bannerbear",
-    "category": "",
-    "description": ""
+    "category": "Creative Design Automation",
+    "description": "API for auto-generating images and videos from templates for marketing and social media content"
   },
   {
     "integration": "BasicLLMChain",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "Fundamental language model chain for building AI applications with large language models"
   },
   {
     "integration": "Beeminder",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Goal tracking service that uses financial incentives to help users stick to their commitments"
   },
   {
     "integration": "Bitly",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "URL shortening service with link management, analytics, and branded short links"
   },
   {
     "integration": "Box",
-    "category": "",
-    "description": ""
+    "category": "Cloud Storage & File Management",
+    "description": "Cloud content management platform for secure file sharing and collaboration"
   },
   {
     "integration": "Brandfetch",
-    "category": "",
-    "description": ""
+    "category": "Web Scraping & Data Extraction",
+    "description": "API service for retrieving brand assets like logos, colors, and fonts from company websites"
   },
   {
     "integration": "ChargeBee",
-    "category": "",
-    "description": ""
+    "category": "Financial & Accounting",
+    "description": "Subscription billing and revenue management platform for recurring billing businesses"
   },
   {
     "integration": "CircleCI",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Continuous integration and continuous deployment platform for automated software development workflows"
   },
   {
     "integration": "Clearbit",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Data enrichment platform that provides company and contact information for lead generation"
   },
   {
     "integration": "ClickUp",
-    "category": "",
-    "description": ""
+    "category": "Project Management",
+    "description": "All-in-one productivity platform combining project management, docs, goals, and chat"
   },
   {
     "integration": "Clockify",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Time tracking software for teams to track work hours and project time"
   },
   {
     "integration": "Cockpit",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Headless content management system for creating and managing structured content"
   },
   {
     "integration": "Coda",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "All-in-one collaborative workspace that combines documents, spreadsheets, and databases"
   },
   {
     "integration": "CoinGecko",
-    "category": "",
-    "description": ""
+    "category": "Financial & Accounting",
+    "description": "Cryptocurrency data platform providing market data, prices, and analytics"
   },
   {
     "integration": "Contentful-delivery-api",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Headless CMS delivery API for retrieving published content across multiple channels"
   },
   {
     "integration": "Contentful-preview-api",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Headless CMS preview API for accessing unpublished content for staging and preview"
   },
   {
     "integration": "ConvertKit",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Email marketing platform designed for creators to build and nurture their audience"
   },
   {
     "integration": "Copper",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "CRM platform designed for Google Workspace users to manage sales and customer relationships"
   },
   {
     "integration": "Cortex",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Service catalog and developer portal for managing microservices and infrastructure"
   },
   {
     "integration": "CrateDB",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Distributed SQL database designed for machine data and IoT applications"
   },
   {
     "integration": "Customerio",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Behavioral email and messaging platform for sending targeted campaigns based on user actions"
   },
   {
     "integration": "Date&Time",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Utility service for date and time manipulation, formatting, and calculations in workflows"
   },
   {
     "integration": "Deepl",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "AI-powered translation service providing high-quality translations across multiple languages"
   },
   {
     "integration": "Demio",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Webinar platform for hosting live and automated webinars with marketing integrations"
   },
   {
     "integration": "Discord",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Voice, video, and text communication platform for communities and teams"
   },
   {
     "integration": "Discourse",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Modern forum platform for building discussion communities and support forums"
   },
   {
     "integration": "Disqus",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Comment system and discussion platform for websites and blogs"
   },
   {
     "integration": "Drif",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Conversational marketing platform with chatbots and live chat for customer engagement"
   },
   {
     "integration": "DropBox",
-    "category": "",
-    "description": ""
+    "category": "Cloud Storage & File Management",
+    "description": "Cloud storage service for file synchronization, sharing, and collaboration"
   },
   {
     "integration": "E-goi",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Multi-channel marketing automation platform with email, SMS, and push notifications"
   },
   {
     "integration": "EditImage",
-    "category": "",
-    "description": ""
+    "category": "Creative Design Automation",
+    "description": "Image editing and manipulation service for automated image processing workflows"
   },
   {
     "integration": "Emelia",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Cold email outreach platform for B2B lead generation and sales prospecting"
   },
   {
     "integration": "ExecuteWorkflow",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Service for triggering and executing other workflows within automation sequences"
   },
   {
     "integration": "FTP",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "File Transfer Protocol service for uploading, downloading, and managing files on servers"
   },
   {
     "integration": "Flow",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Workflow management service for creating and managing complex business process flows"
   },
   {
     "integration": "FreshDesk",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Customer support platform with ticketing, knowledge base, and multichannel support"
   },
   {
     "integration": "FunctionItem",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Custom function execution service for running JavaScript code within workflows"
   },
   {
     "integration": "GetResponse",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Email marketing platform with automation, landing pages, and webinar capabilities"
   },
   {
     "integration": "Ghost",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Modern publishing platform for creating blogs, newsletters, and membership sites"
   },
   {
     "integration": "Git",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Version control system for tracking changes in source code and collaborating on development"
   },
   {
     "integration": "GitLab",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "DevOps platform with Git repository management, CI/CD, and project management tools"
   },
   {
     "integration": "Github",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Code hosting platform with version control, collaboration tools, and DevOps features"
   },
   {
     "integration": "Gmail",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Google's email service with powerful search, organization, and integration capabilities"
   },
   {
     "integration": "GoogleBooks",
-    "category": "",
-    "description": ""
+    "category": "Web Scraping & Data Extraction",
+    "description": "Google's digital library service for searching and accessing book information and content"
   },
   {
     "integration": "GoogleCalendar",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Google's calendar service for scheduling, event management, and time organization"
   },
   {
     "integration": "GoogleCloudFirestore",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "NoSQL document database for web, mobile, and server development with real-time sync"
   },
   {
     "integration": "GoogleContacts",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "Google's contact management service for storing and organizing personal and business contacts"
   },
   {
     "integration": "GoogleDrive",
-    "category": "",
-    "description": ""
+    "category": "Cloud Storage & File Management",
+    "description": "Google's cloud storage service for file storage, sharing, and collaborative editing"
   },
   {
     "integration": "GoogleSheets",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Google's cloud-based spreadsheet application with real-time collaboration and powerful functions"
   },
   {
     "integration": "GoogleSlides",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Google's presentation software for creating and sharing professional presentations"
   },
   {
     "integration": "GoogleTask",
-    "category": "",
-    "description": ""
+    "category": "Project Management",
+    "description": "Google's task management service for creating to-do lists and organizing personal tasks"
   },
   {
     "integration": "Gotify",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Self-hosted notification server for sending push notifications to mobile devices and applications"
   },
   {
     "integration": "HTML Extract",
-    "category": "",
-    "description": ""
+    "category": "Web Scraping & Data Extraction",
+    "description": "Service for extracting specific data and content from HTML web pages and documents"
   },
   {
     "integration": "HTTP",
-    "category": "",
-    "description": ""
+    "category": "Web Scraping & Data Extraction",
+    "description": "HTTP client for making web requests, API calls, and retrieving data from web services"
   },
   {
     "integration": "Hackernews",
-    "category": "",
-    "description": ""
+    "category": "Web Scraping & Data Extraction",
+    "description": "Service for accessing Hacker News content, comments, and trending technology discussions"
   },
   {
     "integration": "Harvest",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Time tracking and invoicing software for freelancers and teams to manage billable hours"
   },
   {
     "integration": "HelpScout",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Customer service platform with email-based help desk, knowledge base, and live chat"
   },
   {
     "integration": "Hubspot",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "Comprehensive CRM platform with marketing, sales, and customer service tools"
   },
   {
     "integration": "Hunter",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Email finder tool for discovering and verifying professional email addresses"
   },
   {
     "integration": "InMemoryVectorStore",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "In-memory vector database for storing and querying high-dimensional data for AI applications"
   },
   {
     "integration": "Intercom",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Customer messaging platform with live chat, help desk, and marketing automation"
   },
   {
     "integration": "InvoiceNinja",
-    "category": "",
-    "description": ""
+    "category": "Financial & Accounting",
+    "description": "Open-source invoicing and billing software for small businesses and freelancers"
   },
   {
     "integration": "Iterable",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Cross-channel marketing platform for personalized customer engagement across email, SMS, and push"
   },
   {
     "integration": "Keap",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "CRM and marketing automation platform designed for small businesses to grow and scale"
   },
   {
     "integration": "Kitemaker",
-    "category": "",
-    "description": ""
+    "category": "Project Management",
+    "description": "Product development tool for planning, tracking, and shipping software products"
   },
   {
     "integration": "Lemlist",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Cold outreach platform for personalized email campaigns and sales prospecting"
   },
   {
     "integration": "Line",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Popular messaging app and platform for personal and business communication, especially in Asia"
   },
   {
     "integration": "LingvaNex",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "Translation API service providing machine translation across multiple languages"
   },
   {
     "integration": "Linkedin",
-    "category": "",
-    "description": ""
+    "category": "Social Media Management",
+    "description": "Professional networking platform for business connections, content sharing, and recruitment"
   },
   {
     "integration": "MQTT",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Lightweight messaging protocol for IoT and machine-to-machine communication"
   },
   {
     "integration": "MailCheck",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Email verification service for validating email addresses and improving deliverability"
   },
   {
     "integration": "Mailchimp",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation", 
+    "description": "All-in-one marketing platform with email marketing, automation, and audience management"
   },
   {
     "integration": "Mailerlite",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Email marketing platform with automation, landing pages, and subscriber management"
   },
   {
     "integration": "Mailjet",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Email service provider with transactional and marketing email capabilities"
   },
   {
     "integration": "Mandrill",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Transactional email API service by Mailchimp for sending automated emails"
   },
   {
     "integration": "Matrix",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Open standard for decentralized, real-time communication and collaboration"
   },
   {
     "integration": "Mattermost",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Open-source team collaboration platform with messaging, file sharing, and integrations"
   },
   {
     "integration": "Mautic",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Open-source marketing automation platform for lead nurturing and customer engagement"
   },
   {
     "integration": "Medium",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Publishing platform for writers and thought leaders to share articles and build audience"
   },
   {
     "integration": "MessageBird",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Cloud communications platform for SMS, voice, and chat messaging APIs"
   },
   {
     "integration": "Microsoft OneDrive",
-    "category": "",
-    "description": ""
+    "category": "Cloud Storage & File Management",
+    "description": "Microsoft's cloud storage service for file storage, sync, and sharing across devices"
   },
   {
     "integration": "MicrosoftExcel",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Microsoft's spreadsheet application for data analysis, calculations, and reporting"
   },
   {
     "integration": "MicrosoftOutlook",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Microsoft's email client and personal information manager with calendar and contacts"
   },
   {
     "integration": "MicrosoftSQL",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Microsoft's relational database management system for enterprise data storage and analytics"
   },
   {
     "integration": "Mindee",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "Document AI platform for extracting data from documents using machine learning"
   },
   {
     "integration": "Mocean",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Cloud communications API for SMS, voice, and verification services"
   },
   {
     "integration": "Monday",
-    "category": "",
-    "description": ""
+    "category": "Project Management",
+    "description": "Work operating system for teams to plan, organize, and track projects and workflows"
   },
   {
     "integration": "MongoDB",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "NoSQL document database for modern applications with flexible, scalable data storage"
   },
   {
     "integration": "Move Binary Data",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Service for handling and transferring binary data like files, images, and documents in workflows"
   },
   {
     "integration": "MySQL",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Open-source relational database management system for web applications and data storage"
   },
   {
     "integration": "NASA",
-    "category": "",
-    "description": ""
+    "category": "Web Scraping & Data Extraction",
+    "description": "Access to NASA's open data APIs for space, astronomy, and earth science information"
   },
   {
     "integration": "Nested sub-node errors",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Error handling service for managing and debugging nested workflow execution errors"
   },
   {
     "integration": "NextCloud",
-    "category": "",
-    "description": ""
+    "category": "Cloud Storage & File Management",
+    "description": "Open-source cloud storage and collaboration platform for file sharing and productivity"
   },
   {
     "integration": "OpenThesaurus",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "Open-source thesaurus API for finding synonyms and related words in multiple languages"
   },
   {
     "integration": "OpenWeatherMap",
-    "category": "",
-    "description": ""
+    "category": "Web Scraping & Data Extraction",
+    "description": "Weather data API providing current weather, forecasts, and historical weather information"
   },
   {
     "integration": "Orbit",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "Community relationship management platform for building and engaging developer communities"
   },
   {
     "integration": "Paddle",
-    "category": "",
-    "description": ""
+    "category": "Financial & Accounting",
+    "description": "Payment processor and merchant of record for software businesses selling digital products"
   },
   {
     "integration": "PagerDuty",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Incident management platform for real-time operations and automated response workflows"
   },
   {
     "integration": "Paypal",
-    "category": "",
-    "description": ""
+    "category": "Financial & Accounting",
+    "description": "Digital payment platform for online transactions, invoicing, and money transfers"
   },
   {
     "integration": "Peekalink",
-    "category": "",
-    "description": ""
+    "category": "Web Scraping & Data Extraction",
+    "description": "Link preview API for generating rich previews with metadata from web URLs"
   },
   {
     "integration": "PhantomBuster",
-    "category": "",
-    "description": ""
+    "category": "Web Scraping & Data Extraction",
+    "description": "Automation platform for extracting data from websites and social media platforms"
   },
   {
     "integration": "PineconeVectorStore",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "Vector database for machine learning applications, embeddings, and similarity search"
   },
   {
     "integration": "Pipedrive",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "Sales CRM platform designed to help sales teams manage leads and close deals"
   },
   {
     "integration": "PostHog",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Product analytics platform for tracking user behavior, feature flags, and A/B testing"
   },
   {
     "integration": "Postgres",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Advanced open-source relational database with strong standards compliance and extensibility"
   },
   {
     "integration": "ProfitWell",
-    "category": "",
-    "description": ""
+    "category": "Financial & Accounting",
+    "description": "Subscription analytics platform for tracking revenue metrics and reducing churn"
   },
   {
     "integration": "Pushbullet",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Service for sending notifications, links, and files between devices and platforms"
   },
   {
     "integration": "Pushover",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Simple push notification service for sending alerts to mobile devices and desktops"
   },
   {
     "integration": "QdrantVectorStore",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "Vector similarity search engine for machine learning applications and embeddings"
   },
   {
     "integration": "QuestDB",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "High-performance time-series database for real-time analytics and monitoring"
   },
   {
     "integration": "QuickBase",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Low-code platform for building custom business applications and workflow automation"
   },
   {
     "integration": "QuickBooks",
-    "category": "",
-    "description": ""
+    "category": "Financial & Accounting",
+    "description": "Accounting software for small businesses with invoicing, expense tracking, and reporting"
   },
   {
     "integration": "Rabbitmq",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Message broker software for handling asynchronous messaging between applications"
   },
   {
     "integration": "Raindrop",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Bookmark manager for organizing and accessing saved web content across devices"
   },
   {
     "integration": "Reddit",
-    "category": "",
-    "description": ""
+    "category": "Social Media Management",
+    "description": "Social news aggregation platform for community discussions and content sharing"
   },
   {
     "integration": "Redis",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "In-memory data structure store used as database, cache, and message broker"
   },
   {
     "integration": "RocketChat",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Open-source team communication platform with chat, video calls, and file sharing"
   },
   {
     "integration": "Rundeck",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Runbook automation platform for operations teams to execute procedures and workflows"
   },
   {
     "integration": "S3",
-    "category": "",
-    "description": ""
+    "category": "Cloud Storage & File Management",
+    "description": "Amazon S3 compatible object storage service for scalable data storage and retrieval"
   },
   {
     "integration": "SIGNL4",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Mobile alerting and incident response platform for critical notifications and escalation"
   },
   {
     "integration": "Salesforce",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "Leading cloud-based CRM platform for sales, marketing, and customer service automation"
   },
   {
     "integration": "Salesmate",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "CRM software designed for small businesses with contact management and sales automation"
   },
   {
     "integration": "Segment",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Customer data platform for collecting, cleaning, and routing customer data to analytics tools"
   },
   {
     "integration": "SendGrid",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Cloud-based email delivery platform for transactional and marketing emails"
   },
   {
     "integration": "SentryIo",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Application monitoring platform for tracking errors, performance issues, and crashes"
   },
   {
     "integration": "Shopify",
-    "category": "",
-    "description": ""
+    "category": "E-commerce & Retail",
+    "description": "E-commerce platform for building and managing online stores and retail businesses"
   },
   {
     "integration": "Slack",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Business communication platform with channels, direct messaging, and app integrations"
   },
   {
     "integration": "Spontit",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Push notification service for sending custom alerts and updates to mobile devices"
   },
   {
     "integration": "Spotify",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Music streaming platform with APIs for accessing playlists, tracks, and user data"
   },
   {
     "integration": "Stackby",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Collaborative work platform combining spreadsheets, databases, and automation tools"
   },
   {
     "integration": "Storyblok",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Headless CMS with visual editor for managing content across websites and applications"
   },
   {
     "integration": "Strapi",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Open-source headless CMS for building flexible content management solutions"
   },
   {
     "integration": "Strava",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Fitness tracking platform for athletes with social features and activity analytics"
   },
   {
     "integration": "Sub-node errors",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Error handling service for managing workflow execution errors and debugging"
   },
   {
     "integration": "SummarizationChain",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "AI service for automatically summarizing long texts and documents using language models"
   },
   {
     "integration": "Taiga",
-    "category": "",
-    "description": ""
+    "category": "Project Management",
+    "description": "Open-source project management platform for agile development teams"
   },
   {
     "integration": "Tapfiliate",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Affiliate marketing platform for creating and managing affiliate programs"
   },
   {
     "integration": "Telegram",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Cloud-based messaging app with strong security, bots, and group communication features"
   },
   {
     "integration": "TheHive[v3]",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Security incident response platform for managing cybersecurity investigations (version 3)"
   },
   {
     "integration": "TheHive[v4]",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Security incident response platform for managing cybersecurity investigations (version 4)"
   },
   {
     "integration": "TimescaleDB",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Time-series database built on PostgreSQL for IoT and monitoring applications"
   },
   {
     "integration": "Todoist",
-    "category": "",
-    "description": ""
+    "category": "Project Management",
+    "description": "Task management application for organizing personal and team projects with due dates"
   },
   {
     "integration": "TravisCI",
-    "category": "",
-    "description": ""
+    "category": "Technical Infrastructure & DevOps",
+    "description": "Continuous integration service for testing and deploying code from GitHub repositories"
   },
   {
     "integration": "Trello",
-    "category": "",
-    "description": ""
+    "category": "Project Management",
+    "description": "Visual project management tool using boards, lists, and cards for organizing tasks"
   },
   {
     "integration": "Twilio",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Cloud communications platform providing APIs for SMS, voice, video, and messaging"
   },
   {
     "integration": "Twist",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Asynchronous team communication platform focused on organized, threaded conversations"
   },
   {
     "integration": "Twitter",
-    "category": "",
-    "description": ""
+    "category": "Social Media Management",
+    "description": "Social media platform for sharing short messages, news, and engaging with audiences"
   },
   {
     "integration": "UnleashedSoftware",
-    "category": "",
-    "description": ""
+    "category": "Business Process Automation",
+    "description": "Inventory management software for tracking stock, orders, and supply chain operations"
   },
   {
     "integration": "Uplead",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "B2B prospecting tool for finding and verifying business contact information"
   },
   {
     "integration": "Vero",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Customer engagement platform for sending personalized messages based on user behavior"
   },
   {
     "integration": "Vonage",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Communications API platform for voice, video, messaging, and verification services"
   },
   {
     "integration": "Webflow",
-    "category": "",
-    "description": ""
+    "category": "Creative Design Automation",
+    "description": "Web design platform for building responsive websites with visual development tools"
   },
   {
     "integration": "Wekan",
-    "category": "",
-    "description": ""
+    "category": "Project Management",
+    "description": "Open-source kanban board for project management and team collaboration"
   },
   {
     "integration": "Wise",
-    "category": "",
-    "description": ""
+    "category": "Financial & Accounting",
+    "description": "International money transfer service with multi-currency accounts and business solutions"
   },
   {
     "integration": "Wordpress",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Content management system and website builder for blogs, websites, and online stores"
   },
   {
     "integration": "XML",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Service for parsing, manipulating, and generating XML data in automation workflows"
   },
   {
     "integration": "Xero",
-    "category": "",
-    "description": ""
+    "category": "Financial & Accounting",
+    "description": "Cloud-based accounting software for small businesses with invoicing and financial reporting"
   },
   {
     "integration": "Yourls",
-    "category": "",
-    "description": ""
+    "category": "Marketing & Advertising Automation",
+    "description": "Open-source URL shortener for creating custom short links with analytics"
   },
   {
     "integration": "Youtube",
-    "category": "",
-    "description": ""
+    "category": "Creative Content & Video Automation",
+    "description": "Video sharing platform with APIs for uploading, managing, and analyzing video content"
   },
   {
     "integration": "Zendesk",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Customer service platform with ticketing, knowledge base, and multichannel support"
   },
   {
     "integration": "ZohoCRM",
-    "category": "",
-    "description": ""
+    "category": "CRM & Sales",
+    "description": "Customer relationship management platform with sales automation and analytics"
   },
   {
     "integration": "Zoom",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Video conferencing platform for meetings, webinars, and virtual collaboration"
   },
   {
     "integration": "Zulip",
-    "category": "",
-    "description": ""
+    "category": "Communication & Messaging",
+    "description": "Open-source team chat with threaded conversations and powerful search capabilities"
   },
   {
     "integration": "uProc",
-    "category": "",
-    "description": ""
+    "category": "Data Processing & Analysis",
+    "description": "Document processing API for extracting data from various document formats"
   },
   {
     "integration": "vectorStorePGVector",
-    "category": "",
-    "description": ""
+    "category": "AI Agent Development",
+    "description": "PostgreSQL extension for vector similarity search and AI embedding storage"
   }
 ]
