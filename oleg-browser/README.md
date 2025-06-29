@@ -5,7 +5,12 @@
 <a target="_blank" href="https://www.linkedin.com/in/weng-fung/" rel="nofollow"><img src="https://img.shields.io/badge/LinkedIn-blue?style=flat&logo=linkedin&labelColor=blue" alt="Linked-In" data-canonical-src="https://img.shields.io/badge/LinkedIn-blue?style=flat&amp;logo=linkedin&amp;labelColor=blue" style="max-width:10ch;"></a>
 <a target="_blank" href="https://www.youtube.com/@WayneTeachesCode/" rel="nofollow"><img src="https://img.shields.io/badge/Youtube-red?style=flat&logo=youtube&labelColor=red" alt="Youtube" data-canonical-src="https://img.shields.io/badge/Youtube-red?style=flat&amp;logo=youtube&amp;labelColor=red" style="max-width:10ch;"></a>
 
-By Weng Fei Fung. A beautiful, searchable web interface for browsing and downloading n8n automation templates. This project makes Oleg Melnikov's comprehensive n8n templates collection easily accessible through a modern web application.
+By Weng Fei Fung. A beautiful, searchable web interface for browsing and downloading n8n automation templates. This project makes [Oleg Melnikov's comprehensive n8n templates collection](https://docs.google.com/spreadsheets/d/1v8aRvHQBwglhdWrpoCNE9fzptiCc23UxQvuhgr2RlIM/edit?gid=0#gid=0) easily accessible through a modern web application. Here is a [video](https://www.youtube.com/watch?v=yAiCXyGLZ2c) of him explaining his collection. He has also developed an [AI Chatbot]( https://olegfuns.app.n8n.cloud/webhook/cda21b26-b940-4b60-8afa-fd7b8281a96b/chat) to search teh templates.
+
+I found it preferable to have an actual search engine with filtering and sorting, so I created the browsable interface:
+![](docs/20250625072527.png)
+
+I also created the downloader script that will download the json from the Google Drive links in Oleg's database, making the workflows instantly viewable and downloadable from the browsable interface.
 
 ## 🌟 Features
 
@@ -20,7 +25,7 @@ By Weng Fei Fung. A beautiful, searchable web interface for browsing and downloa
 
 ## 🎯 Data Source
 
-The core template data is sourced from [Oleg Melnikov's comprehensive n8n templates collection](https://www.youtube.com/watch?v=yAiCXyGLZ2c), uploaded on June 20th, 2025. This collection contains hundreds of n8n automation workflows covering various use cases and integrations snapshotted on June 25th, 2025.
+The core template data is sourced from Oleg Melnikov's comprehensive n8n templates collection, uploaded on June 20th, 2025. This collection contains hundreds of n8n automation workflows covering various use cases and integrations snapshotted on June 25th, 2025.
 
 
 ### 🤖 AI-Powered Template Recommendations

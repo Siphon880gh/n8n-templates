@@ -189,23 +189,16 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                     <p class="text-gray-600 text-sm">Systematically categorized and structured for easy navigation</p>
                                 </div>
                             </div>
-                            
-                            <div class="flex items-start">
-                                <i class="fas fa-rocket text-purple-600 mr-3 mt-1"></i>
-                                <div>
-                                    <h3 class="font-semibold text-gray-800">Comprehensive Coverage</h3>
-                                    <p class="text-gray-600 text-sm">Wide range of automation scenarios and use cases</p>
-                                </div>
-                            </div>
+                            <div style="height: 20px;"></div>
                         </div>
                         
                         <div class="mt-6 pt-4 border-t border-gray-200">
                             <div class="flex items-center justify-between">
                                 <div class="text-sm text-gray-500">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    Developed by zie619
+                                    Developed by zie619 and the community
                                 </div>
-                                <a href="zie619/" 
+                                <a href="zie619-community/" 
                                    class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 transform hover:scale-105">
                                     <i class="fas fa-arrow-right mr-2"></i>
                                     Browse Archive

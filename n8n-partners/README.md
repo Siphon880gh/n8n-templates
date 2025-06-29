@@ -11,7 +11,7 @@ By Weng Fei Fung. A browser for exploring n8n's official `test-workflows` reposi
 
 ## Overview
 
-n8n-partners is designed to help you browse and discover the extensive collection of workflows from n8n's official test-workflows repository. The majority of these workflows demonstrate integrations with third-party applications and services, such as CrateDB and many other partner platforms.
+n8n-partners is designed to help you browse and discover the extensive collection of workflows from [n8n's official test-workflows repository](https://github.com/n8n-io/test-workflows). The majority of these workflows demonstrate integrations with third-party applications and services, such as CrateDB and many other partner platforms.
 
 ## Purpose
 
