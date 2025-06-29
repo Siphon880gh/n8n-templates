@@ -8,7 +8,7 @@
 By Weng Fei Fung. A beautiful, searchable web interface for browsing and downloading n8n automation templates. This project makes [Oleg Melnikov's comprehensive n8n templates collection](https://docs.google.com/spreadsheets/d/1v8aRvHQBwglhdWrpoCNE9fzptiCc23UxQvuhgr2RlIM/edit?gid=0#gid=0) easily accessible through a modern web application. Here is a [video](https://www.youtube.com/watch?v=yAiCXyGLZ2c) of him explaining his collection. He has also developed an [AI Chatbot]( https://olegfuns.app.n8n.cloud/webhook/cda21b26-b940-4b60-8afa-fd7b8281a96b/chat) to search the templates.
 
 I found it preferable to have an actual search engine with filtering and sorting, so I created the browsable interface:
-![](docs/20250625072527.png)
+![](docs/20250625080429.png)
 
 I also created the downloader script that will download the json from the Google Drive links in Oleg's database, making the workflows instantly viewable and downloadable from the browsable interface.
 
