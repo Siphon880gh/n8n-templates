@@ -1,3 +1,6 @@
 [submodule "n8n-partners/test-workflows"]
 	path = n8n-partners/test-workflows
 	url = /Users/wengffung/dev/web/weng/app/n8n-templates/n8n-partners/test-workflows
+[submodule "zie619-community/n8n-workflows"]
+	path = zie619-community/n8n-workflows
+	url = /Users/wengffung/dev/web/weng/app/n8n-templates/zie619-community/n8n-workflows

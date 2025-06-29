@@ -50,7 +50,7 @@ Perfect for learning from experienced n8n practitioners and getting video explan
 ---
 
 ### 🗃️ zie619's Community Collection
-**Massive Workflows Archive** *(Coming Soon)*
+**Workflows Archive**
 
 A systematically organized collection of 2,000+ n8n workflows developed and **browsed through zie619's own interface**, providing the most comprehensive coverage of automation scenarios and use cases.
 
