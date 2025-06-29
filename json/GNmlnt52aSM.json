@@ -1,0 +1,1360 @@
+{
+  "name": "PPC Thievery",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        -320
+      ],
+      "id": "75a6d16d-0e83-4e43-ae1f-55c47f6dfbac",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "PPC Thievery",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -400,
+        -320
+      ],
+      "id": "9623397f-d0a0-44b9-9d9a-3d74f3a7b65a",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 1. Run once to create folder & database\n\n#### This generates your database (Google Sheet) and your parent folder (Google Drive). Once you have values for each, adjust the \"Set Variables\" node.",
+        "height": 340,
+        "width": 1140,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -660,
+        -480
+      ],
+      "id": "8382dbb6-6428-43de-b105-c15cc2c13f53",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "00a1c88b-d177-4862-b82c-6dc1ce4291f7",
+              "leftValue": "={{ $json.snapshot.images[0].original_image_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        120,
+        100
+      ],
+      "id": "1cc8b6d8-10e8-4bef-bbb7-c237e8068aea",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/XtaWFhbtfxyzqrFmd/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer apify_api_XYlnkcgY99soI0HPEcAlebZEa5Rcv14daAdy"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"count\": 20,\n    \"period\": \"last7d\",\n    \"scrapeAdDetails\": true,\n    \"scrapePageAds.activeStatus\": \"active\",\n    \"urls\": [\n        {\n            \"url\": \"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&is_targeted_country=false&media_type=all&q=agency&search_type=keyword_unordered\",\n            \"method\": \"GET\"\n        }\n    ]\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -100,
+        100
+      ],
+      "id": "0113a162-d07a-4d8b-8f45-6abe7d1bb00f",
+      "name": "Run Ad Library Scraper"
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        340,
+        100
+      ],
+      "id": "d3f340d6-f747-4a80-9db5-59495e47d563",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "name": "={{ $binary.data.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        100
+      ],
+      "id": "9b724dc2-0a25-40fd-a3b4-7a338152ab5d",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "text": "What's in this image? Describe it extremely comprehensively. Leave nothing out.",
+        "imageUrls": "=https://drive.google.com/uc?export=download&id={{ $('Google Drive1').item.json.id }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -340,
+        300
+      ],
+      "id": "68d7caa8-067b-4d2e-b479-2f6776389710",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "oLLACDYfGm4C4ouV",
+          "name": "YouTube "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -560,
+        300
+      ],
+      "id": "3eb261c6-ecf8-4b8c-af50-7f158866b653",
+      "name": "Google Drive2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "402a3a15-e71a-4a1b-b235-31edd676d59b",
+              "name": "googleDriveFolderId",
+              "value": "1O_Uh4uvtqU9C9ntk9Rk-B2XhMLYxg_1Z",
+              "type": "string"
+            },
+            {
+              "id": "91e9cf54-7a74-4255-a322-44096d3e3af3",
+              "name": "changeRequest",
+              "value": "Spin this ad so that it features a minimalistic, pastel design. If there is any text on the page replace it with something like \"Upgrade your systems today\" or \"Get your flows optimized today\". If there are any assets on the page leave them as-is. Add a company name, LeftClick, in the bottom right hand corner, along with a little stylized mouse pointer icon.",
+              "type": "string"
+            },
+            {
+              "id": "d3bd4796-3be4-4925-9467-e0f8ab2d6573",
+              "name": "spreadsheetId",
+              "value": "1-R45sKQJidkfffSwYAPsI-OLL-4CKSdYXIDkKfdcTVg",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        100
+      ],
+      "id": "4777d368-4eda-47b4-977b-0e33b27b2a0f",
+      "name": "Set Variables"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're a helpful, intelligent prompt rewriting assistant. You help rewrite prompts.",
+              "role": "system"
+            },
+            {
+              "content": "=I've generated an image description. I want you to take that image description and then give me a simple \"change request\" prompt I can use to tell an AI image editor what changes to make.\n\nReturn your output in the following JSON format:\n\n{\"variants\":[\"First change request\", \"Second change request\", \"Third change request\", \"etc\"]}\n\nRules:\n- Your task is to generate *new* change suggestions that we will later feed into an image generation model.\n- Changes you can make: font style (serif, sans-serif, display), font size, font leading, font tracking, font color, saturation, brightness, background color, background patterns, design style (flat, minimalistic, sleek, photoreal, etc—go nuts here), colors of assets on the page, swapping one asset for another that is more related to the change request.\n- Make these changes reasonable—we want to stick to the source pretty closely. Do not suggest any meaningful changes to the placement of assets. We want the elements all in the exact same place in the image, so only ever suggest color, style, asset type, font type, or copy changes.\n- Use the provided company name in the change request—never the original company name.\n- Generate 3 variants. No more, no less.\n- Adjust the copy so that it's relevant to an audience that wants \"AI automation\". Also make sure your generated copy is similar in length to the copy of the original.\n"
+            },
+            {
+              "content": "{\"originalDescription\":\"The image features a promotional graphic with a bright blue background. Centered on the left is a layered design element consisting of two images. The top image shows a person sitting with a laptop, smiling, wearing a white jacket and blue jeans, with a background of green leaves and plants. Below this image is what appears to be a partially visible document with text and a table. \\n\\nSuperimposed at the top of the image is a white download arrow icon. Beneath the images, the text reads, \"Change your practice management software,\" in bold white lettering, with the words partially highlighted by a darker blue rectangle. This suggests a call to action or advertisement for software related to practice management.\", \"changeRequest\":\"Make it a soft, pastel orange; change text to something like 'Upgrade your systems today'. LeftClick logo with a mouse pointer icon (bottom right)\"}"
+            },
+            {
+              "content": "{\"variants\":[\n  \"Make the background bright orange, swap the text for 'Upgrade your systems today', change it to sans-serif. Add a LeftClick logo with a mouse pointer icon positioned in the bottom right corner. Slightly more upscale style.\",\n  \"Switch the background to a clean white. Update the headline to say 'Optimize with LeftClick.' and clean, minimalistic serif font. Place the LeftClick logo and a minimalist arrow cursor icon in the top-left corner.\",\n  \"Set the background to a gradient from deep blue to turquoise. Change the text to 'Smarter systems start here.', play with the leading and tracking and make it a standout display font. Keep the LeftClick logo in the bottom right, but make it semi-transparent.\",\n  \"Use a charcoal grey background with high-contrast white text that says 'LeftClick powers performance.' Include a small pointer icon beside the logo in the bottom center.\",\n  \"Make the background electric lime green. Replace the message with 'Your automation partner: LeftClick.' Mouse pointer icon next to the logo in the lower-right, make the fonts hyper stylized.\"\n]\n}",
+              "role": "assistant"
+            },
+            {
+              "content": "={\"originalDescription\":\"{{ $json.content }}\", \"changeRequest\":\"{{ $('Set Variables').item.json.changeRequest }}\"} "
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -120,
+        300
+      ],
+      "id": "788441a5-c5ff-44f8-84eb-a6fc3e156bfe",
+      "name": "Spin Prompts",
+      "credentials": {
+        "openAiApi": {
+          "id": "oLLACDYfGm4C4ouV",
+          "name": "YouTube "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image[]",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "=Your task is to generate an image.\n\nHere is your prompt:\n\n{{ $('Loop Over Items').item.json.variant }}\n\nRules:\n- Stick as closely as possible to the outlines of the source document.\n- Change text, colors, shapes, and styles only if explicitly specified in the prompt. If something is not specified, do not change it.\n- If there is an actor and no style is specified, change the way they look a little so it's not the same actor. Only do this if the desired style is not a rendered, drawing, or cartoon version of them."
+            },
+            {
+              "name": "size",
+              "value": "1024x1024"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        300
+      ],
+      "id": "50ba1a6c-d22a-4258-b91b-f20520a20a29",
+      "name": "Generate Image Using GPT Image 1",
+      "executeOnce": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "kRhXLl2JwVGc05AE",
+          "name": "AI Facebook Ad Analyzer"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        660,
+        300
+      ],
+      "id": "17fd0756-ad6e-4121-91de-04ab438cfe13",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        300
+      ],
+      "id": "d9f49791-9fea-4c38-9034-de58bd183e9e",
+      "name": "Wait",
+      "webhookId": "e0023d56-efc1-4a82-b312-bc27f4ff837b"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "message.content.variants",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "id": "ff8c3016-0e67-4686-a816-99cde652e134",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "de128b60-4a0b-4736-876b-4bef0add0478",
+              "name": "variant",
+              "value": "={{ $json[\"message.content.variants\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "6aa78def-4707-408a-8e9f-9c8b8fbe9381",
+              "name": "imageAdUrl",
+              "value": "={{ $('Filter').item.json.snapshot.images[0].original_image_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        300
+      ],
+      "id": "13b36108-695c-469a-aa88-bd92e413af8f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.imageAdUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        300
+      ],
+      "id": "eae80950-41ef-4281-b05f-560aac5ecac7",
+      "name": "Download Static Image Ad1"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1340,
+        300
+      ],
+      "id": "3a2260cb-f095-4859-812c-cb4e71afb000",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Google Drive1').item.json.name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1560,
+        300
+      ],
+      "id": "58b50e96-183c-4259-aaf0-f0ede030ae54",
+      "name": "Google Drive3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json.ad_archive_id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Set Variables').item.json.googleDriveFolderId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        560,
+        100
+      ],
+      "id": "a6c041b7-ab3c-4c91-bcbf-8b0afc931596",
+      "name": "Create Asset Parent Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "=1. Source Assets",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{$json.id}}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        780,
+        100
+      ],
+      "id": "66e56335-799e-4a83-854c-6de778259bd3",
+      "name": "Create Child Source Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "=2. Spun Assets",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create Asset Parent Folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        980,
+        100
+      ],
+      "id": "83f12f1e-3cf6-4bbd-8329-3ab0f085bff0",
+      "name": "Create Child Spun Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8R2NiLt8owCA0E2O",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Run Ad Library Scraper').item.json.snapshot.images[0].original_image_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1220,
+        100
+      ],
+      "id": "e4091051-9606-4690-b15d-d2d33be0aae8",
+      "name": "Download Static Image Ad"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Variables').item.json.spreadsheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "scraped_ads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.toSeconds() }}",
+            "ad_archive_id": "={{ $('Run Ad Library Scraper').item.json.ad_archive_id }}",
+            "page_id": "={{ $('Run Ad Library Scraper').item.json.page_id }}",
+            "original_image_url": "={{ $('Run Ad Library Scraper').item.json.snapshot.images[0].original_image_url }}",
+            "page_name": "={{ $('Run Ad Library Scraper').item.json.page_name }}",
+            "ad_body": "={{ $('Run Ad Library Scraper').item.json.snapshot.body.text }}",
+            "date_scraped": "={{ $('Run Ad Library Scraper').item.json.start_date }}",
+            "spun_prompts": "={{ $('Download Static Image Ad1').item.json.variant }}",
+            "asset_folder": "=https://drive.google.com/drive/u/0/folders/{{ $('Create Asset Parent Folder').item.json.id }}",
+            "source_folder": "=https://drive.google.com/drive/u/0/folders/{{ $('Create Child Source Folder').item.json.id }}",
+            "spun_folder": "=https://drive.google.com/drive/u/0/folders/{{ $('Create Child Spun Folder').item.json.id }}",
+            "direct_spun_image_link": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ad_archive_id",
+              "displayName": "ad_archive_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "page_id",
+              "displayName": "page_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "original_image_url",
+              "displayName": "original_image_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "page_name",
+              "displayName": "page_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ad_body",
+              "displayName": "ad_body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date_scraped",
+              "displayName": "date_scraped",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "spun_prompts",
+              "displayName": "spun_prompts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "asset_folder",
+              "displayName": "asset_folder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source_folder",
+              "displayName": "source_folder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "spun_folder",
+              "displayName": "spun_folder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "direct_spun_image_link",
+              "displayName": "direct_spun_image_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1780,
+        300
+      ],
+      "id": "5e7d1d17-786e-4793-b167-658ce611690a",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EOibXIc4U8wcXyRR",
+          "name": "YouTube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "spreadsheet",
+        "title": "PPC Thievery",
+        "sheetsUi": {
+          "sheetValues": [
+            {
+              "title": "scraped_ads"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -180,
+        -320
+      ],
+      "id": "b8cb1ac8-c9c2-4144-9923-3db423c8a0e2",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EOibXIc4U8wcXyRR",
+          "name": "YouTube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Google Sheets1').item.json.spreadsheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "scraped_ads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ad_archive_id",
+              "displayName": "ad_archive_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "page_id",
+              "displayName": "page_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "original_image_url",
+              "displayName": "original_image_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "page_name",
+              "displayName": "page_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ad_body",
+              "displayName": "ad_body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date_scraped",
+              "displayName": "date_scraped",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "spun_prompts",
+              "displayName": "spun_prompts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "asset_folder",
+              "displayName": "asset_folder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source_folder",
+              "displayName": "source_folder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "spun_folder",
+              "displayName": "spun_folder",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "direct_spun_image_link",
+              "displayName": "direct_spun_image_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        260,
+        -320
+      ],
+      "id": "ee38310a-44bf-4a95-b822-217a6b828c7b",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EOibXIc4U8wcXyRR",
+          "name": "YouTube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "298bd00b-3410-47ec-95eb-af379f2966fa",
+              "name": "timestamp",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "c922e090-09cf-40b0-8787-b89f63af41c3",
+              "name": "ad_archive_id",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "854139e6-2696-4039-95d0-33d62b413dcb",
+              "name": "page_id",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "c9422756-a649-403b-b080-38a2c6ef66d7",
+              "name": "original_image_url",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "8a3c6e68-9f8d-4955-a10b-81b24a7296c5",
+              "name": "page_name",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "6bcc6c5d-4115-4ca4-bdb4-08458a3764ba",
+              "name": "ad_body",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "fe4e7b13-f9ca-4684-8fc2-824a33fe8cb5",
+              "name": "date_scraped",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "28d2210d-1bf8-40cd-bde6-201bdc62b2c0",
+              "name": "spun_prompts",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "d8f16995-1d73-42da-b7f0-fb9cfb974ea0",
+              "name": "asset_folder",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "9323586a-7d73-4c22-978d-30f4f35b11d0",
+              "name": "source_folder",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "64abb9e9-2d0f-4120-b1dc-f0a349815223",
+              "name": "spun_folder",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "1a580ae0-0004-4b6a-85ae-23aa96e30ec8",
+              "name": "direct_spun_image_link",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        40,
+        -320
+      ],
+      "id": "4be4b5ac-95e5-44fc-9348-d8bac921fbdf",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "## 2. Update \"Set Variables\" and \"Run Ad Library Scraper\" and run.\n\n#### This flow starts by running an Ad Library Scraper, generating Google Drive scaffolding for organizational purposes, and then analyzes incoming image ads with OpenAI -> spins the prompt. For each spun prompt, it then generates a new, spun image, and uploads it back to your Google Drive before logging it in your Sheet.",
+        "height": 620,
+        "width": 2860,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -660,
+        -80
+      ],
+      "id": "8e9e7f50-63a9-48a1-bd73-f9dfbd9e3df0",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Ad Library Scraper": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Create Asset Parent Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Spin Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables": {
+      "main": [
+        [
+          {
+            "node": "Run Ad Library Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Spin Prompts": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Download Static Image Ad1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Using GPT Image 1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Static Image Ad1": {
+      "main": [
+        [
+          {
+            "node": "Generate Image Using GPT Image 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive3": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Asset Parent Folder": {
+      "main": [
+        [
+          {
+            "node": "Create Child Source Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Child Source Folder": {
+      "main": [
+        [
+          {
+            "node": "Create Child Spun Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Child Spun Folder": {
+      "main": [
+        [
+          {
+            "node": "Download Static Image Ad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Static Image Ad": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5090b211-39f4-49e4-b705-a409313f90b3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d7661a849ead114a9aa6d9ceaf4160465aeb79532a35bde62160c840ffba9fc8"
+  },
+  "id": "sVjef9mTRpUIrdSE",
+  "tags": []
+}
