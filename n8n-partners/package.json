@@ -1,0 +1,12 @@
+{
+  "name": "n8n-partners",
+  "version": "1.0.0",
+  "description": "",
+  "main": "create-context.js",
+  "scripts": {
+    "context": "echo \"Getting context\" && node create-context.js",
+    "integrations": "echo \"Getting context\" && node get-integrations.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
