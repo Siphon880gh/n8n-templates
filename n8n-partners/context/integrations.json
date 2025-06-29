@@ -1,726 +1,907 @@
 [
   {
     "integration": "APITemplate.io",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWS Transcribe",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWSComprehend",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWSLambda",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWSRekognition",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWSS3",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWSSES",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWSSNS",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWSSQS",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "ActiveCampaign",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Affinity",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Agent",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Airtable",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Asana",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Automizy",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Autopilot",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Bannerbear",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "BasicLLMChain",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Beeminder",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Bitly",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Box",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Brandfetch",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "ChargeBee",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "CircleCI",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Clearbit",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "ClickUp",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Clockify",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Cockpit",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Coda",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "CoinGecko",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Contentful-delivery-api",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Contentful-preview-api",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "ConvertKit",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Copper",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Cortex",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "CrateDB",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Customerio",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Date&Time",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Deepl",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Demio",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Discord",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Discourse",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Disqus",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Drif",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "DropBox",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "E-goi",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "EditImage",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Emelia",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "ExecuteWorkflow",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "FTP",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Flow",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "FreshDesk",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "FunctionItem",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GetResponse",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Ghost",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Git",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GitLab",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Github",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Gmail",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GoogleBooks",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GoogleCalendar",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GoogleCloudFirestore",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GoogleContacts",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GoogleDrive",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GoogleSheets",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GoogleSlides",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "GoogleTask",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Gotify",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "HTML Extract",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "HTTP",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Hackernews",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Harvest",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "HelpScout",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Hubspot",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Hunter",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "InMemoryVectorStore",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Intercom",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "InvoiceNinja",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Iterable",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Keap",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Kitemaker",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Lemlist",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Line",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "LingvaNex",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Linkedin",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "MQTT",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "MailCheck",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Mailchimp",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Mailerlite",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Mailjet",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Mandrill",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Matrix",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Mattermost",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Mautic",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Medium",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "MessageBird",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Microsoft OneDrive",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "MicrosoftExcel",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "MicrosoftOutlook",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "MicrosoftSQL",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Mindee",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Mocean",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Monday",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "MongoDB",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Move Binary Data",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "MySQL",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "NASA",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Nested sub-node errors",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "NextCloud",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "OpenThesaurus",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "OpenWeatherMap",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Orbit",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Paddle",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "PagerDuty",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Paypal",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Peekalink",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "PhantomBuster",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "PineconeVectorStore",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Pipedrive",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "PostHog",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Postgres",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "ProfitWell",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Pushbullet",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Pushover",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "QdrantVectorStore",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "QuestDB",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "QuickBase",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "QuickBooks",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Rabbitmq",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Raindrop",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Reddit",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Redis",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "RocketChat",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Rundeck",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "S3",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "SIGNL4",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Salesforce",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Salesmate",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Segment",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "SendGrid",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "SentryIo",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Shopify",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Slack",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Spontit",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Spotify",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Stackby",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Storyblok",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Strapi",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Strava",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Sub-node errors",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "SummarizationChain",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Taiga",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Tapfiliate",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Telegram",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "TheHive[v3]",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "TheHive[v4]",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "TimescaleDB",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Todoist",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "TravisCI",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Trello",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Twilio",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Twist",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Twitter",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "UnleashedSoftware",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Uplead",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Vero",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Vonage",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Webflow",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Wekan",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Wise",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Wordpress",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "XML",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Xero",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Yourls",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Youtube",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Zendesk",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "ZohoCRM",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Zoom",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "Zulip",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "uProc",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "vectorStorePGVector",
-    "category": ""
+    "category": "",
+    "description": ""
   }
 ]

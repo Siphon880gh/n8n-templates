@@ -72,15 +72,18 @@ It produces a `context/integrations.json` file:
 [
   {
     "integration": "APITemplate.io",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWS Transcribe",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   {
     "integration": "AWSComprehend",
-    "category": ""
+    "category": "",
+    "description": ""
   },
   ...
 ```
@@ -90,7 +93,7 @@ Once you have the integration data, you'll need to ask **ChatGPT or another AI a
 
 Prompt:
 ```
-You are a business automation and integration expert. You will help user enrich this JSON file of integrations. Fill the JSON data with categories where they are empty. For example, Twilio is under the category "Marketing & Advertising Automation"
+You are a business automation and integration expert. You will help user enrich this JSON file of integrations. Fill the JSON data with categories and description where they are empty. For example, Twilio is under the category "Marketing & Advertising Automation". The description is where you describe what that service does.
 
 #### Example Categories:
 - **AI Agent Development**

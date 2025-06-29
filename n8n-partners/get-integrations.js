@@ -35,7 +35,8 @@ function getIntegrations() {
             .sort() // Sort alphabetically
             .map(integration => ({
                 integration: integration,
-                category: ""
+                category: "",
+                description: ""
             }));
 
         // Write the integrations.json file
