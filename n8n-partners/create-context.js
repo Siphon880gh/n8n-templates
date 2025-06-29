@@ -52,7 +52,7 @@ function createContext() {
                 // Use the workflow name as the key (integration key)
                 context[workflowName] = {
                     path: path.relative(__dirname, filePath),
-                    integration: integration
+                    integration: integration.trim()
                 };
                 
                 console.log(`Processed: ${file} - "${workflowName}"`);
