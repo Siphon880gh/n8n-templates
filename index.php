@@ -183,10 +183,10 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             </div>
                             
                             <div class="flex items-start">
-                                <i class="fas fa-layer-group text-indigo-600 mr-3 mt-1"></i>
+                                <i class="fas fa-project-diagram text-indigo-600 mr-3 mt-1"></i>
                                 <div>
-                                    <h3 class="font-semibold text-gray-800">Systematically Organized</h3>
-                                    <p class="text-gray-600 text-sm">Systematically categorized and structured for easy navigation</p>
+                                    <h3 class="font-semibold text-gray-800">Visual Flow Diagrams</h3>
+                                    <p class="text-gray-600 text-sm">Preview workflow structures with interactive Mermaid diagrams in your browser</p>
                                 </div>
                             </div>
                             <div style="height: 20px;"></div>
