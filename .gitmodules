@@ -1,0 +1,3 @@
+[submodule "n8n-partners/test-workflows"]
+	path = n8n-partners/test-workflows
+	url = /Users/wengffung/dev/web/weng/app/n8n-templates/n8n-partners/test-workflows
