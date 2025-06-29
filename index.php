@@ -57,10 +57,10 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                     <div class="p-6">
                         <div class="space-y-4">
                             <div class="flex items-start">
-                                <i class="fas fa-plug text-green-600 mr-3 mt-1"></i>
+                                <i class="fas fa-download text-green-600 mr-3 mt-1"></i>
                                 <div>
-                                    <h3 class="font-semibold text-gray-800">Third-Party Integrations</h3>
-                                    <p class="text-gray-600 text-sm">Explore workflows showcasing integrations with external platforms and APIs</p>
+                                    <h3 class="font-semibold text-gray-800">Direct Downloads</h3>
+                                    <p class="text-gray-600 text-sm">Download workflow JSON files directly, then add your credentials to test the integration on your n8n instance.</p>
                                 </div>
                             </div>
                             
@@ -166,19 +166,20 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                     
                     <div class="p-6">
                         <div class="space-y-4">
-                            <div class="flex items-start">
-                                <i class="fas fa-archive text-purple-600 mr-3 mt-1"></i>
-                                <div>
-                                    <h3 class="font-semibold text-gray-800">Massive Collection</h3>
-                                    <p class="text-gray-600 text-sm">2,000+ organized n8n workflows in one place</p>
-                                </div>
-                            </div>
-                            
+
                             <div class="flex items-start">
                                 <i class="fas fa-download text-pink-600 mr-3 mt-1"></i>
                                 <div>
                                     <h3 class="font-semibold text-gray-800">Direct Downloads</h3>
                                     <p class="text-gray-600 text-sm">Download workflow JSON files directly from the organized archive</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <i class="fas fa-archive text-purple-600 mr-3 mt-1"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Massive Collection</h3>
+                                    <p class="text-gray-600 text-sm">2,000+ organized n8n workflows in one place</p>
                                 </div>
                             </div>
                             
