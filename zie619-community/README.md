@@ -9,20 +9,20 @@ Once you are done with setup, the portal will be able to open Zie619's template 
 To set up Zie619's workflow browser locally:
 
 1. **Download the repository**
-   ```bash
-   git clone https://github.com/Zie619/n8n-workflows
-   cd n8n-workflows
-   ```
+```
+git clone https://github.com/Zie619/n8n-workflows
+cd n8n-workflows
+```
 
 2. **Install Python dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+```
+pip install -r requirements.txt
+```
 
 3. **Run the application**
-   ```bash
-   python app.py
-   ```
+```
+python app.py
+```
 
 4. **Configure reverse proxy**
    Configure your reverse proxy to point to the running Python application. Then the portal will be able to open this curated collection as well.

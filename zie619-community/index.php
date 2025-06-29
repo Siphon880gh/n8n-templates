@@ -7,31 +7,52 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
 // Function to parse markdown content
 function parseMarkdown($content) {
+    // Normalize line endings
+    $content = str_replace("\r\n", "\n", $content);
+    $content = str_replace("\r", "\n", $content);
+    
+    // Convert code blocks first (before other processing)
+    $content = preg_replace('/```(\w+)?\s*\n(.*?)\n```/s', '<pre class="bg-gray-800 text-green-400 p-4 rounded-lg mb-6 overflow-x-auto font-mono text-sm"><code>$2</code></pre>', $content);
+    
     // Convert headers
-    $content = preg_replace('/^# (.+)$/m', '<h1 class="text-3xl font-bold text-gray-800 mb-4">$1</h1>', $content);
-    $content = preg_replace('/^## (.+)$/m', '<h2 class="text-2xl font-semibold text-gray-700 mb-3 mt-6">$1</h2>', $content);
-    $content = preg_replace('/^### (.+)$/m', '<h3 class="text-xl font-medium text-gray-600 mb-2 mt-4">$1</h3>', $content);
+    $content = preg_replace('/^# (.+)$/m', '<h1 class="text-3xl font-bold text-gray-800 mb-6 mt-8 first:mt-0">$1</h1>', $content);
+    $content = preg_replace('/^## (.+)$/m', '<h2 class="text-2xl font-semibold text-gray-700 mb-4 mt-8 border-b border-gray-200 pb-2">$1</h2>', $content);
+    $content = preg_replace('/^### (.+)$/m', '<h3 class="text-xl font-medium text-gray-600 mb-3 mt-6">$1</h3>', $content);
     
-    // Convert code blocks
-    $content = preg_replace('/```(\w+)?\n(.*?)\n```/s', '<pre class="bg-gray-100 p-4 rounded-lg mb-4 overflow-x-auto"><code class="text-sm">$2</code></pre>', $content);
-    
-    // Convert inline code
-    $content = preg_replace('/`([^`]+)`/', '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">$1</code>', $content);
+    // Convert numbered lists
+    $content = preg_replace('/^\d+\.\s+(.+)$/m', '<div class="mb-3"><span class="inline-flex items-center justify-center w-6 h-6 bg-purple-600 text-white text-sm font-semibold rounded-full mr-2">$0</span><strong class="text-gray-800">$1</strong></div>', $content);
+    $content = preg_replace('/<span class="inline-flex items-center justify-center w-6 h-6 bg-purple-600 text-white text-sm font-semibold rounded-full mr-2">(\d+)\.\s+(.+)<\/span><strong class="text-gray-800">\2<\/strong>/', '<span class="inline-flex items-center justify-center w-6 h-6 bg-purple-600 text-white text-sm font-semibold rounded-full mr-2">$1</span><strong class="text-gray-800">$2</strong>', $content);
     
     // Convert bold text
-    $content = preg_replace('/\*\*([^*]+)\*\*/', '<strong class="font-semibold">$1</strong>', $content);
+    $content = preg_replace('/\*\*([^*]+)\*\*/', '<strong class="font-semibold text-gray-800">$1</strong>', $content);
+    
+    // Convert inline code
+    $content = preg_replace('/`([^`]+)`/', '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-purple-700">$1</code>', $content);
     
     // Convert links
-    $content = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank">$1</a>', $content);
+    $content = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2" class="text-blue-600 hover:text-blue-800 underline font-medium" target="_blank">$1</a>', $content);
     
-    // Convert paragraphs
-    $content = preg_replace('/\n\n/', '</p><p class="mb-4 text-gray-700 leading-relaxed">', $content);
-    $content = '<p class="mb-4 text-gray-700 leading-relaxed">' . $content . '</p>';
+    // Split content into blocks by double newlines
+    $blocks = preg_split('/\n\s*\n/', $content);
+    $processedBlocks = [];
     
-    // Convert line breaks
-    $content = str_replace("\n", '<br>', $content);
+    foreach ($blocks as $block) {
+        $block = trim($block);
+        if (empty($block)) continue;
+        
+        // Skip if it's already HTML (headers, code blocks, etc.)
+        if (preg_match('/^<(h[1-6]|pre|div)/', $block)) {
+            $processedBlocks[] = $block;
+        } else {
+            // Convert remaining newlines to <br> and wrap in paragraph
+            $block = str_replace("\n", '<br>', $block);
+            if (!empty($block)) {
+                $processedBlocks[] = '<p class="mb-4 text-gray-700 leading-relaxed">' . $block . '</p>';
+            }
+        }
+    }
     
-    return $content;
+    return implode("\n\n", $processedBlocks);
 }
 
 // Read README.md content
