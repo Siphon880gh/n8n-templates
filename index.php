@@ -60,7 +60,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                 <i class="fas fa-download text-green-600 mr-3 mt-1"></i>
                                 <div>
                                     <h3 class="font-semibold text-gray-800">Direct Downloads</h3>
-                                    <p class="text-gray-600 text-sm">Download workflow JSON files directly, then add your credentials to test the integration on your n8n instance.</p>
+                                    <p class="text-gray-600 text-sm">Download 200+ workflow JSON files, then add your credentials to test the integration on your n8n instance.</p>
                                 </div>
                             </div>
                             
