@@ -32,6 +32,32 @@ npm run context
 
 This command processes all workflows in the `test-workflows` submodule and extracts contextual information, making them searchable and browsable.
 
+It produces a `context/context.json` file:
+```
+{
+  "Twitter:tweet:create:create like retweet delete search": {
+    "path": "test-workflows/workflows/1.json",
+    "integration": "Twitter"
+  },
+  "PagerDuty:incident:create get update getAll:incidentNote:create getAll:User:get:LogEntry:getAll get": {
+    "path": "test-workflows/workflows/10.json",
+    "integration": "PagerDuty"
+  },
+  "RenameKeys": {
+    "path": "test-workflows/workflows/101.json",
+    "integration": ""
+  },
+  "ReadBinaryFile": {
+    "path": "test-workflows/workflows/102.json",
+    "integration": ""
+  },
+  "ExecuteCommand": {
+    "path": "test-workflows/workflows/103.json",
+    "integration": ""
+  },
+  ...
+```
+
 ### 2. Extract Integration Names
 After generating the context, run the integrations command to identify all third-party integrations:
 
@@ -41,10 +67,29 @@ npm run integrations
 
 This command analyzes the workflows and extracts the names of all integrations, allowing you to browse workflows by specific third-party services.
 
+It produces a `context/integrations.json` file:
+```
+[
+  {
+    "integration": "APITemplate.io",
+    "category": ""
+  },
+  {
+    "integration": "AWS Transcribe",
+    "category": ""
+  },
+  {
+    "integration": "AWSComprehend",
+    "category": ""
+  },
+  ...
+```
+
 ### 3. AI-Powered Categorization
-Once you have the integration data, you'll need to ask **ChatGPT or another AI agent** to categorize the workflows into appropriate categories. 
+Once you have the integration data, you'll need to ask **ChatGPT or another AI agent** to categorize the workflows into appropriate categories. Cursor AI is not bad actually for this (Make sure to open on the `integrations.json` file).
 
 Prompt:
+```
 You are a business automation and integration expert. You will help user enrich this JSON file of integrations. Fill the JSON data with categories where they are empty. For example, Twilio is under the category "Marketing & Advertising Automation"
 
 #### Example Categories:
