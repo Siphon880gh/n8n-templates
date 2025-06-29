@@ -11,7 +11,7 @@ By Weng Fei Fung.
 
 ## 🚀 Your Gateway to Automation Excellence
 
-Welcome to the **n8n Templates Portal** - a comprehensive hub that brings together three expertly curated collections of n8n workflow templates. **Weng has created browser interfaces for n8n official integration workflows and oleg's workflows** to make them more accessible and searchable. Whether you're looking for official third-party integrations, battle-tested templates from content creators, or massive community archives, we've got you covered.
+Welcome to the **n8n Templates Portal** - a comprehensive hub that brings together three expertly curated collections of n8n workflow templates. **Weng has created browser interfaces for n8n official integration workflows and Oleg's workflows** to make them more accessible and searchable. Whether you're looking for official third-party integrations, battle-tested templates from content creators, or massive community archives, we've got you covered.
 
 ## 🌟 Three Powerful Collections
 
