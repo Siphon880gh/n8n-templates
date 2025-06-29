@@ -54,6 +54,9 @@ Perfect for learning from experienced n8n practitioners and getting video explan
 
 A systematically organized collection of 2,000+ n8n workflows developed and **browsed through zie619's own interface**, providing the most comprehensive coverage of automation scenarios and use cases.
 
+**Weng has added to the browser interface** to have a Use Case Category filter. Until author Zie619 merges the categorization feature (🙏), you can access it on my fork:
+👉 https://github.com/Siphon880gh/n8n-workflows-contributing
+
 **Key Features:**
 - **Massive Scale**: 2,000+ organized workflows in one place
 - **Systematic Organization**: Categorized and structured for easy navigation
