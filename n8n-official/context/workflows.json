@@ -68,5 +68,565 @@
     "integration": "Clockify",
     "category": "Business Process Automation",
     "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1775-automatically-add-customers-from-pipedrive-to-stripe",
+    "filename": "1775-automatically-add-customers-from-pipedrive-to-stripe",
+    "integration": "Pipedrive",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1840-sync-zendesk-tickets-to-your-hubspot-contacts",
+    "filename": "1840-sync-zendesk-tickets-to-your-hubspot-contacts",
+    "integration": "Hubspot",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1829-create-mautic-contact-on-a-new-shopify-customer",
+    "filename": "1829-create-mautic-contact-on-a-new-shopify-customer",
+    "integration": "Mautic",
+    "category": "Marketing & Advertising Automation",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1841-update-hubspot-contacts-with-zendesk-tickets",
+    "filename": "1841-update-hubspot-contacts-with-zendesk-tickets",
+    "integration": "Hubspot",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1805-sync-shopify-customers-to-your-hubspot-contacts",
+    "filename": "1805-sync-shopify-customers-to-your-hubspot-contacts",
+    "integration": "Hubspot",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1808-sync-shopify-orders-with-your-zendesk-contacts",
+    "filename": "1808-sync-shopify-orders-with-your-zendesk-contacts",
+    "integration": "Shopify",
+    "category": "E-commerce & Retail",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1823-create-monday-item-on-a-new-mautic-contact",
+    "filename": "1823-create-monday-item-on-a-new-mautic-contact",
+    "integration": "Mautic",
+    "category": "Marketing & Advertising Automation",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1771-send-or-update-new-mailchimp-subscribers-in-hubspot",
+    "filename": "1771-send-or-update-new-mailchimp-subscribers-in-hubspot",
+    "integration": "Hubspot",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1758-upload-leads-with-custom-fields-from-typeform-to-pipedrive",
+    "filename": "1758-upload-leads-with-custom-fields-from-typeform-to-pipedrive",
+    "integration": "Pipedrive",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1770-add-new-contacts-from-hubspot-to-the-email-list-in-mailchimp",
+    "filename": "1770-add-new-contacts-from-hubspot-to-the-email-list-in-mailchimp",
+    "integration": "Hubspot",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1809-sync-shopify-orders-with-zendesk-tickets",
+    "filename": "1809-sync-shopify-orders-with-zendesk-tickets",
+    "integration": "Shopify",
+    "category": "E-commerce & Retail",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1949-create-2-xml-files-with-and-without-xml-attributes",
+    "filename": "1949-create-2-xml-files-with-and-without-xml-attributes",
+    "integration": "XML",
+    "category": "Data Processing & Analysis",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1765-get-slack-notifications-when-new-product-published-on-woocommerce",
+    "filename": "1765-get-slack-notifications-when-new-product-published-on-woocommerce",
+    "integration": "Slack",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1820-sync-zendesk-tickets-to-slack-thread",
+    "filename": "1820-sync-zendesk-tickets-to-slack-thread",
+    "integration": "Slack",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1833-sync-zendesk-tickets-with-subsequent-comments-to-jira-issues",
+    "filename": "1833-sync-zendesk-tickets-with-subsequent-comments-to-jira-issues",
+    "integration": "Zendesk",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1855-sync-stripe-charges-to-hubspot-contacts",
+    "filename": "1855-sync-stripe-charges-to-hubspot-contacts",
+    "integration": "Hubspot",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/655-merge-greetings-with-the-users-based-on-the-language",
+    "filename": "655-merge-greetings-with-the-users-based-on-the-language",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1940-sync-discord-scheduled-events-to-google-calendar",
+    "filename": "1940-sync-discord-scheduled-events-to-google-calendar",
+    "integration": "Discord",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1776-sync-payment-and-customer-data-between-stripe-and-pipedrive",
+    "filename": "1776-sync-payment-and-customer-data-between-stripe-and-pipedrive",
+    "integration": "Pipedrive",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1947-sql-to-xml-export-with-xsl-template-formatting",
+    "filename": "1947-sql-to-xml-export-with-xsl-template-formatting",
+    "integration": "XML",
+    "category": "Data Processing & Analysis",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1975-notify-user-in-slack-of-quarantined-email-and-create-jira-ticket-if-opened",
+    "filename": "1975-notify-user-in-slack-of-quarantined-email-and-create-jira-ticket-if-opened",
+    "integration": "Slack",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1976-receive-and-analyze-emails-with-rules-in-sublime-security",
+    "filename": "1976-receive-and-analyze-emails-with-rules-in-sublime-security",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1918-load-data-into-snowflake",
+    "filename": "1918-load-data-into-snowflake",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/4336-webhook-enabled-ai-pdf-analyzer",
+    "filename": "4336-webhook-enabled-ai-pdf-analyzer",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1931-report-number-of-weekly-created-records-in-an-app",
+    "filename": "1931-report-number-of-weekly-created-records-in-an-app",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1948-xml-to-sql-database-import",
+    "filename": "1948-xml-to-sql-database-import",
+    "integration": "XML",
+    "category": "Data Processing & Analysis",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1970-create-unique-jira-tickets-from-splunk-alerts",
+    "filename": "1970-create-unique-jira-tickets-from-splunk-alerts",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1787-upload-leads-from-a-csv-file-to-pipedrive-crm",
+    "filename": "1787-upload-leads-from-a-csv-file-to-pipedrive-crm",
+    "integration": "Pipedrive",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1944-compare-sql-datasets",
+    "filename": "1944-compare-sql-datasets",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1835-sync-notion-database-pages-as-clickup-tasks",
+    "filename": "1835-sync-notion-database-pages-as-clickup-tasks",
+    "integration": "ClickUp",
+    "category": "Project Management",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/2732-csv-to-json-converter-with-error-handling-and-slack-notifications",
+    "filename": "2732-csv-to-json-converter-with-error-handling-and-slack-notifications",
+    "integration": "Slack",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1932-send-alert-when-data-is-created-in-appdatabase",
+    "filename": "1932-send-alert-when-data-is-created-in-appdatabase",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1941-send-google-sheets-data-as-a-message-to-a-discord-channel",
+    "filename": "1941-send-google-sheets-data-as-a-message-to-a-discord-channel",
+    "integration": "Discord",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1945-sync-outlook-calendar-events-to-notion",
+    "filename": "1945-sync-outlook-calendar-events-to-notion",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1966-itemmatching-usage-example",
+    "filename": "1966-itemmatching-usage-example",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1819-send-google-drive-files-to-notion-database",
+    "filename": "1819-send-google-drive-files-to-notion-database",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/2222-convert-an-xml-file-to-json-via-webhook-call",
+    "filename": "2222-convert-an-xml-file-to-json-via-webhook-call",
+    "integration": "XML",
+    "category": "Data Processing & Analysis",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1973-analyze-crowdstrike-detections-search-for-iocs-in-virustotal-create-a-ticket-in-jira-and-post-a-message-in-slack",
+    "filename": "1973-analyze-crowdstrike-detections-search-for-iocs-in-virustotal-create-a-ticket-in-jira-and-post-a-message-in-slack",
+    "integration": "Slack",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1804-sync-your-github-issues-to-your-notion-database",
+    "filename": "1804-sync-your-github-issues-to-your-notion-database",
+    "integration": "Git",
+    "category": "Technical Infrastructure & DevOps",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1831-sync-jira-issues-with-subsequent-comments-to-notion-database",
+    "filename": "1831-sync-jira-issues-with-subsequent-comments-to-notion-database",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/4108-ai-image-generator-from-text-built-on-falai",
+    "filename": "4108-ai-image-generator-from-text-built-on-falai",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1943-comparing-data-with-the-compare-datasets-node",
+    "filename": "1943-comparing-data-with-the-compare-datasets-node",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1969-import-csv-from-url-to-google-sheets",
+    "filename": "1969-import-csv-from-url-to-google-sheets",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1991-analyze-email-headers-for-ips-and-spoofing",
+    "filename": "1991-analyze-email-headers-for-ips-and-spoofing",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1942-push-and-update-files-in-github",
+    "filename": "1942-push-and-update-files-in-github",
+    "integration": "Git",
+    "category": "Technical Infrastructure & DevOps",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1977-weekly-shodan-query-report-accidents",
+    "filename": "1977-weekly-shodan-query-report-accidents",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1968-import-multiple-csv-to-google-sheets",
+    "filename": "1968-import-multiple-csv-to-google-sheets",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1778-sync-tasks-automatically-from-todoist-to-notion",
+    "filename": "1778-sync-tasks-automatically-from-todoist-to-notion",
+    "integration": "Todoist",
+    "category": "Project Management",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1974-monitor-security-advisories",
+    "filename": "1974-monitor-security-advisories",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1769-sync-tasks-data-between-notion-and-asana",
+    "filename": "1769-sync-tasks-data-between-notion-and-asana",
+    "integration": "Asana",
+    "category": "Project Management",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1939-send-labeled-email-to-a-notion-database",
+    "filename": "1939-send-labeled-email-to-a-notion-database",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1993-suspicious-login-detection",
+    "filename": "1993-suspicious-login-detection",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/2007-telegram-echo-bot",
+    "filename": "2007-telegram-echo-bot",
+    "integration": "Telegram",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1856-turn-on-a-light-to-a-specific-color-on-any-update-in-github-repository",
+    "filename": "1856-turn-on-a-light-to-a-specific-color-on-any-update-in-github-repository",
+    "integration": "Git",
+    "category": "Technical Infrastructure & DevOps",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1967-prepare-csv-files-with-gpt-4",
+    "filename": "1967-prepare-csv-files-with-gpt-4",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1964-sync-google-sheets-data-with-mysql",
+    "filename": "1964-sync-google-sheets-data-with-mysql",
+    "integration": "MySQL",
+    "category": "Data Processing & Analysis",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1971-url-and-ip-lookups-through-greynoise-and-virustotal",
+    "filename": "1971-url-and-ip-lookups-through-greynoise-and-virustotal",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1933-push-json-data-into-an-app-or-to-spreadsheet-file",
+    "filename": "1933-push-json-data-into-an-app-or-to-spreadsheet-file",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1958-ai-ask-questions-about-any-data-source-using-the-n8n-workflow-retriever",
+    "filename": "1958-ai-ask-questions-about-any-data-source-using-the-n8n-workflow-retriever",
+    "integration": "Flow",
+    "category": "Business Process Automation",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1895-reddit-ai-digest",
+    "filename": "1895-reddit-ai-digest",
+    "integration": "Reddit",
+    "category": "Social Media Management",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1930-sync-new-data-between-two-apps",
+    "filename": "1930-sync-new-data-between-two-apps",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1822-two-way-sync-pipedrive-and-mysql",
+    "filename": "1822-two-way-sync-pipedrive-and-mysql",
+    "integration": "MySQL",
+    "category": "Data Processing & Analysis",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/5010-rag-starter-template-using-simple-vector-stores-form-trigger-and-openai",
+    "filename": "5010-rag-starter-template-using-simple-vector-stores-form-trigger-and-openai",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1956-ai-summarize-podcast-episode-and-enhance-using-wikipedia",
+    "filename": "1956-ai-summarize-podcast-episode-and-enhance-using-wikipedia",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1955-custom-langchain-agent-written-in-javascript",
+    "filename": "1955-custom-langchain-agent-written-in-javascript",
+    "integration": "Agent",
+    "category": "AI Agent Development",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1957-force-ai-to-use-a-specific-output-format",
+    "filename": "1957-force-ai-to-use-a-specific-output-format",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1898-send-a-chatgpt-email-reply-and-save-responses-to-google-sheets",
+    "filename": "1898-send-a-chatgpt-email-reply-and-save-responses-to-google-sheets",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1897-send-specific-pdf-attachments-from-gmail-to-google-drive-using-openai",
+    "filename": "1897-send-specific-pdf-attachments-from-gmail-to-google-drive-using-openai",
+    "integration": "Gmail",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1992-phishing-analysis-urlscanio-and-virustotal",
+    "filename": "1992-phishing-analysis-urlscanio-and-virustotal",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1962-load-and-summarize-google-drive-files-with-ai",
+    "filename": "1962-load-and-summarize-google-drive-files-with-ai",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1826-working-with-excel-spreadsheet-files-xls-and-xlsx",
+    "filename": "1826-working-with-excel-spreadsheet-files-xls-and-xlsx",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1963-ai-conversational-agent-with-custom-tool-written-in-javascript",
+    "filename": "1963-ai-conversational-agent-with-custom-tool-written-in-javascript",
+    "integration": "Agent",
+    "category": "AI Agent Development",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1961-slack-chatbot-powered-by-ai",
+    "filename": "1961-slack-chatbot-powered-by-ai",
+    "integration": "Slack",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1980-use-an-open-source-llm-via-huggingface",
+    "filename": "1980-use-an-open-source-llm-via-huggingface",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1978-personalize-marketing-emails-using-customer-data-and-ai",
+    "filename": "1978-personalize-marketing-emails-using-customer-data-and-ai",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/2035-telegram-ai-bot-with-langchain-nodes",
+    "filename": "2035-telegram-ai-bot-with-langchain-nodes",
+    "integration": "Telegram",
+    "category": "Communication & Messaging",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1959-ai-chatbot-that-can-search-the-web",
+    "filename": "1959-ai-chatbot-that-can-search-the-web",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1953-suggest-meeting-slots-using-ai",
+    "filename": "1953-suggest-meeting-slots-using-ai",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1951-scrape-and-summarize-webpages-with-ai",
+    "filename": "1951-scrape-and-summarize-webpages-with-ai",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1954-ai-agent-chat",
+    "filename": "1954-ai-agent-chat",
+    "integration": "Agent",
+    "category": "AI Agent Development",
+    "json": "<savedAsJSONFile>"
   }
 ]
