@@ -11,9 +11,25 @@ By Weng Fei Fung.
 
 ## 🚀 Your Gateway to Automation Excellence
 
-Welcome to the **n8n Templates Portal** - a comprehensive hub that brings together three expertly curated collections of n8n workflow templates. **Weng has created browser interfaces for n8n official integration workflows and Oleg's workflows** to make them more accessible and searchable. Whether you're looking for official third-party integrations, battle-tested templates from content creators, or massive community archives, we've got you covered.
+Welcome to the **n8n Templates Portal** - a comprehensive hub that brings together four expertly curated collections of n8n workflow templates. **Weng has created browser interfaces for n8n official workflows, integration workflows, and Oleg's workflows** to make them more accessible and searchable. Whether you're looking for official n8n team workflows, third-party integrations, battle-tested templates from content creators, or massive community archives, we've got you covered.
 
-## 🌟 Three Powerful Collections
+## 🌟 Four Powerful Collections
+
+### 🏢 [n8n Official Team Workflows](n8n-official/)
+**Official n8n Team Workflows Collection**
+
+Browse the official workflow templates created by the n8n team, sourced directly from [n8n.io/creators/n8n-team/](https://n8n.io/creators/n8n-team/). **Weng has created a data processing system** to scrape, enrich, and organize these high-quality workflows with proper categorization.
+
+**Key Features:**
+- **Official Quality**: Templates created directly by the n8n core team
+- **Enriched Metadata**: Workflows categorized by integration type and use case category
+- **Easy Browsing**: Individual JSON files for quick access and downloading
+- **Professional Examples**: Real-world automation scenarios from the experts
+- **Integration Focused**: Workflows demonstrating various n8n integrations
+
+Perfect for developers who want the highest quality, officially-created workflow examples.
+
+---
 
 ### 🤝 [n8n Integration Partner Workflows](n8n-partners/)
 **Official Third-Party Integration Workflows**
@@ -69,7 +85,7 @@ Perfect for finding specific use cases and discovering new automation possibilit
 ## 🎯 Quick Start
 
 1. **Visit the Portal**: Open `index.php` in your web browser
-2. **Choose Your Collection**: Select from the three available collections
+2. **Choose Your Collection**: Select from the four available collections
 3. **Browse & Search**: Use the built-in search and filtering capabilities
 4. **Download Templates**: Get the JSON files you need
 5. **Import to n8n**: Import downloaded templates into your n8n instance
@@ -78,6 +94,7 @@ Perfect for finding specific use cases and discovering new automation possibilit
 
 | Collection | Templates | Focus | Best For |
 |------------|-----------|-------|----------|
+| **n8n Official Team** | 90+ | Official n8n Team Workflows | Professional & Expert Examples |
 | **n8n Partners** | Official Test Workflows | Third-party Integrations | Enterprise & API Integrations |
 | **Oleg's Collection** | 150+ | YouTuber Templates | Learning & Video Tutorials |
 | **zie619's Archive** | 2,000+ | Community Workflows | Comprehensive Use Cases |
