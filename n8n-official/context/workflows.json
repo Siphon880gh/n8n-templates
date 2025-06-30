@@ -1,0 +1,72 @@
+[
+  {
+    "href": "https://n8n.io/workflows/1806-send-zendesk-tickets-to-pipedrive-contacts-and-assign-tasks",
+    "filename": "1806-send-zendesk-tickets-to-pipedrive-contacts-and-assign-tasks",
+    "integration": "Pipedrive",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1807-sync-zendesk-tickets-to-pipedrive-contact-owners",
+    "filename": "1807-sync-zendesk-tickets-to-pipedrive-contact-owners",
+    "integration": "Pipedrive",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1821-sync-zendesk-tickets-with-subsequent-comments-to-asana-tasks",
+    "filename": "1821-sync-zendesk-tickets-with-subsequent-comments-to-asana-tasks",
+    "integration": "Asana",
+    "category": "Project Management",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1788-add-a-new-lead-to-pipedrive-once-github-repo-is-forked",
+    "filename": "1788-add-a-new-lead-to-pipedrive-once-github-repo-is-forked",
+    "integration": "Git",
+    "category": "Technical Infrastructure & DevOps",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1789-add-a-note-to-pipedrives-contact-once-pr-is-added-on-github",
+    "filename": "1789-add-a-note-to-pipedrives-contact-once-pr-is-added-on-github",
+    "integration": "Git",
+    "category": "Technical Infrastructure & DevOps",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1832-sync-zendesk-tickets-with-subsequent-comments-to-github-issues",
+    "filename": "1832-sync-zendesk-tickets-with-subsequent-comments-to-github-issues",
+    "integration": "Git",
+    "category": "Technical Infrastructure & DevOps",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1828-create-or-update-mautic-contact-on-a-new-calendly-event",
+    "filename": "1828-create-or-update-mautic-contact-on-a-new-calendly-event",
+    "integration": "Mautic",
+    "category": "Marketing & Advertising Automation",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1777-add-new-products-to-stripe-when-product-added-to-pipedrive",
+    "filename": "1777-add-new-products-to-stripe-when-product-added-to-pipedrive",
+    "integration": "Pipedrive",
+    "category": "CRM & Sales",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1929-v1-helper-find-params-with-affected-expressions",
+    "filename": "1929-v1-helper-find-params-with-affected-expressions",
+    "integration": "",
+    "category": "",
+    "json": "<savedAsJSONFile>"
+  },
+  {
+    "href": "https://n8n.io/workflows/1834-send-new-clockify-invoice-to-notion-database",
+    "filename": "1834-send-new-clockify-invoice-to-notion-database",
+    "integration": "Clockify",
+    "category": "Business Process Automation",
+    "json": "<savedAsJSONFile>"
+  }
+]
