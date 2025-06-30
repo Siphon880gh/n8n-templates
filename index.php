@@ -44,7 +44,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                 
                 <!-- n8n Official Section -->
                 <div class="workflow-card bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-                    <div class="bg-gradient-to-r from-cyan-600 to-teal-600 text-white p-6">
+                    <div class="bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-6">
                         <div class="flex items-center mb-4">
                             <i class="fas fa-star text-3xl mr-4"></i>
                             <div>
@@ -75,11 +75,13 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             <div class="flex items-start">
                                 <i class="fas fa-certificate text-sky-600 mr-3 mt-1"></i>
                                 <div>
-                                    <h3 class="font-semibold text-gray-800">Production Ready</h3>
-                                    <p class="text-gray-600 text-sm">Battle-tested workflows maintained by the official n8n development team</p>
+                                    <h3 class="font-semibold text-gray-800">Official Documentation Available</h3>
+                                    <p class="text-gray-600 text-sm">Complete documentation and guides provided by the official n8n development team</p>
                                 </div>
                             </div>
                         </div>
+
+
 
                         <div style="height: 20px;"></div>
                         
@@ -87,13 +89,18 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             <div class="flex items-center justify-between">
                                 <div class="text-sm text-gray-500">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    90 official workflows from the n8n core team
+                                    Official workflows from the n8n core team
                                     <a href="https://n8n.io/creators/n8n-team/" target="_blank" class="text-gray-600 hover:text-blue-600 transition-colors ml-1">
                                         <i class="fas fa-external-link-alt opacity-50"></i>
                                     </a>
+                                    <span class="warning-trigger cursor-pointer text-yellow-600 hover:text-yellow-700 ml-2" 
+                                          data-warning="n8n's official templates have not been updated for a few years and may require modifications for current n8n versions."
+                                          title="Click for important information">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </span>
                                 </div>
                                 <a href="n8n-official/" 
-                                   class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white font-medium rounded-lg hover:from-cyan-700 hover:to-teal-700 transition-all duration-200 transform hover:scale-105">
+                                   class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-medium rounded-lg hover:from-cyan-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105">
                                     <i class="fas fa-arrow-right mr-2"></i>
                                     Browse Official
                                 </a>
@@ -104,12 +111,12 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
                 <!-- n8n Partners Section -->
                 <div class="workflow-card bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-                    <div class="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
                         <div class="flex items-center mb-4">
                             <i class="fas fa-handshake text-3xl mr-4"></i>
                             <div>
                                 <h2 class="text-2xl font-bold">Official n8n Integrations</h2>
-                                <p class="text-green-100 text-sm">Third-party integrations tested by the n8n core team</p>
+                                <p class="text-blue-100 text-sm">Third-party integrations tested by the n8n core team</p>
                             </div>
                         </div>
                     </div>
@@ -140,6 +147,8 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                 </div>
                             </div>
                         </div>
+
+                        <div style="height: 20px;"></div>
                         
                         <div class="mt-6 pt-4 border-t border-gray-200">
                             <div class="flex items-center justify-between">
@@ -151,7 +160,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                     </a>
                                 </div>
                                 <a href="n8n-partners/" 
-                                   class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-blue-600 text-white font-medium rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105">
+                                   class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">
                                     <i class="fas fa-arrow-right mr-2"></i>
                                     Browse Partners
                                 </a>
@@ -167,7 +176,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             <i class="fas fa-video text-3xl mr-4"></i>
                             <div>
                                 <h2 class="text-2xl font-bold">Oleg's Workflows with Explanations</h2>
-                                <p class="text-blue-100 text-sm">Created and taught by Youtubers</p>
+                                <p class="text-blue-100 text-sm">Created and taught by n8n community's favorite Youtubers</p>
                             </div>
                         </div>
                     </div>
@@ -226,7 +235,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             <i class="fas fa-database text-3xl mr-4"></i>
                             <div>
                                 <h2 class="text-2xl font-bold">zie619's Community Collection</h2>
-                                <p class="text-purple-100 text-sm">Massive Workflows Archive</p>
+                                <p class="text-purple-100 text-sm">Massive Workflows Archive by the n8n community</p>
                             </div>
                         </div>
                     </div>
@@ -296,8 +305,8 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                             <div class="text-lg font-semibold text-gray-800">Official Team</div>
                             <div class="text-sm text-gray-600">90 production-ready workflows by the n8n core development team</div>
                         </div>
-                        <div class="text-center p-4 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg border border-green-200">
-                            <div class="text-3xl font-bold text-green-600 mb-2">
+                        <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+                            <div class="text-3xl font-bold text-blue-600 mb-2">
                                 <i class="fas fa-handshake"></i>
                             </div>
                             <div class="text-lg font-semibold text-gray-800">Official Partners</div>
@@ -449,6 +458,48 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                 setTimeout(function() {
                     $btn.html(originalHtml);
                 }, 3000);
+            });
+
+            // Handle warning icon clicks
+            $('.warning-trigger').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const warningText = $(this).data('warning');
+                
+                // Create a nice alert-style modal
+                const alertHtml = `
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" id="warning-modal">
+                        <div class="bg-white rounded-lg p-6 m-4 max-w-md shadow-2xl">
+                            <div class="flex items-start mb-4">
+                                <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mr-3 mt-1"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 mb-2">Important Notice</h3>
+                                    <p class="text-gray-600 text-sm">${warningText}</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors" onclick="closeWarningModal()">
+                                    Got it
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                $('body').append(alertHtml);
+            });
+
+            // Function to close warning modal
+            window.closeWarningModal = function() {
+                $('#warning-modal').remove();
+            };
+
+            // Close modal when clicking outside
+            $(document).on('click', '#warning-modal', function(e) {
+                if (e.target === this) {
+                    closeWarningModal();
+                }
             });
         });
     </script>
