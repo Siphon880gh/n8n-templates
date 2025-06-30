@@ -86,6 +86,9 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                 <div class="text-sm text-gray-500">
                                     <i class="fas fa-info-circle mr-1"></i>
                                     Official n8n test workflows supporting integration
+                                    <a href="https://github.com/n8n-io/test-workflows" target="_blank" class="text-gray-600 hover:text-blue-600 transition-colors ml-1">
+                                        <i class="fas fa-external-link-alt opacity-50"></i>
+                                    </a>
                                 </div>
                                 <a href="n8n-partners/" 
                                    class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-blue-600 text-white font-medium rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105">
@@ -135,12 +138,16 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                 </div>
                             </div>
                         </div>
+                        <div style="height: 20px;"></div>
                         
                         <div class="mt-6 pt-4 border-t border-gray-200">
                             <div class="flex items-center justify-between">
                                 <div class="text-sm text-gray-500">
                                     <i class="fas fa-info-circle mr-1"></i>
                                     Curated from n8n YouTubers & Influencers
+                                    <a href="https://docs.google.com/spreadsheets/d/1v8aRvHQBwglhdWrpoCNE9fzptiCc23UxQvuhgr2RlIM/edit?gid=0#gid=0" target="_blank" class="text-gray-600 hover:text-blue-600 transition-colors ml-1">
+                                        <i class="fas fa-external-link-alt opacity-50"></i>
+                                    </a>
                                 </div>
                                 <a href="oleg-browser/" 
                                    class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">
@@ -171,15 +178,15 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                 <i class="fas fa-download text-pink-600 mr-3 mt-1"></i>
                                 <div>
                                     <h3 class="font-semibold text-gray-800">Direct Downloads</h3>
-                                    <p class="text-gray-600 text-sm">Download workflow JSON files directly from the organized archive</p>
+                                    <p class="text-gray-600 text-sm">Download 2,000+ workflow JSON files directly from the organized collection</p>
                                 </div>
                             </div>
 
                             <div class="flex items-start">
                                 <i class="fas fa-archive text-purple-600 mr-3 mt-1"></i>
                                 <div>
-                                    <h3 class="font-semibold text-gray-800">Massive Collection</h3>
-                                    <p class="text-gray-600 text-sm">2,000+ organized n8n workflows in one place</p>
+                                    <h3 class="font-semibold text-gray-800">Open Source Collection</h3>
+                                    <p class="text-gray-600 text-sm">Many contributors actively contributing in one place</p>
                                 </div>
                             </div>
                             
@@ -190,7 +197,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                     <p class="text-gray-600 text-sm">Preview workflow structures with interactive Mermaid diagrams in your browser</p>
                                 </div>
                             </div>
-                            <div style="height: 20px;"></div>
+                            <div style="height: 3px;"></div>
                         </div>
                         
                         <div class="mt-6 pt-4 border-t border-gray-200">
@@ -198,6 +205,9 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                                 <div class="text-sm text-gray-500">
                                     <i class="fas fa-info-circle mr-1"></i>
                                     Developed by zie619 and the community
+                                    <a href="https://github.com/Zie619/n8n-workflows/commits?author=Siphon880gh" target="_blank" class="text-gray-600 hover:text-blue-600 transition-colors ml-1">
+                                        <i class="fas fa-external-link-alt opacity-50"></i>
+                                    </a>
                                 </div>
                                 <a href="zie619-community/" 
                                    class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 transform hover:scale-105">
