@@ -41,7 +41,8 @@ if (listHandles.length) {
   console.error('No element found for the XPath');
 }
 
-console.log(ahrefs)
+console.log(ahrefs);
+const ahrefsLength = ahrefs.length;
 
 for(var i=0; i<ahrefs.length; i++) {
     var ahref = ahrefs[i];
@@ -68,9 +69,9 @@ for(var i=0; i<ahrefs.length; i++) {
         json
     } // ahrefs array being modified
 
-   await page.waitForTimeout(2000); // dont get banned!
-
+   console.log(`At ${i} of ${ahrefsLength}.`);
    console.log(ahrefs);
+   await page.waitForTimeout(3000); // dont get banned!
 }
 ```
 
